@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">QGNEWS</string>
+    <string name="main_toolber_search">搜索</string>
+    <string name="mian_menu_logout">退出登录</string>
 </resources>
