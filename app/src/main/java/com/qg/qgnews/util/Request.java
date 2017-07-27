@@ -5,4 +5,5 @@ package com.qg.qgnews.util;
  */
 
 public class Request {
+
 }

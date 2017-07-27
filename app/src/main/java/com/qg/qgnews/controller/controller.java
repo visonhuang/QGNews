@@ -5,4 +5,5 @@ package com.qg.qgnews.controller;
  */
 
 public class controller {
+
 }
