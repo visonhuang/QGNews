@@ -6,4 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.qg.qgnews.ui.activity.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/activity_main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/primary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
