@@ -6,16 +6,160 @@
     android:layout_height="match_parent"
     tools:context="com.qg.qgnews.ui.activity.MainActivity">
 
+    <LinearLayout
+        android:layout_width="140dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="14dp"
+        android:divider="@drawable/div"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:showDividers="middle"
+        app:layout_constraintLeft_toLeftOf="@+id/linearLayout"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.023"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/round_shape_white"
+            android:elevation="2dp"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="编辑新闻" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton2"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_text_fields_white_36dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="140dp"
+        android:layout_height="60dp"
+        android:divider="@drawable/div"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:showDividers="middle"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/linearLayout"
+        android:layout_marginRight="14dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/linearLayout2">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/round_shape_white"
+            android:elevation="2dp"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="我的新闻" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton2"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            app:backgroundTint="@color/darkGreen"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_text_fields_white_36dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="140dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="9dp"
+        android:layout_marginRight="14dp"
+        android:divider="@drawable/div"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:showDividers="middle"
+        app:layout_constraintBottom_toTopOf="@+id/activity_main_plus_button"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/linearLayout">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/round_shape_white"
+            android:elevation="2dp"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="人员管理" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton2"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            app:backgroundTint="@color/orange"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/person" />
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/activity_main_plus_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:clickable="true"
+        app:backgroundTint="@color/colorAccent"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_add_white_36dp"
+        android:layout_marginEnd="16dp" />
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_main_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:elevation="5dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        />
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_main_toolbar"
+        app:layout_constraintVertical_bias="0.0">
+
+    </FrameLayout>
+
 </android.support.constraint.ConstraintLayout>
