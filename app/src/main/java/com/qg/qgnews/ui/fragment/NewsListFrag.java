@@ -15,9 +15,9 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.Controller;
 import com.qg.qgnews.controller.adapter.NewsListAdapter;
 import com.qg.qgnews.controller.adapter.NewsListAdapter2;
-import com.qg.qgnews.controller.controller;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.ui.diyview.RefreshLayout;
 import com.qg.qgnews.util.Tool;
@@ -78,7 +78,7 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         refreshLayout.setRefreshing(true);
-        controller.getInstance().RequestNews(0, new controller.OnRequestNewsListener() {
+        Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
             @Override
             public void onSuccess(final List<News> list) {
                 Tool.runOnUiThread(new Runnable() {
@@ -101,7 +101,7 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onLoad() {
         Tool.toast("上啦加载");
-        controller.getInstance().RequestNews(0, new controller.OnRequestNewsListener() {
+        Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
             @Override
             public void onSuccess(List<News> list) {
                 dataNews.addAll(list);
