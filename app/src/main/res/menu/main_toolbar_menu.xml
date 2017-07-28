@@ -12,4 +12,9 @@
         android:orderInCategory="100"
         android:title="@string/mian_menu_logout"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/main_menu_select_download_path"
+        android:orderInCategory="100"
+        android:title="设置文件保存路径"
+        app:showAsAction="never" />
 </menu>
