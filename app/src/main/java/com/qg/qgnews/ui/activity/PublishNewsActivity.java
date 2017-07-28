@@ -23,6 +23,7 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
     private FloatingActionButton mUploadFileButton;
     private LinearLayout mUploadCoverLinear;
     private LinearLayout mUploadFileLinear;
+    private LinearLayout mFileContainerLinear;
     private static final int PLUS_OPEN = 1;
     private static final int PLUS_CLOSE = 0;
     private static int pulsButtonMode = PLUS_CLOSE;
@@ -57,6 +58,7 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         mUploadCoverButton = (FloatingActionButton) findViewById(R.id.activity_publish_upload_cover_button);
         mUploadFileLinear = (LinearLayout) findViewById(R.id.activity_public_upload_file_linearlayout);
         mUploadCoverLinear = (LinearLayout) findViewById(R.id.activity_public_upload_cover_linearlayout);
+        mFileContainerLinear = (LinearLayout) findViewById(R.id.file_container_linear);
         mFab.setOnClickListener(this);
         mUploadFileButton.setOnClickListener(this);
         mUploadCoverButton.setOnClickListener(this);
@@ -81,6 +83,9 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
             case R.id.activity_publish_upload_cover_button:
                 break;
             case R.id.activity_publish_upload_file_button:
+                mFileContainerLinear.setVisibility(View.VISIBLE);
+                mFileContainerLinear.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enter));
+                hideButtons();
                 break;
             default:
                 break;
