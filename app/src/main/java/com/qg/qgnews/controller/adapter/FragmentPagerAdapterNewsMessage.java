@@ -3,6 +3,9 @@ package com.qg.qgnews.controller.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.widget.Toast;
+
+import com.qg.qgnews.util.Tool;
 
 import java.util.List;
 
@@ -32,4 +35,6 @@ public class FragmentPagerAdapterNewsMessage extends FragmentPagerAdapter {
     public int getCount() {
         return mFragmentList.size();
     }
+
+
 }

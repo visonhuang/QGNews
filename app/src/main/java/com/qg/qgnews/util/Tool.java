@@ -140,4 +140,9 @@ public class Tool {
         SharedPreferences sp = App.context.getSharedPreferences("Manager", Context.MODE_PRIVATE);
         return sp.getString("path", Environment.getDownloadCacheDirectory().getPath());
     }
+
+    public static boolean isEmail (String email) {
+        return true;
+    }
+
 }
