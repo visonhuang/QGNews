@@ -36,7 +36,7 @@ public class NewsListFrag extends Fragment implements NewsListAdapter.OnItemClic
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View content = inflater.inflate(R.layout.frag_news_list, container, false);
         //adapter = new NewsListAdapter(,getContext());
-        adapter.setOnItemClickListener(this);
+        //adapter.setOnItemClickListener(this);
         newList = (RecyclerView) content.findViewById(R.id.news_list);
         newList.setLayoutManager(new LinearLayoutManager(getContext()));
         newList.setAdapter(adapter);
