@@ -39,7 +39,7 @@ public class PublishNewsActivity extends TopBarBaseActivity {
         setTopRightButton("", 0, new OnClickListener() {
             @Override
             public void onClick() {
-                Toast.makeText(PublishNewsActivity.this, "点击了右上角按钮！", Toast.LENGTH_LONG).show();
+                Toast.makeText(PublishNewsActivity.this, "点击了！", Toast.LENGTH_LONG).show();
             }
         });
 
