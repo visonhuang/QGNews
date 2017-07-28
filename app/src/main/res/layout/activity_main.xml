@@ -15,16 +15,16 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="14dp"
         android:divider="@drawable/div"
+        android:elevation="5dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
         android:showDividers="middle"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/activity_main_mynews_liner"
         app:layout_constraintHorizontal_bias="0.023"
         app:layout_constraintLeft_toLeftOf="@+id/activity_main_edit_liner"
-        app:layout_constraintRight_toRightOf="parent"
-        android:elevation="5dp">
+        app:layout_constraintRight_toRightOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:text="人员管理"
-            android:textColor="@color/primary_text" />
+            android:textColor="@color/primary_text"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/activity_main_manager_button"
@@ -47,7 +47,7 @@
             android:clickable="true"
             app:backgroundTint="@color/orange"
             app:fabSize="mini"
-            app:srcCompat="@drawable/person" />
+            app:srcCompat="@drawable/person"/>
 
     </LinearLayout>
 
@@ -59,15 +59,15 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="14dp"
         android:divider="@drawable/div"
+        android:elevation="5dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
         android:showDividers="middle"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/activity_main_edit_liner"
         app:layout_constraintLeft_toLeftOf="@+id/activity_main_edit_liner"
-        app:layout_constraintRight_toRightOf="parent"
-        android:elevation="5dp">
+        app:layout_constraintRight_toRightOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -80,7 +80,7 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:text="我的新闻"
-            android:textColor="@color/primary_text" />
+            android:textColor="@color/primary_text"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/activity_main_mynews_button"
@@ -90,7 +90,7 @@
             android:clickable="true"
             app:backgroundTint="@color/darkGreen"
             app:fabSize="mini"
-            app:srcCompat="@drawable/news" />
+            app:srcCompat="@drawable/news"/>
     </LinearLayout>
 
     <LinearLayout
@@ -100,14 +100,14 @@
         android:layout_marginBottom="9dp"
         android:layout_marginRight="14dp"
         android:divider="@drawable/div"
+        android:elevation="5dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
         android:showDividers="middle"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/activity_main_plus_button"
-        app:layout_constraintRight_toRightOf="parent"
-        android:elevation="5dp">
+        app:layout_constraintRight_toRightOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -120,7 +120,7 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:text="编辑新闻"
-            android:textColor="@color/primary_text" />
+            android:textColor="@color/primary_text"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/activity_main_edit_button"
@@ -129,7 +129,7 @@
             android:layout_weight="1"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/ic_text_fields_white_36dp" />
+            app:srcCompat="@drawable/ic_text_fields_white_36dp"/>
 
     </LinearLayout>
 

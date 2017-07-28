@@ -13,6 +13,8 @@ import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.NewsListAdapter;
 import com.qg.qgnews.model.News;
 
+import java.util.ArrayList;
+
 /**
  * Created by 小吉哥哥 on 2017/7/27.
  */
@@ -35,7 +37,7 @@ public class NewsListFrag extends Fragment implements NewsListAdapter.OnItemClic
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View content = inflater.inflate(R.layout.frag_news_list, container, false);
-        //adapter = new NewsListAdapter(,getContext());
+        adapter = new NewsListAdapter(new ArrayList<News>(),getContext());
         adapter.setOnItemClickListener(this);
         newList = (RecyclerView) content.findViewById(R.id.news_list);
         newList.setLayoutManager(new LinearLayoutManager(getContext()));
