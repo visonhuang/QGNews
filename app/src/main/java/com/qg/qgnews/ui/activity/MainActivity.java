@@ -1,5 +1,6 @@
 package com.qg.qgnews.ui.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
@@ -89,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_search:
                 break;
             case R.id.main_menu_logout:
+                break;
+            case R.id.main_menu_select_download_path:
+                startActivity(new Intent(this,FileSelector.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

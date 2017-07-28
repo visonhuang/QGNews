@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.widget.Toast;
 
 import com.qg.qgnews.App;
@@ -83,7 +84,9 @@ public class Tool {
         return networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED;
     }
 
-    /** 在主线程中奔跑
+    /**
+     * 在主线程中奔跑
+     *
      * @param runnable
      */
     public static void runOnUiThread(Runnable runnable) {
@@ -105,24 +108,36 @@ public class Tool {
         }
         return new BigInteger(1, bytes).toString(16); // 把加密后的数组用16进制表示
     }
-    public static void setCurrentManager(Manager manager){
-        SharedPreferences.Editor editor = App.context.getSharedPreferences("Manager",Context.MODE_PRIVATE).edit();
-        editor.putInt("managerId",manager.getManagerId());
-        editor.putInt("managerSuper",manager.getManagerSuper());
-        editor.putString("managerAccount",manager.getManagerAccount());
-        editor.putString("managerPassword",manager.getManagerPassword());
-        editor.putString("managerName",manager.getManagerName());
+
+    public static void setCurrentManager(Manager manager) {
+        SharedPreferences.Editor editor = App.context.getSharedPreferences("Manager", Context.MODE_PRIVATE).edit();
+        editor.putInt("managerId", manager.getManagerId());
+        editor.putInt("managerSuper", manager.getManagerSuper());
+        editor.putString("managerAccount", manager.getManagerAccount());
+        editor.putString("managerPassword", manager.getManagerPassword());
+        editor.putString("managerName", manager.getManagerName());
         editor.apply();
     }
-    public static Manager getCurrentManager(){
-        SharedPreferences sp = App.context.getSharedPreferences("Manager",Context.MODE_PRIVATE);
+
+    public static Manager getCurrentManager() {
+        SharedPreferences sp = App.context.getSharedPreferences("Manager", Context.MODE_PRIVATE);
         Manager m = new Manager();
-        m.setManagerId(sp.getInt("managerId",-1));
-        m.setManagerSuper(sp.getInt("managerSuper",-1));
-        m.setManagerName(sp.getString("managerAccount",""));
-        m.setManagerPassword(sp.getString("managerPassword",""));
-        m.setManagerName(sp.getString("managerName",""));
+        m.setManagerId(sp.getInt("managerId", -1));
+        m.setManagerSuper(sp.getInt("managerSuper", -1));
+        m.setManagerName(sp.getString("managerAccount", ""));
+        m.setManagerPassword(sp.getString("managerPassword", ""));
+        m.setManagerName(sp.getString("managerName", ""));
         return m;
     }
 
+    public static void setFileSavePath(String path) {
+        SharedPreferences.Editor editor = App.context.getSharedPreferences("path", Context.MODE_PRIVATE).edit();
+        editor.putString("path", path);
+        editor.apply();
+    }
+
+    public static String getFileSavePath() {
+        SharedPreferences sp = App.context.getSharedPreferences("Manager", Context.MODE_PRIVATE);
+        return sp.getString("path", Environment.getDownloadCacheDirectory().getPath());
+    }
 }
