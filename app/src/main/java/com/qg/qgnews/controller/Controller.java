@@ -7,5 +7,16 @@ import java.util.Collections;
  */
 
 public class Controller {
+    private static Controller sController = null;
+
+    public Controller() {
+    }
+
+    public Controller getInstance(){
+        if (sController == null) {
+            sController = new Controller();
+        }
+        return sController;
+    }
 
 }
