@@ -1,11 +1,13 @@
 package com.qg.qgnews.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
 import com.qg.qgnews.App;
+import com.qg.qgnews.model.Manager;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -103,4 +105,24 @@ public class Tool {
         }
         return new BigInteger(1, bytes).toString(16); // 把加密后的数组用16进制表示
     }
+    public static void setCurrentManager(Manager manager){
+        SharedPreferences.Editor editor = App.context.getSharedPreferences("Manager",Context.MODE_PRIVATE).edit();
+        editor.putInt("managerId",manager.getManagerId());
+        editor.putInt("managerSuper",manager.getManagerSuper());
+        editor.putString("managerAccount",manager.getManagerAccount());
+        editor.putString("managerPassword",manager.getManagerPassword());
+        editor.putString("managerName",manager.getManagerName());
+        editor.apply();
+    }
+    public static Manager getCurrentManager(){
+        SharedPreferences sp = App.context.getSharedPreferences("Manager",Context.MODE_PRIVATE);
+        Manager m = new Manager();
+        m.setManagerId(sp.getInt("managerId",-1));
+        m.setManagerSuper(sp.getInt("managerSuper",-1));
+        m.setManagerName(sp.getString("managerAccount",""));
+        m.setManagerPassword(sp.getString("managerPassword",""));
+        m.setManagerName(sp.getString("managerName",""));
+        return m;
+    }
+
 }
