@@ -7,6 +7,10 @@ import android.widget.Toast;
 
 import com.qg.qgnews.App;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Created by 小吉哥哥 on 2017/7/26.
  */
@@ -82,5 +86,21 @@ public class Tool {
      */
     public static void runOnUiThread(Runnable runnable) {
         App.getActivityStack().firstElement().runOnUiThread(runnable);
+    }
+
+    /**
+     * 进行MD5加密
+     *
+     * @param plainText 待加密的字符串
+     * @return 加密后的字符串
+     */
+    public static String encryption(String plainText) {
+        byte[] bytes = null;
+        try {
+            bytes = MessageDigest.getInstance("md5").digest(plainText.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return new BigInteger(1, bytes).toString(16); // 把加密后的数组用16进制表示
     }
 }
