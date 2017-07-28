@@ -8,8 +8,10 @@
     tools:context="com.qg.qgnews.ui.activity.MainActivity">
 
     <LinearLayout
+        android:id="@+id/activity_main_manager_liner"
         android:layout_width="140dp"
         android:layout_height="60dp"
+        android:layout_marginBottom="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="14dp"
         android:divider="@drawable/div"
@@ -17,13 +19,14 @@
         android:orientation="horizontal"
         android:padding="5dp"
         android:showDividers="middle"
-        app:layout_constraintLeft_toLeftOf="@+id/linearLayout"
-        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/activity_main_mynews_liner"
         app:layout_constraintHorizontal_bias="0.023"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2">
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main_edit_liner"
+        app:layout_constraintRight_toRightOf="parent"
+        android:elevation="5dp">
+
         <TextView
-            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -33,10 +36,11 @@
             android:paddingBottom="2dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:text="人员管理" />
+            android:text="人员管理"
+            android:textColor="@color/primary_text" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatingActionButton2"
+            android:id="@+id/activity_main_manager_button"
             android:layout_width="50dp"
             android:layout_height="40dp"
             android:layout_weight="1"
@@ -48,23 +52,24 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/activity_main_mynews_liner"
         android:layout_width="140dp"
         android:layout_height="60dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="14dp"
         android:divider="@drawable/div"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
         android:showDividers="middle"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="@+id/linearLayout"
-        android:layout_marginRight="14dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/activity_main_edit_liner"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main_edit_liner"
         app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/linearLayout2">
+        android:elevation="5dp">
 
         <TextView
-            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -74,20 +79,22 @@
             android:paddingBottom="2dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:text="我的新闻" />
+            android:text="我的新闻"
+            android:textColor="@color/primary_text" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatingActionButton2"
+            android:id="@+id/activity_main_mynews_button"
             android:layout_width="50dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:clickable="true"
             app:backgroundTint="@color/darkGreen"
             app:fabSize="mini"
-            app:srcCompat="@drawable/ic_text_fields_white_36dp" />
+            app:srcCompat="@drawable/news" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/activity_main_edit_liner"
         android:layout_width="140dp"
         android:layout_height="60dp"
         android:layout_marginBottom="9dp"
@@ -97,11 +104,12 @@
         android:orientation="horizontal"
         android:padding="5dp"
         android:showDividers="middle"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/activity_main_plus_button"
         app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/linearLayout">
+        android:elevation="5dp">
+
         <TextView
-            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -111,10 +119,11 @@
             android:paddingBottom="2dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:text="编辑新闻" />
+            android:text="编辑新闻"
+            android:textColor="@color/primary_text" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatingActionButton2"
+            android:id="@+id/activity_main_edit_button"
             android:layout_width="50dp"
             android:layout_height="40dp"
             android:layout_weight="1"
@@ -152,6 +161,7 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <FrameLayout
+        android:id="@+id/main_frag_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
