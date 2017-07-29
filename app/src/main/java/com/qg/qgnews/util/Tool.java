@@ -150,4 +150,8 @@ public class Tool {
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
         return baos.toByteArray();
     }
+
+    public static boolean isEmail(String email){
+        return false;
+    }
 }
