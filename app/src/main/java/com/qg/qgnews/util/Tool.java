@@ -25,7 +25,7 @@ public class Tool {
     private static Object mObject;
 
     /**
-     * @param o 需要toast的对象
+     * @param o 需要toast对象
      */
     public static void toast(final Object o) {
         App.getActivityStack().firstElement().runOnUiThread(new Runnable() {
