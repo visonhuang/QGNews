@@ -36,7 +36,7 @@ public class Request {
         //模拟数据
         List<News> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            list.add(new News());
+//            list.add(new News());
         }
         return new FeedBack(1, "", gson.toJson(list));
     }
@@ -134,7 +134,7 @@ public class Request {
      * @param files 附件路径数组
      * @return feedback字符串，若有异常则为  ""
      */
-    public String upLoadNews(News news, Bitmap cover, String[] files) {
+    public static String upLoadNews(News news, Bitmap cover, String[] files) {
         Gson gson = new Gson();
         String end = "\r\n";
         String twoHyphens = "--";
@@ -165,7 +165,7 @@ public class Request {
 
 
             //上传新闻体
-            ds.write((gson.toJson(news) + end + boundary + end).getBytes());
+            ds.write((gson.toJson(news) + end + end).getBytes());
 
 
             //上传封面

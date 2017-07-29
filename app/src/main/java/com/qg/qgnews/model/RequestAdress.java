@@ -5,12 +5,12 @@ package com.qg.qgnews.model;
  */
 
 public class RequestAdress {
-    private static final String HOST = "http://192.168.199.119:8080/";
+    private static final String HOST = "http://192.168.43.96:8080/";
 
     /**
      * 上传新闻url
      */
-    public static final String UPLOAD_NEWS = HOST + "admin/addnews";
+    public static final String UPLOAD_NEWS = HOST + "Hello/admin/addnews";
     /**
      * 删除新闻
      */

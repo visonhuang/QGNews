@@ -21,6 +21,7 @@
             android:layout_weight="4">
 
             <EditText
+                android:id="@+id/news_title_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -141,7 +142,7 @@
 
 
                     <EditText
-                        android:id="@+id/fruit_content_text"
+                        android:id="@+id/title_content_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
@@ -178,20 +179,14 @@
                 android:id="@+id/file_container_linear"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:background="#f6f6f6"
+                android:background="#ffffff"
                 android:orientation="vertical"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:visibility="gone">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#eeeeee"/>
+                android:layout_alignParentStart="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="45dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:weightSum="1">
@@ -213,6 +208,13 @@
                         android:layout_height="40dp"
                         app:srcCompat="@drawable/ic_file2"/>
                 </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:max="100"/>
 
                 <View
                     android:layout_width="match_parent"

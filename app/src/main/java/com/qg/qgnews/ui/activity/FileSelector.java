@@ -1,6 +1,7 @@
 package com.qg.qgnews.ui.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Environment;
@@ -24,6 +25,7 @@ import com.qg.qgnews.controller.adapter.UrlListAdapter;
 import com.qg.qgnews.util.Tool;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,7 +40,7 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
     File now;
     public static final int MODE_PATH = 0;
     public static final int MODE_FILE = 1;
-    private int mode = MODE_PATH;
+    private int mode = MODE_FILE;
     private UrlListAdapter adapter;
     Map<String, File> selectedFiles = new HashMap<>();
     public  int maxSelected = 10;
@@ -62,6 +64,12 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
                     @Override
                     public void onClick() {
                         Tool.toast("点击了确定");
+                        Intent intent = new Intent();
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("map_key", (Serializable) selectedFiles);
+                        intent.putExtra("map_key", bundle);
+                        setResult(RESULT_OK,intent);
+                        finish();
                         //TODO 选择文件逻辑
                     }
                 });
