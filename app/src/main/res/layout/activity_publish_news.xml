@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="15dp"
             android:layout_weight="4">
 
             <EditText
@@ -35,6 +35,85 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/activity_public_upload_cover_linearlayout"
+            android:layout_width="140dp"
+            android:layout_height="60dp"
+            android:layout_above="@+id/activity_public_upload_file_linearlayout"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="12dp"
+            android:divider="@drawable/div"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/round_shape_white"
+                android:elevation="2dp"
+                android:gravity="center"
+                android:paddingBottom="2dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="上传封面"
+                android:textColor="@color/primary_text"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/activity_publish_upload_cover_button"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="@color/darkGreen"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_cover"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/activity_public_upload_file_linearlayout"
+            android:layout_width="140dp"
+            android:layout_height="60dp"
+            android:layout_above="@+id/floating_linear"
+            android:layout_alignStart="@+id/activity_public_upload_cover_linearlayout"
+            android:layout_marginBottom="13dp"
+            android:layout_marginRight="12dp"
+            android:divider="@drawable/div"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/round_shape_white"
+                android:elevation="2dp"
+                android:gravity="center"
+                android:paddingBottom="2dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="上传文件"
+                android:textColor="@color/primary_text"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/activity_publish_upload_file_button"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="@color/orange"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_file"/>
+
+        </LinearLayout>
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
@@ -69,95 +148,18 @@
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
-        <LinearLayout
-                android:id="@+id/activity_public_upload_file_linearlayout"
-                android:layout_width="140dp"
-                android:layout_height="60dp"
-                android:layout_above="@+id/floating_button"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="11dp"
-                android:layout_marginRight="12dp"
-                android:divider="@drawable/div"
-                android:elevation="4dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:showDividers="middle"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/round_shape_white"
-                    android:elevation="2dp"
-                    android:gravity="center"
-                    android:paddingBottom="2dp"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:text="上传文件"
-                    android:textColor="@color/primary_text"/>
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/activity_publish_upload_file_button"
-                    android:layout_width="50dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    app:backgroundTint="@color/orange"
-                    app:fabSize="mini"
-                    app:srcCompat="@drawable/ic_file"/>
-
-            </LinearLayout>
-
-        <LinearLayout
-                android:id="@+id/activity_public_upload_cover_linearlayout"
-                android:layout_width="140dp"
-                android:layout_height="60dp"
-                android:layout_above="@+id/activity_public_upload_file_linearlayout"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="12dp"
-                android:divider="@drawable/div"
-                android:elevation="4dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:showDividers="middle"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/round_shape_white"
-                    android:elevation="2dp"
-                    android:gravity="center"
-                    android:paddingBottom="2dp"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:text="上传封面"
-                    android:textColor="@color/primary_text"/>
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/activity_publish_upload_cover_button"
-                    android:layout_width="50dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    app:backgroundTint="@color/darkGreen"
-                    app:fabSize="mini"
-                    app:srcCompat="@drawable/ic_cover"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/floating_linear"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/floating_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 app:backgroundTint="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -166,6 +168,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_gravity="bottom|end"
                 android:layout_alignParentEnd="true"
+                android:layout_above="@+id/file_container_linear"
                 android:src="@drawable/ic_add"
                 />
 
@@ -175,9 +178,9 @@
                 android:layout_height="150dp"
                 android:background="@color/colorPrimary"
                 android:orientation="vertical"
-                android:visibility="gone"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true">
+                android:layout_alignParentStart="true"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -191,7 +194,7 @@
                     android:layout_height="100dp"/>
             </LinearLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 

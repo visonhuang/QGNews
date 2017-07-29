@@ -3,11 +3,13 @@ package com.qg.qgnews.ui.activity;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.qg.qgnews.R;
 import com.qg.qgnews.util.Tool;
@@ -23,9 +25,13 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
     private FloatingActionButton mUploadFileButton;
     private LinearLayout mUploadCoverLinear;
     private LinearLayout mUploadFileLinear;
+    private LinearLayout mFileContainLinear;
     private static final int PLUS_OPEN = 1;
     private static final int PLUS_CLOSE = 0;
-    private static int pulsButtonMode = PLUS_CLOSE;
+    private static int PulsButtonMode = PLUS_CLOSE;
+    private static final int UPLOAD_OPEN = 1;
+    private static final int UPLOAD_CLOSE = 0;
+    private static int UploadButtonMode = UPLOAD_CLOSE;
 
     @Override
     protected int getContentView() {
@@ -57,6 +63,7 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         mUploadCoverButton = (FloatingActionButton) findViewById(R.id.activity_publish_upload_cover_button);
         mUploadFileLinear = (LinearLayout) findViewById(R.id.activity_public_upload_file_linearlayout);
         mUploadCoverLinear = (LinearLayout) findViewById(R.id.activity_public_upload_cover_linearlayout);
+        mFileContainLinear = (LinearLayout) findViewById(R.id.file_container_linear);
         mFab.setOnClickListener(this);
         mUploadFileButton.setOnClickListener(this);
         mUploadCoverButton.setOnClickListener(this);
@@ -66,33 +73,66 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.floating_button:
-                if (pulsButtonMode == PLUS_CLOSE) {
+                if (UploadButtonMode == UPLOAD_OPEN){
+                    Log.d("8888888888", "8888888888888");
+                    hideUpleadLinear();
+                    UploadButtonMode = UPLOAD_CLOSE;
+                }
+                else if (PulsButtonMode == PLUS_CLOSE) {
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_to_45));
                     showButtons();
-                    pulsButtonMode = PLUS_OPEN;
+                    PulsButtonMode = PLUS_OPEN;
                     //TODO open
-                } else {
+                }
+                else{
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_back_45));
                     hideButtons();
-                    pulsButtonMode = PLUS_CLOSE;
+                    PulsButtonMode = PLUS_CLOSE;
                     //TODO close
                 }
                 break;
             case R.id.activity_publish_upload_cover_button:
                 break;
             case R.id.activity_publish_upload_file_button:
+                hideButtons();
+                mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enter));
+                mFileContainLinear.setVisibility(View.VISIBLE);
+                mFileContainLinear.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enter));
+                UploadButtonMode = UPLOAD_OPEN;
+                PulsButtonMode = PLUS_CLOSE;
                 break;
             default:
                 break;
         }
     }
 
+    private void hideUpleadLinear() {
+        Animation exit = AnimationUtils.loadAnimation(this, R.anim.exit);
+        exit.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mFileContainLinear.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.floating_button_exit));
+        mFileContainLinear.startAnimation(exit);
+
+    }
+
     private void hideButtons() {
         Animation hide_0, hide_50;
         hide_0 = AnimationUtils.loadAnimation(this, R.anim.trans_down_offset_0);
         hide_50 = AnimationUtils.loadAnimation(this, R.anim.trans_down_offset_50);
-        mUploadCoverLinear.startAnimation(hide_50);
-        mUploadFileLinear.startAnimation(hide_0);
 
         hide_0.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -102,6 +142,7 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                Log.d("8888888888.", "7777777777777");
                 mUploadFileLinear.setVisibility(View.GONE);
             }
 
@@ -126,6 +167,9 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
 
             }
         });
+
+        mUploadCoverLinear.startAnimation(hide_50);
+        mUploadFileLinear.startAnimation(hide_0);
     }
 
     private void showButtons() {
