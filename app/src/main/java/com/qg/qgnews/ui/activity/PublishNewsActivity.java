@@ -79,6 +79,7 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
                     UploadButtonMode = UPLOAD_CLOSE;
                 }
                 else if (PulsButtonMode == PLUS_CLOSE) {
+                    Log.d("8888888888", "33333333333333");
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_to_45));
                     showButtons();
                     PulsButtonMode = PLUS_OPEN;
@@ -94,7 +95,8 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
             case R.id.activity_publish_upload_cover_button:
                 break;
             case R.id.activity_publish_upload_file_button:
-                hideButtons();
+                mUploadCoverLinear.setVisibility(View.GONE);
+                mUploadFileLinear.setVisibility(View.GONE);
                 mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enter));
                 mFileContainLinear.setVisibility(View.VISIBLE);
                 mFileContainLinear.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enter));
