@@ -40,7 +40,9 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
         if (adapter.getCount() <= position) {
             return;
         }
-        //onNewsItemClickListener.OnItemClickListener(view, position, adapter.getItem(position));
+        if (onNewsItemClickListener != null) {
+            onNewsItemClickListener.OnItemClickListener(view, position, adapter.getItem(position));
+        }
     }
 
 
@@ -48,7 +50,17 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
         void OnItemClickListener(View v, int pos, News news);
     }
 
+    public interface OnRefreshOrLoadIngListener {
+        void onRefresh(NewsListAdapter2 adapter,List<News> oldList);
+        void onLoad(NewsListAdapter2 adapter,List<News> oldList);
+    }
+
     private OnNewsItemClickListener onNewsItemClickListener = null;
+    private OnRefreshOrLoadIngListener onRefreshOrLoadIngListener = null;
+
+    public void setOnRefreshOrLoadIngListener(OnRefreshOrLoadIngListener onRefreshOrLoadIngListener) {
+        this.onRefreshOrLoadIngListener = onRefreshOrLoadIngListener;
+    }
 
     public void setOnNewsItemClickListener(OnNewsItemClickListener onNewsItemClickListener) {
         this.onNewsItemClickListener = onNewsItemClickListener;
@@ -78,6 +90,11 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         refreshLayout.setRefreshing(true);
+        //刷新接口丢出去
+        if (onRefreshOrLoadIngListener != null) {
+            onRefreshOrLoadIngListener.onRefresh(adapter,dataNews);
+            refreshLayout.setRefreshing(false);
+        }
         Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
             @Override
             public void onSuccess(final List<News> list) {
@@ -101,6 +118,10 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onLoad() {
         Tool.toast("上啦加载");
+        if (onRefreshOrLoadIngListener != null) {
+            onRefreshOrLoadIngListener.onLoad(adapter,dataNews);
+            refreshLayout.setLoading(false);
+        }
         Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
             @Override
             public void onSuccess(List<News> list) {

@@ -71,11 +71,7 @@ public class Request {
             httpURLConnection.setRequestProperty("Charset", "utf-8");
             // 设置DataOutputStream
             ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
-            ds.write((twoHyphens + boundary + end).getBytes());
-            ds.write(("Content-Disposition: form-data; " + "name=\"hello, we are mobile" + "\"" + end).getBytes());
-            ds.write(("Content-Type: text; charset=UTF-8" + end + end).getBytes());
-            ds.write((content + end + boundary + end).getBytes());
-            ds.write((twoHyphens + boundary + twoHyphens + end).getBytes());
+            ds.write(content.getBytes());
                /* close streams */
             ds.flush();
             inputStream = httpURLConnection.getInputStream();
@@ -88,7 +84,6 @@ public class Request {
                 resultBuffer.append("\n");
             }
         } catch (Exception e) {
-            Tool.toast("发生未知错误");
             e.printStackTrace();
         } finally {
             if (ds != null) {
@@ -123,7 +118,6 @@ public class Request {
                     e.printStackTrace();
                 }
             }
-
             return resultBuffer.toString();
         }
     }

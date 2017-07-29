@@ -1,12 +1,13 @@
 package com.qg.qgnews.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by 小吉哥哥 on 2017/7/28.
  */
 
-public class Manager {
+public class Manager implements Serializable {
     private  int managerId;     // 管理员Id
     private  String managerAccount;    // 管理员账号
     private  String managerPassword;    // 管理员密码

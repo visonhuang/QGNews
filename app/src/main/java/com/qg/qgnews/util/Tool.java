@@ -9,9 +9,11 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import com.qg.qgnews.App;
+import com.qg.qgnews.R;
 import com.qg.qgnews.model.Manager;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -142,16 +144,40 @@ public class Tool {
         SharedPreferences sp = App.context.getSharedPreferences("Manager", Context.MODE_PRIVATE);
         return sp.getString("path", Environment.getDownloadCacheDirectory().getPath());
     }
+
     /**
      * 把Bitmap转Byte
      */
-    public static byte[] Bitmap2Bytes(Bitmap bm){
+    public static byte[] Bitmap2Bytes(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
         return baos.toByteArray();
     }
 
-    public static boolean isEmail(String email){
-        return false;
+    public static boolean isEmail(String email) {
+        return true;
+    }
+
+    public int getFileIcon(File file) {
+        if (file == null) {
+            throw new IllegalArgumentException("file 不能为空");
+        }
+        if (file.isDirectory()) {
+            return R.drawable.ic_folder;
+        }
+        String[] fileInfo = file.toString().split("\\.");
+        if (fileInfo.length == 2 && fileInfo[1].equals("mp3")) {
+            return R.drawable.ic_mp3_two;
+        } else if (fileInfo.length == 2 && fileInfo[1].equals("txt")) {
+            return R.drawable.ic_txt;
+        } else if (fileInfo.length == 2 && fileInfo[1].equals("dat")) {
+            return R.drawable.ic_dat;
+        } else if (fileInfo.length == 2 && fileInfo[1].equals("rmvb")) {
+            return R.drawable.ic_rmvb;
+        } else if (fileInfo.length == 2 && fileInfo[1].equals("apk")) {
+            return R.drawable.ic_apk;
+        } else {
+            return R.drawable.ic_unknow;
+        }
     }
 }
