@@ -52,6 +52,7 @@ public class NewsMessage extends Fragment {
 
         initView();
         getMessage();
+        enclosureAda();
         new Imageload().execute();
 
 
