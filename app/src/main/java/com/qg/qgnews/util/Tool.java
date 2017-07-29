@@ -2,6 +2,7 @@ package com.qg.qgnews.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import com.qg.qgnews.App;
 import com.qg.qgnews.model.Manager;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -139,5 +141,13 @@ public class Tool {
     public static String getFileSavePath() {
         SharedPreferences sp = App.context.getSharedPreferences("Manager", Context.MODE_PRIVATE);
         return sp.getString("path", Environment.getDownloadCacheDirectory().getPath());
+    }
+    /**
+     * 把Bitmap转Byte
+     */
+    public static byte[] Bitmap2Bytes(Bitmap bm){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
     }
 }

@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,15 +24,24 @@ import com.qg.qgnews.controller.adapter.UrlListAdapter;
 import com.qg.qgnews.util.Tool;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class FileSelector extends TopBarBaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class FileSelector extends TopBarBaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener, UrlListAdapter.OnSelectedFilesChangedListener {
     ImageView ok;
     ListView urlList;
     private int level = 0;
     TextView where;
     File now;
-
+    public static final int MODE_PATH = 0;
+    public static final int MODE_FILE = 1;
+    private int mode = MODE_PATH;
+    private UrlListAdapter adapter;
+    Map<String, File> selectedFiles = new HashMap<>();
+    public  int maxSelected = 10;
 
     @Override
     protected int getContentView() {
@@ -40,22 +50,43 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
 
     @Override
     protected void init(Bundle savedInstanceState) {
+        //申请读写权限
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }//申请权限
-        setTitle("文件选择器");
+
+        switch (mode) {
+            case MODE_FILE:
+                setTitle("选择上传文件0/"+maxSelected);
+                setTopRightButton("确认", R.drawable.selector_ok, new OnClickListener() {
+                    @Override
+                    public void onClick() {
+                        Tool.toast("点击了确定");
+                        //TODO 选择文件逻辑
+                    }
+                });
+                break;
+            case MODE_PATH:
+                setTitle("选择文件保存路径");
+                setTopRightButton("确认", R.drawable.selector_ok, new OnClickListener() {
+                    @Override
+                    public void onClick() {
+                        Tool.setFileSavePath(now.getPath());
+                        Tool.toast("路径已保存");
+                        finish();
+                    }
+                });
+                break;
+        }
+
+        //返回键监听
         setTopLeftButton(R.drawable.ic_back, new OnClickListener() {
             @Override
             public void onClick() {
                 finish();
             }
         });
-        setTopRightButton("确认", R.drawable.selector_ok, new OnClickListener() {
-            @Override
-            public void onClick() {
-                Tool.toast("点击了确定");
-            }
-        });
+
         urlList = (ListView) findViewById(R.id.url_list);
         where = (TextView) findViewById(R.id.where);
         urlList.setOnItemClickListener(this);
@@ -74,13 +105,11 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
 
 
     private void setAdapter(File file) {
-        if (file == null) {
-            Tool.toast("asdasdasdsaasdsdasdasdasdadsasdasdasd");
-        }
         LayoutAnimationController lac = new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.item_in));
         lac.setOrder(LayoutAnimationController.ORDER_NORMAL);
         urlList.setLayoutAnimation(lac);
-        UrlListAdapter adapter = new UrlListAdapter(this, R.layout.url_tiem, Arrays.asList(file.listFiles()));
+        adapter = new UrlListAdapter(this, R.layout.url_tiem, Arrays.asList(file.listFiles()), mode, selectedFiles,maxSelected);
+        adapter.setOnSelectedFilesChangedListener(this);
         urlList.setAdapter(adapter);
         where.setText(now.getPath().replaceAll("/", " > ").replace("> storage > emulated > 0", "内部储存器"));
     }
@@ -105,9 +134,27 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
             level++;
             now = now.listFiles()[position];
             setAdapter(now);
+        } else if (mode == MODE_FILE) {
+            CheckBox checkBox = (CheckBox) view.findViewById(R.id.url_item_checkBox);
+            checkBox.setChecked(!checkBox.isChecked());
+
+            if (checkBox.isChecked()) {
+                if (selectedFiles.size() >= maxSelected) {
+                    checkBox.setChecked(false);
+                    Tool.toast("已达到上限");
+                    return;
+                }
+                Tool.toast("添加"+now.listFiles()[position].getPath());
+                selectedFiles.put(now.listFiles()[position].getPath(), now.listFiles()[position]);
+            } else {
+                selectedFiles.remove(now.listFiles()[position].getPath());
+                Tool.toast("移除"+now.listFiles()[position].getPath());
+            }
+            setTitle("选择上传文件"+ selectedFiles.size()+"/10");
         }
 
     }
+
     /**
      * 权限请求结果
      *
@@ -126,4 +173,8 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
         }
     }
 
+    @Override
+    public void onChanged() {
+        setTitle("选择上传文件"+ selectedFiles.size()+"/"+maxSelected);
+    }
 }
