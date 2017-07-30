@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -102,6 +103,9 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         mRecyclerView.setLayoutManager(manager);
         adapter = new FileAdapter(mFileList);
         mRecyclerView.setAdapter(adapter);
+
+        mTitleText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
+        mContentText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1500)});
     }
 
     private void testConnection() {
