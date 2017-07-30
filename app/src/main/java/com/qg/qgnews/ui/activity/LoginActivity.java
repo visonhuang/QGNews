@@ -21,6 +21,12 @@ public class LoginActivity extends AppCompatActivity {
 
     ActionBar actionBar;
 
+    public static final int REGISTER = 1;
+
+    public static final int FORGETPASSWORD = 2;
+
+    public static int mode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -44,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.login_frameLayout,fragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
         setTitle(title);
     }
@@ -57,9 +64,20 @@ public class LoginActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home :
                 getSupportFragmentManager().popBackStackImmediate();
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+                actionBar.setDisplayHomeAsUpEnabled(false);
+                setTitle("登录");
                 break;
             default:
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        getSupportFragmentManager().popBackStackImmediate();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        setTitle("登录");
     }
 }

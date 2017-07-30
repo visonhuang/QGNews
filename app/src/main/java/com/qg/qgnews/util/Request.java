@@ -314,4 +314,79 @@ public class Request {
         }
     }
 
+
+    /**
+     * @param URl 请求地址
+     * @return
+     */
+    public static String RequestWithNoString(String URl) {
+        String end = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        BufferedOutputStream ds = null;
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader reader = null;
+        StringBuffer resultBuffer = new StringBuffer();
+        String tempLine = null;
+        try {
+            URL url = new URL(URl);
+            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.setConnectTimeout(5000);
+            httpURLConnection.setReadTimeout(5000);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            httpURLConnection.setRequestProperty("Charset", "utf-8");
+            inputStream = httpURLConnection.getInputStream();
+            inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            reader = new BufferedReader(inputStreamReader);
+            tempLine = null;
+            resultBuffer = new StringBuffer();
+            while ((tempLine = reader.readLine()) != null) {
+                resultBuffer.append(tempLine);
+                resultBuffer.append("\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ds != null) {
+                try {
+                    ds.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (inputStreamReader != null) {
+                try {
+                    inputStreamReader.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            return resultBuffer.toString();
+        }
+    }
+
 }

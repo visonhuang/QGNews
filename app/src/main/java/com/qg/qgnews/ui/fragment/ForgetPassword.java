@@ -6,7 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,8 +16,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.qg.qgnews.R;
+import com.qg.qgnews.model.FeedBack;
+import com.qg.qgnews.model.Manager;
+import com.qg.qgnews.ui.activity.LoginActivity;
+import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by linzongzhan on 2017/7/30.
@@ -50,10 +62,15 @@ public class ForgetPassword extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_forget_password,container,false);
 
+        LoginActivity loginActivity = (LoginActivity) getActivity();
+        loginActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        loginActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+
         time = new TimeCount(60000,1000);
 
-
-
+        initView();
+        viewOnClick();
+        editViewOnClick();
 
 
         return view;
@@ -84,8 +101,26 @@ public class ForgetPassword extends Fragment {
             @Override
             public void onClick(View view) {
                 time.start();
-                //发送验证码
-                Tool.toast("验证码");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //发送验证码
+                        Gson gson = new Gson();
+                        Manager manager = new Manager();
+                        manager.setManagerAccount(user.getText().toString());
+                        String line = gson.toJson(manager);
+                        Log.d(TAG, line);
+                        String response = Request.RequestWithString("http://192.168.3.65:8080/admin/sendverifycode",line);
+                        Log.d(TAG, line);
+                        FeedBack feedBack = gson.fromJson(response,FeedBack.class);
+                        int state = feedBack.getState();
+                        if (state == 1) {
+                            Tool.toast("发送验证码成功");
+                        } else if (state == 5000) {
+                            Tool.toast("服务器异常");
+                        } //等等等等等等等等
+                    }
+                });
             }
         });
 
@@ -93,7 +128,24 @@ public class ForgetPassword extends Fragment {
             @Override
             public void onClick(View view) {
                 //注册
-                Tool.toast("注册");
+                Gson gson = new Gson();
+                String nameS = user.getText().toString();
+                String passwordS = password.getText().toString();
+                String numberS = number.getText().toString();
+                Map<String,String> map = new HashMap<String, String>();
+                map.put("managerAccount",nameS);
+                map.put("verifyCode",passwordS);
+                map.put("managerPassword",nameS);
+                String line = gson.toJson(map);
+                String reponse = Request.RequestWithString("http://192.168.3.65:8080/admin/setnewpassword",line);
+                FeedBack feedBack = gson.fromJson(reponse,FeedBack.class);
+                int state = feedBack.getState();
+                if (state == 1) {
+                    Tool.toast("修改密码成功");
+                }
+
+
+
             }
         });
     }
@@ -172,8 +224,6 @@ public class ForgetPassword extends Fragment {
         });
     }
 
-
-
     class TimeCount extends CountDownTimer {
         public TimeCount(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
@@ -188,7 +238,7 @@ public class ForgetPassword extends Fragment {
         @Override
         public void onTick(long l) {
             number_button.setClickable(false);
-            number_button.setText("剩余" + l + "秒");
+            number_button.setText("剩余" + (int)(l/1000) + "秒");
         }
     }
 }
