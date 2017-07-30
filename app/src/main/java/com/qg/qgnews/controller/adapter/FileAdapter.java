@@ -1,42 +1,91 @@
 package com.qg.qgnews.controller.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.qg.qgnews.R;
+import com.qg.qgnews.util.Tool;
+
+import java.io.File;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
  * Created by 黄伟烽 on 2017/7/29.
  */
 
-public class FileAdapter extends RecyclerView.Adapter{
+public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>{
 
-    private List<String> fileList;
+    private List<String> mMyFileList;
 
     class ViewHolder extends RecyclerView.ViewHolder{
         private ImageView fileImage;
+        private TextView fileNameText;
+        private TextView fileSizeText;
 
-
-        public ViewHolder(View itemView) {
-            super(itemView);
+        public ViewHolder(View view) {
+            super(view);
+            fileImage = (ImageView) view.findViewById(R.id.file_image);
+            fileNameText = (TextView) view.findViewById(R.id.pic_name);
+            fileSizeText = (TextView) view.findViewById(R.id.size_text);
         }
     }
 
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+    public FileAdapter(List<String> myFileList) {
+        mMyFileList = myFileList;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_item, parent, false);
+        ViewHolder holder = new ViewHolder(view);
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        String filePath = mMyFileList.get(position);
+        File file = new File(filePath);
+        holder.fileImage.setImageResource(Tool.getFileIcon(file));
+        holder.fileNameText.setText(getFileName(filePath));
+        holder.fileSizeText.setText(getFileSize(filePath) + "");
+    }
+
+    private String getFileName(String filePath) {
+        int index = filePath.lastIndexOf("/");
+        String fileName = filePath.substring(index + 1);
+        return fileName;
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mMyFileList.size();
+    }
+
+    public void freshFileList(List<String> fileList){
+        mMyFileList = fileList;
+    }
+
+    public static String getFileSize(String filename) {
+        File file = new File(filename);
+        if (!file.exists() || !file.isFile()) {
+            System.out.println("文件不存在");
+            return null;
+        }
+        long bLength = file.length();
+        if(bLength < 1024){
+            return bLength + "B";
+        }
+        double kbLength = bLength / 1024;
+        if (kbLength < 1024){
+            DecimalFormat df = new DecimalFormat( "0.00");
+            return df.format(kbLength) + "KB";
+        }
+        double mbLength = kbLength / 1024;
+        if
     }
 }

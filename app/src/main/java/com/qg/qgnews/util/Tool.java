@@ -2,6 +2,7 @@ package com.qg.qgnews.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -11,6 +12,7 @@ import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.Manager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -27,7 +29,7 @@ public class Tool {
     private static Object mObject;
 
     /**
-     * @param o 需要toast的对象
+     * @param o 需要toast对象
      */
     public static void toast(final Object o) {
         App.getActivityStack().firstElement().runOnUiThread(new Runnable() {
@@ -145,8 +147,17 @@ public class Tool {
         return sp.getString("path", Environment.getDownloadCacheDirectory().getPath());
     }
 
-    public static boolean isEmail (String email) {
-        return email.matches("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
+    /**
+     * 把Bitmap转Byte
+     */
+    public static byte[] Bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
+    }
+
+    public static boolean isEmail(String email) {
+        return true;
     }
 
     public static int getFileIcon(File file) {
@@ -171,6 +182,4 @@ public class Tool {
             return R.drawable.ic_unknow;
         }
     }
-
-
 }
