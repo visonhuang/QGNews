@@ -32,12 +32,13 @@
         <activity android:name=".ui.activity.ManagerActivity">
 
         </activity>
-        <activity android:name=".ui.activity.NewsMessageActivity" />
 
         <service
             android:name=".controller.adapter.DownLoadServer"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true">
+
+        </service>
     </application>
 
 </manifest>
