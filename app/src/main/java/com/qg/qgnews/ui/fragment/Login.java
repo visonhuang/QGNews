@@ -105,13 +105,13 @@ public class Login extends Fragment {
                     intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
                     startActivity(intent);
                     LoginActivity loginActivity = (LoginActivity) getActivity();
-                    loginActivity.finish();
+            //        loginActivity.finish();
                 } else if (user.getText().toString().equals("2") && password.getText().toString().equals("2")) {
                     Intent intent = new Intent(getContext(),MainActivity.class);
                     intent.putExtra("visit_mode",MainActivity.MODE_SUPPER_MANAGER);
                     startActivity(intent);
                     LoginActivity loginActivity = (LoginActivity) getActivity();
-                    loginActivity.finish();
+        //            loginActivity.finish();
                 }
          /*       if (!Tool.isEmail(email)) {
                     Log.d(TAG, ""+email);
@@ -142,7 +142,7 @@ public class Login extends Fragment {
                                 }
                                 startActivity(intent);
                                 LoginActivity loginActivity = (LoginActivity) getActivity();
-                                loginActivity.finish();
+                        //        loginActivity.finish();
                                 Tool.toast("登录成功");
                             } else if (state == 3) {
                                 Tool.toast("邮箱不存在");
@@ -194,7 +194,7 @@ public class Login extends Fragment {
                 intent.putExtra("visit_mode",MainActivity.MODE_VISITOR);
                 startActivity(intent);
                 LoginActivity loginActivity = (LoginActivity) getActivity();
-                loginActivity.finish();
+               // loginActivity.finish();
             }
         });
     }

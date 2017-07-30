@@ -15,9 +15,11 @@ import com.qg.qgnews.ui.fragment.Login;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
-    TextView titleText;
+    private TextView titleText;
+
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +31,10 @@ public class LoginActivity extends AppCompatActivity {
         titleText = (TextView) findViewById(R.id.login_Title);
 
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
 
         replaceFragment(new Login(),"登录");
@@ -54,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home :
-                finish();
+                getSupportFragmentManager().popBackStackImmediate();
                 break;
             default:
         }
