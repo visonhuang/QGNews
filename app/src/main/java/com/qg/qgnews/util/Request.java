@@ -1,6 +1,7 @@
 package com.qg.qgnews.util;
 
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -8,9 +9,13 @@ import com.google.gson.Gson;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.model.RequestAdress;
+import com.qg.qgnews.ui.activity.PublishNewsActivity;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,6 +32,9 @@ import java.util.List;
  */
 
 public class Request {
+
+    private static BufferedOutputStream ds;
+    private static boolean mIsStopUpload;
     /**
      * @param idFrom 从这个id往下请求十条新闻
      * @return 新闻列表，最大十条
@@ -38,7 +46,7 @@ public class Request {
         for (int i = 0; i < 10; i++) {
             list.add(new News());
         }
-        return new FeedBack(1, "", gson.toJson(list));
+        return new FeedBack(1, gson.toJson(list));
     }
 
     /**
@@ -128,12 +136,17 @@ public class Request {
      * @param files 附件路径数组
      * @return feedback字符串，若有异常则为  ""
      */
-    public static String upLoadNews(News news, Bitmap cover, String[] files) {
+    public static String upLoadNews(News news, Bitmap cover,final String[] files, final PublishNewsActivity.UploadListener listener) {
+        PublishNewsActivity.setStopUploadListener(new PublishNewsActivity.StopUploadListener() {
+            @Override
+            public void stopUpload() {
+                mIsStopUpload = true;
+            }
+        });
         Gson gson = new Gson();
-        String end = "\r\n";
-        String twoHyphens = "--";
-        String boundary = "*****";
-        BufferedOutputStream ds = null;
+        final String end = "\r\n";
+        final String twoHyphens = "--";
+        final String boundary = "*****";
         InputStream inputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader reader = null;
@@ -163,43 +176,89 @@ public class Request {
 
 
             //上传封面
-       /*     if (cover != null) {
-                byte[] coverBytes = Tool.Bitmap2Bytes(cover);
+           if (cover != null) {
                 ds.write((twoHyphens + boundary + end).getBytes());
                 ds.write(("Content-Disposition: form-data; " + "name=\"file" + "\";filename=\"" + "/index.png"
                         + "\"" + end).getBytes());
                 ds.write(("Content-Type: application/octet-stream; charset=UTF-8").getBytes());
                 ds.write((end + end).getBytes());
-                ds.write(coverBytes);
+                ByteArrayInputStream coverIps = Tool.Bitmap2Bytes(cover);
+                byte[] b = new byte[1024];
+                int lenth;
+                while((lenth=coverIps.read(b)) != -1){
+                    if(mIsStopUpload){
+                        ds.close();
+                        return null;
+                    }
+                    ds.write(b, 0, lenth);
+                }
                 Log.d("上传封面", "");
                 ds.write(end.getBytes());
-            } */
-
-
-            //上传附件
-            for (int i = 0; i < files.length; i++) {
-                System.out.println("上传文件" + i);
-                String uploadFile = files[i];
-                ds.write((twoHyphens + boundary + end).getBytes());
-                ds.write(("Content-Disposition: form-data; " + "name=\"file" + "\";filename=\"" + uploadFile
-                        + "\"" + end).getBytes());
-                ds.write(("Content-Type: application/octet-stream; charset=UTF-8").getBytes());
-                ds.write((end + end).getBytes());
-                FileInputStream fStream = new FileInputStream(uploadFile);
-                int bufferSize = 1024;
-                byte[] buffer = new byte[bufferSize];
-                int length;
-                while ((length = fStream.read(buffer)) != -1) {
-                    ds.write(buffer, 0, length);
-                    Log.d("上传中", "");
-                }
-                ds.write(end.getBytes());
-               /* close streams */
-                fStream.close();
+                Tool.toast("封面上传完成");
             }
-            ds.write((twoHyphens + boundary + twoHyphens + end).getBytes());
+
+            new AsyncTask<Void, Integer, Boolean>(){
+
+                @Override
+                protected void onPostExecute(Boolean aBoolean) {
+                    listener.showProgress();
+                }
+
+                @Override
+                protected Boolean doInBackground(Void... params) {
+                    //上传附件
+                    long uploadedBytes = 0;
+                    long sumBytes = 0;
+                    for(String filePath : files){
+                        sumBytes += new File(filePath).length();
+                    }
+                    try{
+                        for (int i = 0; i < files.length; i++) {
+                            System.out.println("上传文件" + i);
+                            String uploadFile = files[i];
+                            ds.write((twoHyphens + boundary + end).getBytes());
+                            ds.write(("Content-Disposition: form-data; " + "name=\"file" + "\";filename=\"" + uploadFile
+                                    + "\"" + end).getBytes());
+                            ds.write(("Content-Type: application/octet-stream; charset=UTF-8").getBytes());
+                            ds.write((end + end).getBytes());
+                            FileInputStream fStream = new FileInputStream(uploadFile);
+                            int bufferSize = 1024;
+                            byte[] buffer = new byte[bufferSize];
+                            int length;
+                            while ((length = fStream.read(buffer)) != -1) {
+                                if(mIsStopUpload){
+                                    ds.close();
+                                    return null;
+                                }
+                                ds.write(buffer, 0, length);
+                                uploadedBytes += length;
+                                publishProgress((int)(100 * uploadedBytes / sumBytes));
+                                Log.d("上传中", "");
+                            }
+                            ds.write(end.getBytes());
                /* close streams */
-            ds.flush();
+                            fStream.close();
+                        }
+                        ds.write((twoHyphens + boundary + twoHyphens + end).getBytes());
+               /* close streams */
+                        ds.flush();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void onProgressUpdate(Integer... values) {
+                    listener.freshProgress(values[0]);
+                }
+
+                @Override
+                protected void onPreExecute() {
+                    listener.finishUpload();
+                }
+            }.execute();
 
 
             //读取反馈

@@ -27,7 +27,7 @@ public class Controller {
     public interface OnRequestNewsListener {
         void onSuccess(List<News> list);
 
-        void onFailed(int state, String satateInfo);
+        void onFailed(int state);
     }
 
 
@@ -46,7 +46,7 @@ public class Controller {
                         }
                     });
                 } else {
-                    listener.onFailed(feedBack.getState(), feedBack.getStateInfo());
+                    listener.onFailed(feedBack.getState());
                 }
             }
         }).start();

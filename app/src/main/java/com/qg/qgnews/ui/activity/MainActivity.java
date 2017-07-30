@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onFailed(int state, String stateInfo) {
+            public void onFailed(int state) {
 
             }
         });
@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onFailed(int state, String stateInfo) {
+            public void onFailed(int state) {
 
             }
         });

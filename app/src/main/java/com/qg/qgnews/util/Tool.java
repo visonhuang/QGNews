@@ -12,8 +12,10 @@ import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.Manager;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,7 +32,7 @@ public class Tool {
      * @param o 需要toast对象
      */
     public static void toast(final Object o) {
-        App.getActivityStack().firstElement().runOnUiThread(new Runnable() {
+        App.getActivityStack().lastElement().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (null == mToast || !o.toString().equals(mObject.toString())) {
@@ -94,7 +96,7 @@ public class Tool {
      * @param runnable
      */
     public static void runOnUiThread(Runnable runnable) {
-        App.getActivityStack().firstElement().runOnUiThread(runnable);
+        App.getActivityStack().lastElement().runOnUiThread(runnable);
     }
 
     /**
@@ -148,10 +150,11 @@ public class Tool {
     /**
      * 把Bitmap转Byte
      */
-    public static byte[] Bitmap2Bytes(Bitmap bm) {
+    public static ByteArrayInputStream Bitmap2Bytes(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        return baos.toByteArray();
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        return bais;
     }
 
     public static boolean isEmail(String email) {

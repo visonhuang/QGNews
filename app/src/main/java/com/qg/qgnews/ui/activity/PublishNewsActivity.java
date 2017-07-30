@@ -1,20 +1,27 @@
 package com.qg.qgnews.ui.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.FileAdapter;
@@ -23,6 +30,7 @@ import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
 
 import java.io.File;
+import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,15 +53,18 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
     private ImageView mAddPicImage;
     private ImageView mAddFileImage;
     private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
     private static final int PLUS_OPEN = 1;
     private static final int PLUS_CLOSE = 0;
     private static int PulsButtonMode = PLUS_CLOSE;
     private static final int UPLOAD_OPEN = 1;
     private static final int UPLOAD_CLOSE = 0;
     private static int UploadButtonMode = UPLOAD_CLOSE;
+    private static boolean mIsPublishing;
 
     private List<String> mFileList = new ArrayList<>();
     private FileAdapter adapter;
+    private static StopUploadListener mStopUploadListener;
 
     @Override
     protected int getContentView() {
@@ -72,15 +83,27 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         });
 
         setTopRightButton("发布", 0, new OnClickListener() {
+
             @Override
             public void onClick() {
-                testConnection();
-                mFab.setImageResource(R.drawable.ic_ok);
-                mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
-                Tool.toast("发布成功");
+                if(isEmptyText(mTitleText.getText().toString())){
+                    Tool.toast("新闻标题不能为空");
+                    return;
+                }
+                if(isEmptyText(mContentText.getText().toString())){
+                    Tool.toast("新闻内容不能为空");
+                    return;
+                }
+                if(mIsPublishing == true){
+                    Tool.toast("不能重复发布");
+                    return;
+                }
+                mIsPublishing = true;
+                publishNews();
             }
         });
 
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mTitleText = (TextView) findViewById(R.id.news_title_text);
         mContentText = (TextView) findViewById(R.id.title_content_text);
         mAddPicImage = (ImageView) findViewById(R.id.add_pic_image);
@@ -108,12 +131,12 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         mContentText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1500)});
     }
 
-    private void testConnection() {
+    private void publishNews() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String newsTitle = "我是新闻标题";
-                String newsBody = "我的新闻主要内容";
+                String newsTitle = mTitleText.getText().toString();
+                String newsBody = mContentText.getText().toString();
                 String newsAuthor = "我是新闻作者";
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();
@@ -123,7 +146,26 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
                         newsFace, filesUuid, null);
                 String filePath = "/storage/emulated/0/DCIM/Camera/IMG_20170711_232637.jpg";
                 Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-                Request.upLoadNews(news, null, getFilePathArray(mFileList));
+
+                String response = Request.upLoadNews(news, null, getFilePathArray(mFileList), new UploadListener() {
+                    @Override
+                    public void showProgress() {
+                        Tool.toast("文件开始上传");
+                    }
+
+                    @Override
+                    public void freshProgress(int progress) {
+                        mProgressBar.setProgress(progress);
+                    }
+
+                    @Override
+                    public void finishUpload() {
+                        Tool.toast("新闻发布完成");
+                        mFab.setImageResource(R.drawable.ic_ok);
+                        mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
+                        finish();
+                    }
+                });
             }
         }).start();
     }
@@ -143,22 +185,18 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         switch (v.getId()){
             case R.id.floating_button:
                 if (UploadButtonMode == UPLOAD_OPEN){
-                    Log.d("8888888888", "8888888888888");
                     hideUpleadLinear();
                     UploadButtonMode = UPLOAD_CLOSE;
                 }
                 else if (PulsButtonMode == PLUS_CLOSE) {
-                    Log.d("8888888888", "33333333333333");
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_to_45));
                     showButtons();
                     PulsButtonMode = PLUS_OPEN;
-                    //TODO open
                 }
                 else{
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_back_45));
                     hideButtons();
                     PulsButtonMode = PLUS_CLOSE;
-                    //TODO close
                 }
                 break;
             case R.id.activity_publish_upload_cover_button:
@@ -176,6 +214,8 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
                 break;
             case R.id.add_file_image:
                 Intent intent = new Intent(PublishNewsActivity.this, FileSelector.class);
+                intent.putExtra(FileSelector.KEY_MODE, FileSelector.MODE_FILE);
+                intent.putExtra(FileSelector.KEY_MAX, 10 - mFileList.size());
                 startActivityForResult(intent, 1);
                 break;
             default:
@@ -219,7 +259,6 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Log.d("8888888888.", "7777777777777");
                 mUploadFileLinear.setVisibility(View.GONE);
             }
 
@@ -271,4 +310,42 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         adapter.freshFileList(mFileList);
         adapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onBackPressed() {
+        if(mIsPublishing == false){
+            new AlertDialog.Builder(PublishNewsActivity.this)
+                    .setMessage("确定取消发布新闻？")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            PublishNewsActivity.super.onBackPressed();
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        }
+    }
+
+    public boolean isEmptyText(String text){
+        if(TextUtils.isEmpty(text)){
+            return true;
+        }
+        return false;
+    }
+    
+    public static void setStopUploadListener(StopUploadListener listener){
+        mStopUploadListener = listener;
+    }
+
+    public interface UploadListener{
+        void showProgress();
+        void freshProgress(int progress);
+        void finishUpload();
+    }
+
+    public interface StopUploadListener{
+        void stopUpload();
+    }
+    
 }
