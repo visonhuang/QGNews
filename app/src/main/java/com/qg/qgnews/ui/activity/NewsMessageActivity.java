@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.FragmentPagerAdapterNewsMessage;
 import com.qg.qgnews.model.News;
+import com.qg.qgnews.ui.fragment.NewsMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class NewsMessageActivity extends AppCompatActivity {
     private List<Fragment> mFragmentList = new ArrayList<>();
 
     //标识进入了哪一条新闻
-    private int mPosition;
+    private int mPosition =1;
 
     private ViewPager mViewPager;
 
@@ -32,7 +33,7 @@ public class NewsMessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_message);
 
-        getMessage();
+    //    getMessage();
         initView();
         initFragment();
 
@@ -63,10 +64,26 @@ public class NewsMessageActivity extends AppCompatActivity {
      * 初始化Fragment，并将Fragment加入集List集合
      */
     private void initFragment () {
-        int size = mFragmentList.size();
+      //  int size = mFragmentList.size();
+        News new1 = new News();
+        new1.setNewsBody("11111111111111111111111");
+        News new2 = new News();
+        new2.setNewsBody("2222222222222222222222");
+        News new3 = new News();
+        new3.setNewsBody("333333333333333333333");
+        News new4 = new News();
+        News new5 = new News();
+        News new6 = new News();
+        mNewsMessageList.add(new1);
+        mNewsMessageList.add(new2);
+        mNewsMessageList.add(new3);
+        mNewsMessageList.add(new4);
+        mNewsMessageList.add(new5);
+        mNewsMessageList.add(new6);
+        int size = 6;
         for (int index = 0; index < size; index++) {
             Bundle bundle = new Bundle();
-            Fragment fragment = new Fragment();
+            NewsMessage fragment = new NewsMessage();
             bundle.putSerializable("message",mNewsMessageList.get(index));
             fragment.setArguments(bundle);
             mFragmentList.add(fragment);

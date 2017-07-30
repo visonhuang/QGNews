@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.util.Request;
+import com.qg.qgnews.util.Tool;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class Controller {
         void onFailed(int state, String satateInfo);
     }
 
+
     public static void RequestNews(final int idFrom, final OnRequestNewsListener listener) {
         new Thread(new Runnable() {
             @Override
@@ -37,11 +39,18 @@ public class Controller {
                 if (feedBack.getState() == 1) {
                     listener.onSuccess((List<News>) gson.fromJson(feedBack.getData(), new TypeToken<List<News>>() {
                     }.getType()));
+                    Tool.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
                 } else {
                     listener.onFailed(feedBack.getState(), feedBack.getStateInfo());
                 }
             }
         }).start();
+
 
     }
 }

@@ -2,7 +2,6 @@ package com.qg.qgnews.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -12,11 +11,12 @@ import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.Manager;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by 小吉哥哥 on 2017/7/26.
@@ -27,7 +27,7 @@ public class Tool {
     private static Object mObject;
 
     /**
-     * @param o 需要toast对象
+     * @param o 需要toast的对象
      */
     public static void toast(final Object o) {
         App.getActivityStack().firstElement().runOnUiThread(new Runnable() {
@@ -145,20 +145,11 @@ public class Tool {
         return sp.getString("path", Environment.getDownloadCacheDirectory().getPath());
     }
 
-    /**
-     * 把Bitmap转Byte
-     */
-    public static byte[] Bitmap2Bytes(Bitmap bm) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        return baos.toByteArray();
+    public static boolean isEmail (String email) {
+        return email.matches("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
     }
 
-    public static boolean isEmail(String email) {
-        return true;
-    }
-
-    public int getFileIcon(File file) {
+    public static int getFileIcon(File file) {
         if (file == null) {
             throw new IllegalArgumentException("file 不能为空");
         }
@@ -180,4 +171,6 @@ public class Tool {
             return R.drawable.ic_unknow;
         }
     }
+
+
 }

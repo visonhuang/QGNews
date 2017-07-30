@@ -163,7 +163,7 @@ public class Request {
 
 
             //上传封面
-            if (cover != null) {
+       /*     if (cover != null) {
                 byte[] coverBytes = Tool.Bitmap2Bytes(cover);
                 ds.write((twoHyphens + boundary + end).getBytes());
                 ds.write(("Content-Disposition: form-data; " + "name=\"file" + "\";filename=\"" + "/index.png"
@@ -173,7 +173,7 @@ public class Request {
                 ds.write(coverBytes);
                 Log.d("上传封面", "");
                 ds.write(end.getBytes());
-            }
+            } */
 
 
             //上传附件

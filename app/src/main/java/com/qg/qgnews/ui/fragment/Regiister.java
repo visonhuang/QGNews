@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,36 +17,30 @@ import com.google.gson.Gson;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
-import com.qg.qgnews.ui.activity.LoginActivity;
 import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by linzongzhan on 2017/7/28.
+ * Created by linzongzhan on 2017/7/29.
  */
 
-public class Login extends Fragment {
+public class Regiister extends Fragment {
 
-    private static final String TAG = "Login";
+    private View view;
 
     private EditText user;
 
     private EditText password;
 
-    private Button login;
+    private EditText userName;
 
     private Button register;
-
-    private TextView forgetPassword;
-
-    private View view;
 
     private TextView userState;
 
@@ -57,14 +50,18 @@ public class Login extends Fragment {
 
     private ImageView passwordImage;
 
+    private ImageView userNameImage;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_login,container,false);
+        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_register,container,false);
 
         initView();
-        viewOnclick();
-        editViewOnclick();
+        viewOnClick();
+        editViewOnClick();
+
 
         return view;
     }
@@ -73,33 +70,29 @@ public class Login extends Fragment {
      * 实例化控件
      */
     private void initView () {
-        user = (EditText) view.findViewById(R.id.user);
-        password = (EditText) view.findViewById(R.id.password);
-        login = (Button) view.findViewById(R.id.login);
-        register = (Button) view.findViewById(R.id.register);
-        forgetPassword = (TextView) view.findViewById(R.id.forget_password);
+        user = (EditText) view.findViewById(R.id.register_user);
+        password = (EditText) view.findViewById(R.id.register_password);
+        userName = (EditText) view.findViewById(R.id.register_userName);
+        register = (Button) view.findViewById(R.id.register_register);
 
-        userState = (TextView) view.findViewById(R.id.login_user_state);
-        passwordState = (TextView) view.findViewById(R.id.login_password_state);
-        userImage = (ImageView) view.findViewById(R.id.user_image);
-        passwordImage = (ImageView) view.findViewById(R.id.password_image);
+        userState = (TextView) view.findViewById(R.id.register_user_state);
+        passwordState = (TextView) view.findViewById(R.id.register_password_state);
+        userImage = (ImageView) view.findViewById(R.id.register_user_image);
+        passwordImage = (ImageView) view.findViewById(R.id.register_password_image);
+        userNameImage = (ImageView) view.findViewById(R.id.register_name_image);
     }
 
     /**
      * 设置点击事件
      */
-    private void viewOnclick () {
-
-        //登录
-        login.setOnClickListener(new View.OnClickListener() {
+    private void viewOnClick () {
+        register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = user.getText().toString();
                 if (!Tool.isEmail(email)) {
-                    Log.d(TAG, ""+email);
                     Tool.toast("邮箱格式不正确");
                 } else {
-                    //请求参数
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -107,14 +100,19 @@ public class Login extends Fragment {
                             Manager manager = new Manager();
                             manager.setManagerAccount(user.getText().toString());
                             manager.setManagerPassword(password.getText().toString());
+                            manager.setManagerName(userName.getText().toString());
                             String line = gson.toJson(manager);
-                            String respose = Request.RequestWithString("http://192.168.43.142:8080/admin/login",line);
+                            String response = Request.RequestWithString("http://192.168.43.142:8080/admin/addaccount",line);
                             Gson gson1 = new Gson();
-                            FeedBack feedBack = gson1.fromJson(respose,FeedBack.class);
+                            FeedBack feedBack = gson1.fromJson(response,FeedBack.class);
                             int state = feedBack.getState();
                             if (state == 1) {
-                                //进入主界面
-                                Tool.toast("登录成功");
+                                //注册成功
+                                Tool.toast("注册成功");
+                            } else if (state == 5000) {
+                                Tool.toast("服务器出错");
+                            } else if (state == 2) {
+                                Tool.toast("用户名存在");
                             } else if (state == 3) {
                                 Tool.toast("邮箱不存在");
                             } else if (state == 4) {
@@ -131,37 +129,20 @@ public class Login extends Fragment {
                                 Tool.toast("账户未审批");
                             } else if (state == 11) {
                                 Tool.toast("账户被封了");
-                            } else if (state == 5000) {
-                                Tool.toast("服务器异常");
                             }
                         }
                     }).start();
+
+
                 }
-            }
-        });
-
-        //注册
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LoginActivity loginActivity = (LoginActivity) getActivity();
-                loginActivity.replaceFragment(new Regiister());
-            }
-        });
-
-        //忘记密码
-        forgetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
             }
         });
     }
 
     /**
-     * 编辑框监听
+     * 设置编辑框监听
      */
-    private void editViewOnclick () {
+    private void editViewOnClick () {
         user.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -170,20 +151,20 @@ public class Login extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String text;
-                text = user.getText().toString();
-                if (text.length() == 0) {
+                String email;
+                email = user.getText().toString();
+                if (email.length() == 0) {
                     userState.setVisibility(View.GONE);
                     userImage.setVisibility(View.GONE);
                 } else {
-                    if (Tool.isEmail(text)) {
-                        userImage.setVisibility(View.VISIBLE);
+                    if (Tool.isEmail(email)) {
                         userState.setVisibility(View.GONE);
+                        userImage.setVisibility(View.VISIBLE);
                         userImage.setImageResource(R.drawable.state_true);
                     } else {
                         userImage.setVisibility(View.GONE);
                         userState.setVisibility(View.VISIBLE);
-                        userState.setText("输入的邮箱格式错误");
+                        userState.setText("邮箱格式错误");
                     }
                 }
             }
@@ -211,18 +192,41 @@ public class Login extends Fragment {
                     if (text.length() < 6) {
                         passwordImage.setVisibility(View.GONE);
                         passwordState.setVisibility(View.VISIBLE);
-                        passwordState.setText("输入的密码不能低于6位");
+                        passwordState.setText("输入的密码不能少于6位");
                     } else if (text.length() > 20) {
                         passwordImage.setVisibility(View.GONE);
                         passwordState.setVisibility(View.VISIBLE);
-                        passwordState.setText("输入的密码不能多与20位");
+                        passwordState.setText("输入的密码不能多于20位");
                     } else {
                         passwordState.setVisibility(View.GONE);
                         passwordImage.setVisibility(View.VISIBLE);
                         passwordImage.setImageResource(R.drawable.state_true);
                     }
                 }
+            }
 
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        userName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String text;
+                text = userName.getText().toString();
+                if (text.length() == 0) {
+                    userNameImage.setVisibility(View.GONE);
+                } else {
+                    userNameImage.setVisibility(View.VISIBLE);
+                    userNameImage.setImageResource(R.drawable.state_true);
+                }
             }
 
             @Override
