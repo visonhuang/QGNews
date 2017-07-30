@@ -100,7 +100,20 @@ public class Login extends Fragment {
             @Override
             public void onClick(View view) {
                 String email = user.getText().toString();
-                if (!Tool.isEmail(email)) {
+                if (user.getText().toString().equals("1") && password.getText().toString().equals("1")) {
+                    Intent intent = new Intent(getContext(),MainActivity.class);
+                    intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
+                    startActivity(intent);
+                    LoginActivity loginActivity = (LoginActivity) getActivity();
+                    loginActivity.finish();
+                } else if (user.getText().toString().equals("2") && password.getText().toString().equals("2")) {
+                    Intent intent = new Intent(getContext(),MainActivity.class);
+                    intent.putExtra("visit_mode",MainActivity.MODE_SUPPER_MANAGER);
+                    startActivity(intent);
+                    LoginActivity loginActivity = (LoginActivity) getActivity();
+                    loginActivity.finish();
+                }
+         /*       if (!Tool.isEmail(email)) {
                     Log.d(TAG, ""+email);
                     Tool.toast("邮箱格式不正确");
                 } else {
@@ -152,7 +165,8 @@ public class Login extends Fragment {
                             }
                         }
                     }).start();
-                }
+
+                } */
             }
         });
 
