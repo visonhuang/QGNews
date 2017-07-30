@@ -175,7 +175,7 @@ public class Login extends Fragment {
             @Override
             public void onClick(View view) {
                 LoginActivity loginActivity = (LoginActivity) getActivity();
-                loginActivity.replaceFragment(new Regiister());
+                loginActivity.replaceFragment(new Regiister(),"注册");
             }
         });
 
