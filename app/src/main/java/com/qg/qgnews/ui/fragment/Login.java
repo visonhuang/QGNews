@@ -1,5 +1,6 @@
 package com.qg.qgnews.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
 import com.qg.qgnews.ui.activity.LoginActivity;
+import com.qg.qgnews.ui.activity.MainActivity;
 import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
 
@@ -57,6 +59,8 @@ public class Login extends Fragment {
 
     private ImageView passwordImage;
 
+    private TextView vistor;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,6 +82,7 @@ public class Login extends Fragment {
         login = (Button) view.findViewById(R.id.login);
         register = (Button) view.findViewById(R.id.register);
         forgetPassword = (TextView) view.findViewById(R.id.forget_password);
+        vistor = (TextView) view.findViewById(R.id.visitor);
 
         userState = (TextView) view.findViewById(R.id.login_user_state);
         passwordState = (TextView) view.findViewById(R.id.login_password_state);
@@ -95,7 +100,20 @@ public class Login extends Fragment {
             @Override
             public void onClick(View view) {
                 String email = user.getText().toString();
-                if (!Tool.isEmail(email)) {
+                if (user.getText().toString().equals("1") && password.getText().toString().equals("1")) {
+                    Intent intent = new Intent(getContext(),MainActivity.class);
+                    intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
+                    startActivity(intent);
+                    LoginActivity loginActivity = (LoginActivity) getActivity();
+                    loginActivity.finish();
+                } else if (user.getText().toString().equals("2") && password.getText().toString().equals("2")) {
+                    Intent intent = new Intent(getContext(),MainActivity.class);
+                    intent.putExtra("visit_mode",MainActivity.MODE_SUPPER_MANAGER);
+                    startActivity(intent);
+                    LoginActivity loginActivity = (LoginActivity) getActivity();
+                    loginActivity.finish();
+                }
+         /*       if (!Tool.isEmail(email)) {
                     Log.d(TAG, ""+email);
                     Tool.toast("邮箱格式不正确");
                 } else {
@@ -114,6 +132,17 @@ public class Login extends Fragment {
                             int state = feedBack.getState();
                             if (state == 1) {
                                 //进入主界面
+                                Manager message = gson1.fromJson(feedBack.getData(),Manager.class);
+                                Tool.setCurrentManager(message);
+                                Intent intent = new Intent(getContext(), MainActivity.class);
+                                if (message.getManagerSuper() == 1) {
+                                    intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
+                                } else if (message.getManagerSuper() == 0) {
+                                    intent.putExtra("visit_mode",MainActivity.MODE_SUPPER_MANAGER);
+                                }
+                                startActivity(intent);
+                                LoginActivity loginActivity = (LoginActivity) getActivity();
+                                loginActivity.finish();
                                 Tool.toast("登录成功");
                             } else if (state == 3) {
                                 Tool.toast("邮箱不存在");
@@ -136,7 +165,8 @@ public class Login extends Fragment {
                             }
                         }
                     }).start();
-                }
+
+                } */
             }
         });
 
@@ -154,6 +184,17 @@ public class Login extends Fragment {
             @Override
             public void onClick(View view) {
 
+            }
+        });
+
+        vistor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),MainActivity.class);
+                intent.putExtra("visit_mode",MainActivity.MODE_VISITOR);
+                startActivity(intent);
+                LoginActivity loginActivity = (LoginActivity) getActivity();
+                loginActivity.finish();
             }
         });
     }
