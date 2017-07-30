@@ -4,16 +4,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -21,10 +23,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.FileAdapter;
+import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
@@ -40,7 +43,7 @@ import java.util.UUID;
  * Created by 黄伟烽 on 2017/7/27.
  */
 
-public class PublishNewsActivity extends TopBarBaseActivity implements View.OnClickListener{
+public class PublishNewsActivity extends AppCompatActivity implements View.OnClickListener{
 
     private FloatingActionButton mFab;
     private FloatingActionButton mUploadCoverButton;
@@ -48,12 +51,14 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
     private LinearLayout mUploadCoverLinear;
     private LinearLayout mUploadFileLinear;
     private LinearLayout mFileContainLinear;
+    private TextView tvTitle;
     private TextView mTitleText;
     private TextView mContentText;
     private ImageView mAddPicImage;
     private ImageView mAddFileImage;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
+    private Toolbar mToolbar;
     private static final int PLUS_OPEN = 1;
     private static final int PLUS_CLOSE = 0;
     private static int PulsButtonMode = PLUS_CLOSE;
@@ -65,24 +70,41 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
     private List<String> mFileList = new ArrayList<>();
     private FileAdapter adapter;
     private static StopUploadListener mStopUploadListener;
+    TopBarBaseActivity.OnClickListener onClickListenerTopLeft;
+    TopBarBaseActivity.OnClickListener onClickListenerTopRight;
+    String menuStr;
 
     @Override
-    protected int getContentView() {
-        return R.layout.activity_publish_news;
-    }
-
-    @Override
-    protected void init(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_publish_news);
+        tvTitle = (TextView) findViewById(R.id.tvTitle);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setBackgroundColor(Color.parseColor("#00000000"));
+        //初始化设置 Toolbar
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         setTitle("编辑新闻");
 
-        setTopLeftButton(R.drawable.ic_back, new OnClickListener() {
+        setTopLeftButton(R.drawable.ic_back, new TopBarBaseActivity.OnClickListener() {
             @Override
             public void onClick() {
-
+                if(mIsPublishing == false){
+                    new AlertDialog.Builder(PublishNewsActivity.this)
+                            .setMessage("确定取消发布新闻？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    PublishNewsActivity.super.onBackPressed();
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
+                }
             }
         });
 
-        setTopRightButton("发布", 0, new OnClickListener() {
+        setTopRightButton("发布",new TopBarBaseActivity.OnClickListener(){
 
             @Override
             public void onClick() {
@@ -129,6 +151,7 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
 
         mTitleText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         mContentText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1500)});
+        mIsPublishing = false;
     }
 
     private void publishNews() {
@@ -160,12 +183,20 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
 
                     @Override
                     public void finishUpload() {
-                        Tool.toast("新闻发布完成");
-                        mFab.setImageResource(R.drawable.ic_ok);
-                        mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
-                        finish();
                     }
                 });
+
+                FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
+                int status = feedBack.getState();
+                if(status == 1){
+                    Tool.toast("新闻发布完成");
+                    mFab.setImageResource(R.drawable.ic_ok);
+                    mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
+                }
+                else if(status == 5000){
+                    Tool.toast("新闻发布失败");
+                }
+                mIsPublishing = false;
             }
         }).start();
     }
@@ -347,5 +378,47 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
     public interface StopUploadListener{
         void stopUpload();
     }
-    
+
+    protected void setTopLeftButton(int iconResId, TopBarBaseActivity.OnClickListener onClickListener){
+        mToolbar.setNavigationIcon(iconResId);
+        this.onClickListenerTopLeft = onClickListener;
+    }
+
+    protected void setTopRightButton(String menuStr, TopBarBaseActivity.OnClickListener onClickListener){
+        this.menuStr = menuStr;
+        this.onClickListenerTopRight = onClickListener;
+    }
+
+    protected void setTitle(String title){
+        if (!TextUtils.isEmpty(title)){
+            tvTitle.setText(title);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (!TextUtils.isEmpty(menuStr)){
+            getMenuInflater().inflate(R.menu.menu_activity_base_top_bar, menu);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!TextUtils.isEmpty(menuStr)){
+            menu.findItem(R.id.menu_1).setTitle(menuStr);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onClickListenerTopLeft.onClick();
+        }
+        else if (item.getItemId() == R.id.menu_1){
+            onClickListenerTopRight.onClick();
+        }
+        return true;
+    }
 }

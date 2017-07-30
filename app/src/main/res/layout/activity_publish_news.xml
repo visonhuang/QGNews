@@ -1,240 +1,270 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:background="@drawable/artical_background1"
+              android:orientation="vertical"
+              android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:elevation="5dp"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content" />
+
+    </android.support.v7.widget.Toolbar>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="63dp"
-        android:gravity="center_vertical"
-        android:weightSum="5">
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_weight="4">
-
-            <EditText
-                android:id="@+id/news_title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@null"
-                android:gravity="center"
-                android:hint="@string/news_title"/>
-
-        </android.support.v7.widget.CardView>
-
-    </LinearLayout>
-
-    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/activity_public_upload_cover_linearlayout"
-            android:layout_width="140dp"
-            android:layout_height="60dp"
-            android:layout_above="@+id/activity_public_upload_file_linearlayout"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="12dp"
-            android:divider="@drawable/div"
-            android:elevation="4dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:showDividers="middle"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/round_shape_white"
-                android:elevation="2dp"
-                android:gravity="center"
-                android:paddingBottom="2dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:text="上传封面"
-                android:textColor="@color/primary_text"/>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/activity_publish_upload_cover_button"
-                android:layout_width="50dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                app:backgroundTint="@color/darkGreen"
-                app:fabSize="mini"
-                app:srcCompat="@drawable/ic_cover"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/activity_public_upload_file_linearlayout"
-            android:layout_width="140dp"
-            android:layout_height="60dp"
-            android:layout_above="@+id/floating_linear"
-            android:layout_alignStart="@+id/activity_public_upload_cover_linearlayout"
-            android:layout_marginBottom="13dp"
-            android:layout_marginRight="12dp"
-            android:divider="@drawable/div"
-            android:elevation="4dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:showDividers="middle"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/round_shape_white"
-                android:elevation="2dp"
-                android:gravity="center"
-                android:paddingBottom="2dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:text="上传文件"
-                android:textColor="@color/primary_text"/>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/activity_publish_upload_file_button"
-                android:layout_width="50dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                app:backgroundTint="@color/orange"
-                app:fabSize="mini"
-                app:srcCompat="@drawable/ic_file"/>
-
-        </LinearLayout>
-
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="88dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true">
+            android:layout_height="63dp"
+            android:gravity="center_vertical"
+            android:weightSum="5">
 
-            <LinearLayout
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="46dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_weight="4"
+                app:cardBackgroundColor="#90ffffff">
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
+                <EditText
+                    android:id="@+id/news_title_text"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginTop="15dp"
-                    app:cardCornerRadius="4dp">
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center"
+                    android:hint="@string/news_title"/>
 
+            </android.support.v7.widget.CardView>
 
-                    <EditText
-                        android:id="@+id/title_content_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:hint="@string/news_content"/>
-                </android.support.v7.widget.CardView>
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/floating_linear"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true">
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/floating_button"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:backgroundTint="@color/colorAccent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:pressedTranslationZ="30dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_gravity="bottom|end"
-                android:layout_alignParentEnd="true"
-                android:layout_above="@+id/file_container_linear"
-                android:src="@drawable/ic_add"
-                />
+            android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/file_container_linear"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:background="#ffffff"
-                android:orientation="vertical"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
+                android:id="@+id/activity_public_upload_cover_linearlayout"
+                android:layout_width="140dp"
+                android:layout_height="60dp"
+                android:layout_above="@+id/activity_public_upload_file_linearlayout"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="12dp"
+                android:divider="@drawable/div"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:showDividers="middle"
                 android:visibility="gone">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#eeeeee"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/round_shape_white"
+                    android:elevation="2dp"
+                    android:gravity="center"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:text="上传封面"
+                    android:textColor="@color/primary_text"/>
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/activity_publish_upload_cover_button"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    app:backgroundTint="@color/darkGreen"
+                    app:fabSize="mini"
+                    app:srcCompat="@drawable/ic_cover"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/activity_public_upload_file_linearlayout"
+                android:layout_width="140dp"
+                android:layout_height="60dp"
+                android:layout_above="@+id/floating_linear"
+                android:layout_alignStart="@+id/activity_public_upload_cover_linearlayout"
+                android:layout_marginBottom="13dp"
+                android:layout_marginRight="12dp"
+                android:divider="@drawable/div"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:showDividers="middle"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/round_shape_white"
+                    android:elevation="2dp"
+                    android:gravity="center"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:text="上传文件"
+                    android:textColor="@color/primary_text"/>
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/activity_publish_upload_file_button"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    app:backgroundTint="@color/orange"
+                    app:fabSize="mini"
+                    app:srcCompat="@drawable/ic_file"/>
+
+            </LinearLayout>
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="88dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/add_pic_image"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_width="50dp"
-                        android:layout_height="24dp"
-                        app:srcCompat="@drawable/ic_picture"
-                        android:layout_weight="0.07"/>
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginTop="15dp"
+                        app:cardBackgroundColor="#90ffffff"
+                        app:cardCornerRadius="4dp">
 
-                    <ImageView
-                        android:id="@+id/add_file_image"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_width="30dp"
+
+                        <EditText
+                            android:id="@+id/title_content_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:hint="@string/news_content"/>
+                    </android.support.v7.widget.CardView>
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+
+            <RelativeLayout
+                android:id="@+id/floating_linear"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/floating_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:backgroundTint="@color/colorAccent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:pressedTranslationZ="30dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_alignParentEnd="true"
+                    android:layout_above="@+id/file_container_linear"
+                    android:src="@drawable/ic_add"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/file_container_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="#90ffffff"
+                    android:orientation="vertical"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:visibility="gone"
+                    >
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#eeeeee"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        app:srcCompat="@drawable/ic_file2"/>
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <ImageView
+                            android:id="@+id/add_pic_image"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_width="50dp"
+                            android:layout_height="24dp"
+                            app:srcCompat="@drawable/ic_picture"
+                            android:layout_weight="0.07"/>
+
+                        <ImageView
+                            android:id="@+id/add_file_image"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_width="30dp"
+                            android:layout_height="40dp"
+                            app:srcCompat="@drawable/ic_file2"/>
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:max="100"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"/>
                 </LinearLayout>
 
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:max="100"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"/>
-            </LinearLayout>
+            </RelativeLayout>
 
         </RelativeLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>
+
 
 
 
