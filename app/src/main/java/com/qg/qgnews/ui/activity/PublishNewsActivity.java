@@ -1,28 +1,29 @@
 package com.qg.qgnews.ui.activity;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.FileAdapter;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,7 +51,8 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
     private static final int UPLOAD_CLOSE = 0;
     private static int UploadButtonMode = UPLOAD_CLOSE;
 
-    private String[] filePaths;
+    private List<String> mFileList = new ArrayList<>();
+    private FileAdapter adapter;
 
     @Override
     protected int getContentView() {
@@ -88,12 +90,18 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         mUploadFileLinear = (LinearLayout) findViewById(R.id.activity_public_upload_file_linearlayout);
         mUploadCoverLinear = (LinearLayout) findViewById(R.id.activity_public_upload_cover_linearlayout);
         mFileContainLinear = (LinearLayout) findViewById(R.id.file_container_linear);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mFab.setOnClickListener(this);
         mAddPicImage.setOnClickListener(this);
         mAddFileImage.setOnClickListener(this);
         mUploadFileButton.setOnClickListener(this);
         mUploadCoverButton.setOnClickListener(this);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerView.setLayoutManager(manager);
+        adapter = new FileAdapter(mFileList);
+        mRecyclerView.setAdapter(adapter);
     }
 
     private void testConnection() {
@@ -111,10 +119,19 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
                         newsFace, filesUuid, null);
                 String filePath = "/storage/emulated/0/DCIM/Camera/IMG_20170711_232637.jpg";
                 Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-                Request.upLoadNews(news, null, filePaths);
+                Request.upLoadNews(news, null, getFilePathArray(mFileList));
             }
         }).start();
+    }
 
+    private String[] getFilePathArray(List<String> fileList) {
+        String[] filePathArray = new String[fileList.size()];
+        int i = 0;
+        for(String s : fileList){
+            filePathArray[i] = s;
+            i++;
+        }
+        return filePathArray;
     }
 
     @Override
@@ -243,13 +260,11 @@ public class PublishNewsActivity extends TopBarBaseActivity implements View.OnCl
         if(requestCode == 1){
             Bundle bundle = data.getBundleExtra("map_key");
             Map<String,File> fileMap = (Map<String, File>) bundle.getSerializable("map_key");
-            filePaths = new String[fileMap.size()];
-            int i = 0;
             for (String s : fileMap.keySet()) {
-                Log.d("asda",s);
-                filePaths[i] = s;
-                i++;
+                mFileList.add(s);
             }
         }
+        adapter.freshFileList(mFileList);
+        adapter.notifyDataSetChanged();
     }
 }
