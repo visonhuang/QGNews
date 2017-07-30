@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.Stack;
 
@@ -34,6 +35,7 @@ public class App extends Application {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
                 mActivityStack.push(activity);
+                Log.d("==========",activity.toString()+"=================run");
             }
 
             @Override
@@ -64,6 +66,7 @@ public class App extends Application {
             @Override
             public void onActivityDestroyed(Activity activity) {
                 mActivityStack.pop();
+                Log.d("==========",activity.toString()+"=================dead");
             }
         });
     }

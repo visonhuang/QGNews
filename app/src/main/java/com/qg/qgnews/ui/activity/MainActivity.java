@@ -29,6 +29,7 @@ import com.qg.qgnews.model.News;
 import com.qg.qgnews.ui.fragment.NewsListFrag;
 import com.qg.qgnews.util.Tool;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, NewsListFrag.OnNewsItemClickListener, NewsListFrag.OnRefreshOrLoadIngListener {
@@ -273,7 +274,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void OnItemClickListener(View v, int pos, News news) {
-        startActivity(new Intent(this, NewsMessageActivity.class));
+        Intent intent = new Intent(this,NewsMessageActivity.class);
+        intent.putExtra("news_list", (Serializable) newsListFrag.dataNews);
+        intent.putExtra("start_pos",pos);
+        startActivity(intent);
     }
 
     @Override
@@ -320,12 +324,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    int start = 0;
+    long start = 0;
 
     @Override
     public void onBackPressed() {
-        if (System.currentTimeMillis() - start > 2000) {
+
+        if (pulsButtonMode == PLUS_OPEN) {
+            onClick(plus);
+        } else if (System.currentTimeMillis() - start > 2000) {
             Tool.toast("再按一次退出QGNEWS");
+            start = System.currentTimeMillis();
         } else {
             for (Activity activity : App.getActivityStack()) {
                 activity.finish();

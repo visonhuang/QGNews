@@ -9,12 +9,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.FragmentPagerAdapterNewsMessage;
 import com.qg.qgnews.model.News;
+import com.qg.qgnews.model.NewsDetailAdapter;
 import com.qg.qgnews.ui.fragment.NewsMessage;
 
 import java.util.ArrayList;
@@ -25,11 +27,16 @@ public class NewsMessageActivity extends AppCompatActivity {
     ViewPager viewPager;
     ImageView cover;
     CollapsingToolbarLayout coll;
-
+    List<News> newsList;
+    List<View> viewList;
+    int startPos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_message);
+        Intent intent = getIntent();
+        newsList = (List<News>) intent.getSerializableExtra("news_list");
+        startPos = intent.getIntExtra("start_pos",0);
         initView();
     }
 
@@ -55,6 +62,16 @@ public class NewsMessageActivity extends AppCompatActivity {
                 finish();
             }
         });
+        initViewPager();
+    }
+
+    private void initViewPager() {
+        viewList = new ArrayList<>();
+        for (int i = 0; i < newsList.size(); i++) {
+            viewList.add(LayoutInflater.from(this).inflate(R.layout.news_details,null,false));
+        }
+        viewPager.setAdapter(new NewsDetailAdapter(viewList));
+        viewPager.setCurrentItem(startPos,true);
     }
 
 

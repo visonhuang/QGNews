@@ -33,7 +33,7 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
     private ListView newList;
     private NewsListAdapter2 adapter;
     private RefreshLayout refreshLayout;
-    private List<News> dataNews = new ArrayList<>();
+    public List<News> dataNews = new ArrayList<>();
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
