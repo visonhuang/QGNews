@@ -70,6 +70,8 @@ public class Login extends Fragment {
         viewOnclick();
         editViewOnclick();
 
+        Log.d(TAG, "onCreateVi88888888888888888888888888888888888888888888888888888888888888888888e");
+
         return view;
     }
 
@@ -162,6 +164,8 @@ public class Login extends Fragment {
                                 Tool.toast("账户被封了");
                             } else if (state == 5000) {
                                 Tool.toast("服务器异常");
+                            } else if (state == 17) {
+                                Tool.tosat("账户已登录，不能重复登录");
                             }
                         }
                     }).start();
@@ -176,6 +180,7 @@ public class Login extends Fragment {
             public void onClick(View view) {
                 LoginActivity loginActivity = (LoginActivity) getActivity();
                 loginActivity.replaceFragment(new Regiister(),"注册");
+                LoginActivity.mode = LoginActivity.REGISTER;
             }
         });
 
@@ -183,7 +188,9 @@ public class Login extends Fragment {
         forgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                LoginActivity loginActivity = (LoginActivity) getActivity();
+                loginActivity.replaceFragment(new ForgetPassword(),"忘记密码");
+                LoginActivity.mode = LoginActivity.FORGETPASSWORD;
             }
         });
 

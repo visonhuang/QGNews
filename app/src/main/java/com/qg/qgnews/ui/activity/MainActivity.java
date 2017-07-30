@@ -157,6 +157,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.activity_main_manager_button:
                 Tool.toast("点击了管理");
+                Log.d("666666666", "onClick: ");
+                Intent intent1 = new Intent(this,ManagerActivity.class);
+                startActivity(intent1);
                 break;
             case R.id.activity_main_mynews_button:
                 Tool.toast("点击了我的新闻");

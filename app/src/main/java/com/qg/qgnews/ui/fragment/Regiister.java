@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,6 +18,7 @@ import com.google.gson.Gson;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
+import com.qg.qgnews.ui.activity.LoginActivity;
 import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
 
@@ -57,6 +59,10 @@ public class Regiister extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_register,container,false);
+
+        LoginActivity loginActivity = (LoginActivity) getActivity();
+        loginActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        loginActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
 
         initView();
         viewOnClick();
@@ -235,4 +241,6 @@ public class Regiister extends Fragment {
             }
         });
     }
+
+
 }
