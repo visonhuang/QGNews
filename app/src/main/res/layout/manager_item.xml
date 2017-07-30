@@ -91,7 +91,7 @@
                     android:visibility="visible" />
 
                 <TextView
-                    android:id="@+id/manager_item_status_cancel"
+                    android:id="@+id/manager_item_status_nonactivated"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_shape_gray"
@@ -100,7 +100,7 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:paddingTop="2dp"
-                    android:text="已拒绝"
+                    android:text="未激活"
                     android:textColor="#ffffff"
                     android:visibility="gone" />
             </LinearLayout>
