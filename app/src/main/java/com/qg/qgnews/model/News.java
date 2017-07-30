@@ -19,8 +19,6 @@ public class News implements Serializable{
     private String filesUUID;     //附件UUID
     private  List<ViceFile> fileList;   //一个新闻对应的附件集合
 
-    public News() {
-    }
 
     public News(int newsId, int managerId, String newsTitle,
                 String newsBody, String newsAuthor, String newsTime,
@@ -36,6 +34,9 @@ public class News implements Serializable{
         this.newsFace = newsFace;
         this.filesUUID = filesUUID;
         this.fileList = fileList;
+    }
+
+    public News() {
     }
 
     public int getNewsId() {

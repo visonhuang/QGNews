@@ -21,11 +21,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.Controller;
+import com.qg.qgnews.controller.adapter.NewsListAdapter2;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.ui.fragment.NewsListFrag;
 import com.qg.qgnews.util.Tool;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, NewsListFrag.OnNewsItemClickListener {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, NewsListFrag.OnNewsItemClickListener, NewsListFrag.OnRefreshOrLoadIngListener {
     private Toolbar toolbar;
     private SearchView searchView;
     private FloatingActionButton plus, myNews, manager, edit;
@@ -40,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NewsListFrag newsListFrag;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
+        mode = getIntent().getIntExtra("visit_mode", MODE_VISITOR);
         toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -64,7 +68,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         myNewsLiner = (LinearLayout) findViewById(R.id.activity_main_mynews_liner);
         managerLiner = (LinearLayout) findViewById(R.id.activity_main_manager_liner);
         editLiner = (LinearLayout) findViewById(R.id.activity_main_edit_liner);
+
         newsListFrag.setOnNewsItemClickListener(this);
+        newsListFrag.setOnRefreshOrLoadIngListener(this);
+
+
         plus.setOnClickListener(this);
         myNews.setOnClickListener(this);
         manager.setOnClickListener(this);
@@ -91,9 +99,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_search:
                 break;
             case R.id.main_menu_logout:
+                finish();
+                startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.main_menu_select_download_path:
-                startActivity(new Intent(this,FileSelector.class));
+                Intent intent = new Intent(this, FileSelector.class);
+                intent.putExtra("mode", FileSelector.MODE_PATH);
+                startActivity(new Intent(this, FileSelector.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -136,6 +148,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 pulsButtonMode = pulsButtonMode == PLUS_CLOSE ? PLUS_OPEN : PLUS_CLOSE;
                 break;
             case R.id.activity_main_edit_button:
+                Intent intent = new Intent(this, PublishNewsActivity.class);
+                startActivityForResult(intent, 1);
                 Tool.toast("点击了编辑");
                 break;
             case R.id.activity_main_manager_button:
@@ -244,17 +258,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setFragment() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.main_frag_container, new NewsListFrag());
+        ft.replace(R.id.main_frag_container, newsListFrag);
         ft.commit();
     }
 
-    /** 新闻列表item点击监听
+    /**
+     * 新闻列表item点击监听
+     *
      * @param v
      * @param pos
      * @param news
      */
     @Override
     public void OnItemClickListener(View v, int pos, News news) {
-            Tool.toast("点击了第"+pos);
+        startActivity(new Intent(this,NewsMessageActivity.class));
+    }
+
+    @Override
+    public void onRefresh(final NewsListAdapter2 adapter, final List<News> oldList) {
+        Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
+            @Override
+            public void onSuccess(final List<News> list) {
+                oldList.addAll(0, list);
+                Tool.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(int state, String stateInfo) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onLoad(final NewsListAdapter2 adapter, final List<News> oldList) {
+        Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
+            @Override
+            public void onSuccess(List<News> list) {
+                oldList.addAll(list);
+                Tool.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(int state, String stateInfo) {
+
+            }
+        });
     }
 }

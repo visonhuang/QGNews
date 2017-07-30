@@ -38,6 +38,8 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
     private int level = 0;
     TextView where;
     File now;
+    public static String KEY_MODE = "mode";
+    public static String KEY_MAX = "maxSelected";
     public static final int MODE_PATH = 0;
     public static final int MODE_FILE = 1;
     private int mode = MODE_FILE;
@@ -56,6 +58,12 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }//申请权限
+        while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+        }
+        Intent intent = getIntent();
+        mode = intent.getIntExtra(KEY_MODE,MODE_PATH);
+        maxSelected = intent.getIntExtra(KEY_MAX,0);
 
         switch (mode) {
             case MODE_FILE:
