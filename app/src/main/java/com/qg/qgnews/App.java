@@ -65,7 +65,7 @@ public class App extends Application {
 
             @Override
             public void onActivityDestroyed(Activity activity) {
-                mActivityStack.pop();
+                mActivityStack.remove(activity);
                 Log.d("==========",activity.toString()+"=================dead");
             }
         });
