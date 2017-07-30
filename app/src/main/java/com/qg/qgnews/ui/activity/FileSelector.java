@@ -166,7 +166,7 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
                 selectedFiles.remove(now.listFiles()[position].getPath());
                 Tool.toast("移除"+now.listFiles()[position].getPath());
             }
-            setTitle("选择上传文件"+ selectedFiles.size()+"/10");
+            setTitle("选择上传文件"+ selectedFiles.size()+"/"+maxSelected);
         }
 
     }
