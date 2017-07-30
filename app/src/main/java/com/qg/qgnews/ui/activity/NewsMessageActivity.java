@@ -71,7 +71,7 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
         for (int i = 0; i < newsList.size(); i++) {
             viewList.add(LayoutInflater.from(this).inflate(R.layout.news_details, null, false));
         }
-        viewPager.setAdapter(new NewsDetailAdapter(viewList));
+        viewPager.setAdapter(new NewsDetailAdapter(viewList,this));
         viewPager.setCurrentItem(startPos, true);
         viewPager.setOnPageChangeListener(this);
     }
