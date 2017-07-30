@@ -36,7 +36,7 @@ public class Request {
         //模拟数据
         List<News> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-//            list.add(new News());
+            list.add(new News());
         }
         return new FeedBack(1, "", gson.toJson(list));
     }

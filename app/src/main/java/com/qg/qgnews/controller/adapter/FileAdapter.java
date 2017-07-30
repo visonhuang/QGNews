@@ -52,7 +52,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>{
         File file = new File(filePath);
         holder.fileImage.setImageResource(Tool.getFileIcon(file));
         holder.fileNameText.setText(getFileName(filePath));
-        holder.fileSizeText.setText(getFileSize(filePath) + "");
+        holder.fileSizeText.setText(getFileSize(filePath));
     }
 
     private String getFileName(String filePath) {
@@ -77,15 +77,22 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>{
             return null;
         }
         long bLength = file.length();
-        if(bLength < 1024){
+        if (bLength < 1024){
             return bLength + "B";
         }
         double kbLength = bLength / 1024;
+        DecimalFormat df = new DecimalFormat( "0.00");
         if (kbLength < 1024){
-            DecimalFormat df = new DecimalFormat( "0.00");
             return df.format(kbLength) + "KB";
         }
         double mbLength = kbLength / 1024;
-        if
+        if (mbLength < 1024){
+            return df.format(mbLength) + "MB";
+        }
+        double gbLength = mbLength / 1024;
+        if (gbLength < 1024){
+            return df.format(gbLength) + "GB";
+        }
+        return null;
     }
 }

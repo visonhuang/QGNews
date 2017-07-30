@@ -37,10 +37,13 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         if (adapter.getCount() <= position) {
             return;
         }
+        Tool.toast("dianji ");
         if (onNewsItemClickListener != null) {
+
             onNewsItemClickListener.OnItemClickListener(view, position, adapter.getItem(position));
         }
     }
@@ -51,8 +54,9 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public interface OnRefreshOrLoadIngListener {
-        void onRefresh(NewsListAdapter2 adapter,List<News> oldList);
-        void onLoad(NewsListAdapter2 adapter,List<News> oldList);
+        void onRefresh(NewsListAdapter2 adapter, List<News> oldList);
+
+        void onLoad(NewsListAdapter2 adapter, List<News> oldList);
     }
 
     private OnNewsItemClickListener onNewsItemClickListener = null;
@@ -92,55 +96,18 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
         refreshLayout.setRefreshing(true);
         //刷新接口丢出去
         if (onRefreshOrLoadIngListener != null) {
-            onRefreshOrLoadIngListener.onRefresh(adapter,dataNews);
+            onRefreshOrLoadIngListener.onRefresh(adapter, dataNews);
             refreshLayout.setRefreshing(false);
         }
-        Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
-            @Override
-            public void onSuccess(final List<News> list) {
-                Tool.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dataNews.addAll(0, list);
-                        adapter.notifyDataSetChanged();
-                        refreshLayout.setRefreshing(false);
-                    }
-                });
-            }
 
-            @Override
-            public void onFailed(int state, String stateInfo) {
-
-            }
-        });
     }
 
     @Override
     public void onLoad() {
         Tool.toast("上啦加载");
         if (onRefreshOrLoadIngListener != null) {
-            onRefreshOrLoadIngListener.onLoad(adapter,dataNews);
+            onRefreshOrLoadIngListener.onLoad(adapter, dataNews);
             refreshLayout.setLoading(false);
         }
-        Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
-            @Override
-            public void onSuccess(List<News> list) {
-                dataNews.addAll(list);
-                Tool.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                        refreshLayout.setLoading(false);
-
-                    }
-                });
-            }
-
-            @Override
-            public void onFailed(int state, String stateInfo) {
-
-            }
-        });
-
     }
 }

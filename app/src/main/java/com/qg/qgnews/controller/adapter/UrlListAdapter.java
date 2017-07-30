@@ -28,18 +28,21 @@ import java.util.Map;
 public class UrlListAdapter extends ArrayAdapter<File> {
     private int layoutId;
     private int mode;
-    private Map<String,File> selectedFiles;
+    private Map<String, File> selectedFiles;
     private int maxSelected;
-    public UrlListAdapter(Context context, int resource, List<File> objects, int mode,Map<String,File> map,int maxSelected) {
+
+    public UrlListAdapter(Context context, int resource, List<File> objects, int mode, Map<String, File> map, int maxSelected) {
         super(context, resource, objects);
         this.mode = mode;
         layoutId = resource;
         selectedFiles = map;
         this.maxSelected = maxSelected;
     }
-    public interface OnSelectedFilesChangedListener{
+
+    public interface OnSelectedFilesChangedListener {
         void onChanged();
     }
+
     private OnSelectedFilesChangedListener onSelectedFilesChangedListener = null;
 
     public void setOnSelectedFilesChangedListener(OnSelectedFilesChangedListener onSelectedFilesChangedListener) {
@@ -67,21 +70,7 @@ public class UrlListAdapter extends ArrayAdapter<File> {
 
         //设置图标
         String[] fileInfo = file.toString().split("\\.");
-        if (file.isDirectory()) {
-            viewHolder.imageView.setImageResource(R.drawable.ic_folder);
-        } else if (fileInfo.length == 2 && fileInfo[1].equals("mp3")) {
-            viewHolder.imageView.setImageResource(R.drawable.ic_mp3_two);
-        } else if (fileInfo.length == 2 && fileInfo[1].equals("txt")) {
-            viewHolder.imageView.setImageResource(R.drawable.ic_txt);
-        } else if (fileInfo.length == 2 && fileInfo[1].equals("dat")) {
-            viewHolder.imageView.setImageResource(R.drawable.ic_dat);
-        } else if (fileInfo.length == 2 && fileInfo[1].equals("rmvb")) {
-            viewHolder.imageView.setImageResource(R.drawable.ic_rmvb);
-        } else if (fileInfo.length == 2 && fileInfo[1].equals("apk")) {
-            viewHolder.imageView.setImageResource(R.drawable.ic_apk);
-        } else {
-            viewHolder.imageView.setImageResource(R.drawable.ic_unknow);
-        }
+        viewHolder.imageView.setImageResource(Tool.getFileIcon(file));
 
         //按模式显示
         if (mode == FileSelector.MODE_FILE) {
@@ -108,11 +97,11 @@ public class UrlListAdapter extends ArrayAdapter<File> {
                             viewHolder.checkBox.setChecked(false);
                             return;
                         }
-                        selectedFiles.put(file.getPath(),file);
-                        Tool.toast("添加"+file.getPath());
-                    }else {
+                        selectedFiles.put(file.getPath(), file);
+                        Tool.toast("添加" + file.getPath());
+                    } else {
                         selectedFiles.remove(file.getPath());
-                        Tool.toast("移除"+file.getPath());
+                        Tool.toast("移除" + file.getPath());
                     }
                     if (onSelectedFilesChangedListener != null) {
                         onSelectedFilesChangedListener.onChanged();
