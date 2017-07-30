@@ -1,5 +1,6 @@
 package com.qg.qgnews.ui.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.Controller;
 import com.qg.qgnews.controller.adapter.NewsListAdapter2;
@@ -271,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void OnItemClickListener(View v, int pos, News news) {
-        startActivity(new Intent(this,NewsMessageActivity.class));
+        startActivity(new Intent(this, NewsMessageActivity.class));
     }
 
     @Override
@@ -316,5 +318,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+    }
+
+    int start = 0;
+
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - start > 2000) {
+            Tool.toast("再按一次退出QGNEWS");
+        } else {
+            for (Activity activity : App.getActivityStack()) {
+                activity.finish();
+            }
+        }
     }
 }
