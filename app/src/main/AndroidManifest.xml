@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.qg.qgnews">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -12,22 +14,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.MainActivity">
-
-        </activity>
-        <activity android:name=".ui.activity.PublishNewsActivity">
+        <activity android:name=".ui.activity.MainActivity"></activity>
+        <activity android:name=".ui.activity.PublishNewsActivity"></activity>
+        <activity android:name=".ui.activity.FileSelector"></activity>
+        <activity android:name=".ui.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.FileSelector">
+        <activity android:name=".ui.activity.NewsMessageActivity" />
 
-        </activity>
-        <activity android:name=".ui.activity.LoginActivity">
-        </activity>
-        <activity android:name=".ui.activity.NewsMessageActivity"/>
+        <service
+            android:name=".controller.adapter.DownLoadServer"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

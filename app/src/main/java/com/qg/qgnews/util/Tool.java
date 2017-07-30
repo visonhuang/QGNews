@@ -6,6 +6,9 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.MimeTypeFilter;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.qg.qgnews.App;
@@ -168,6 +171,26 @@ public class Tool {
         if (file.isDirectory()) {
             return R.drawable.ic_folder;
         }
+        String[] fileInfo = file.toString().split("\\.");
+        if (fileInfo.length == 2 && fileInfo[1].equals("mp3")) {
+            return R.drawable.ic_mp3_two;
+        } else if (fileInfo.length == 2 && fileInfo[1].equals("txt")) {
+            return R.drawable.ic_txt;
+        } else if (fileInfo.length == 2 && fileInfo[1].equals("dat")) {
+            return R.drawable.ic_dat;
+        } else if (fileInfo.length == 2 && fileInfo[1].equals("rmvb")) {
+            return R.drawable.ic_rmvb;
+        } else if (fileInfo.length == 2 && fileInfo[1].equals("apk")) {
+            return R.drawable.ic_apk;
+        } else {
+            return R.drawable.ic_unknow;
+        }
+    }
+    public static int getFileIcon(String file) {
+        if (file == null) {
+            throw new IllegalArgumentException("filename 不能为空");
+        }
+
         String[] fileInfo = file.toString().split("\\.");
         if (fileInfo.length == 2 && fileInfo[1].equals("mp3")) {
             return R.drawable.ic_mp3_two;

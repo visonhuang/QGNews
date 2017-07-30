@@ -87,6 +87,7 @@ public class Request {
             reader = new BufferedReader(inputStreamReader);
             tempLine = null;
             resultBuffer = new StringBuffer();
+
             while ((tempLine = reader.readLine()) != null) {
                 resultBuffer.append(tempLine);
                 resultBuffer.append("\n");
