@@ -91,7 +91,7 @@
                     android:visibility="visible" />
 
                 <TextView
-                    android:id="@+id/order_item_status_cancel"
+                    android:id="@+id/manager_item_status_cancel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_shape_gray"

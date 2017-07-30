@@ -22,7 +22,7 @@ import com.qg.qgnews.ui.fragment.NewsMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewsMessageActivity extends AppCompatActivity {
+public class NewsMessageActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     Toolbar toolbar;
     ViewPager viewPager;
     ImageView cover;
@@ -30,13 +30,14 @@ public class NewsMessageActivity extends AppCompatActivity {
     List<News> newsList;
     List<View> viewList;
     int startPos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_message);
         Intent intent = getIntent();
         newsList = (List<News>) intent.getSerializableExtra("news_list");
-        startPos = intent.getIntExtra("start_pos",0);
+        startPos = intent.getIntExtra("start_pos", 0);
         initView();
     }
 
@@ -68,11 +69,32 @@ public class NewsMessageActivity extends AppCompatActivity {
     private void initViewPager() {
         viewList = new ArrayList<>();
         for (int i = 0; i < newsList.size(); i++) {
-            viewList.add(LayoutInflater.from(this).inflate(R.layout.news_details,null,false));
+            viewList.add(LayoutInflater.from(this).inflate(R.layout.news_details, null, false));
         }
         viewPager.setAdapter(new NewsDetailAdapter(viewList));
-        viewPager.setCurrentItem(startPos,true);
+        viewPager.setCurrentItem(startPos, true);
+        viewPager.setOnPageChangeListener(this);
     }
 
 
+    //viewpager华东监听
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (position % 2 == 0) {
+            cover.setImageResource(R.drawable.example);
+        } else {
+            cover.setImageResource(R.drawable.examp2);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+    //viewpager华东监听
 }
