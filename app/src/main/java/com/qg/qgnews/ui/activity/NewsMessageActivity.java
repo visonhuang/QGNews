@@ -20,11 +20,13 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.DownLoadServer;
 import com.qg.qgnews.controller.adapter.FragmentPagerAdapterNewsMessage;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.model.NewsDetailAdapter;
+import com.qg.qgnews.model.PicAsnycTask;
 import com.qg.qgnews.ui.fragment.NewsMessage;
 
 import java.util.ArrayList;
@@ -131,11 +133,7 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
     @Override
     public void onPageSelected(int position) {
         posNow = position;
-        if (position % 2 == 0) {
-            cover.setImageResource(R.drawable.example);
-        } else {
-            cover.setImageResource(R.drawable.examp2);
-        }
+        new PicAsnycTask(cover,newsList.get(position), App.bitmapLruCache).execute();
     }
 
     @Override

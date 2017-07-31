@@ -46,6 +46,8 @@ public class NewsListAdapter2 extends ArrayAdapter<News> {
             holder = (ViewHolder) itemView.getTag();
         }
         new PicAsnycTask(holder.cover,getItem(position), App.bitmapLruCache).execute();
+        holder.title.setText(news.getNewsTitle());
+        holder.time.setText(news.getNewsTime());
         //TODO 显示新闻
         return itemView;
     }
@@ -54,11 +56,12 @@ public class NewsListAdapter2 extends ArrayAdapter<News> {
         ImageView cover;
         TextView title;
         CardView card;
-
+        TextView time;
         public ViewHolder(View itemView) {
             cover = (ImageView) itemView.findViewById(R.id.news_item_cover);
             title = (TextView) itemView.findViewById(R.id.news_item_title);
             card = (CardView) itemView.findViewById(R.id.news_item_card);
+            time = (TextView) itemView.findViewById(R.id.news_item_time);
         }
     }
 }

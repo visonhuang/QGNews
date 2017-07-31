@@ -34,7 +34,7 @@ public class PicAsnycTask extends AsyncTask<Void,Void,Bitmap> {
             return pic;
         } else {
             //否则从文件中读取，存入缓存，并返回图片
-            pic = Request.getCover("http://192.168.43.96:8080/news_face/default.png");
+            pic = Request.getCover(news.getNewsFace());
             mBitmapLruCache.put(news.getNewsId(),pic);
             return pic;
         }

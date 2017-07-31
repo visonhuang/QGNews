@@ -26,15 +26,24 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.Controller;
 import com.qg.qgnews.controller.adapter.NewsListAdapter2;
+import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.News;
+import com.qg.qgnews.model.RequestAdress;
 import com.qg.qgnews.ui.fragment.NewsListFrag;
+import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, NewsListFrag.OnNewsItemClickListener, NewsListFrag.OnRefreshOrLoadIngListener {
@@ -56,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initView();
 
     }
@@ -166,13 +174,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.activity_main_manager_button:
                 Tool.toast("点击了管理");
-                Intent intent1 = new Intent(this,ManagerActivity.class);
+                Intent intent1 = new Intent(this, ManagerActivity.class);
                 startActivity(intent1);
                 break;
             case R.id.activity_main_mynews_button:
                 Tool.toast("点击了我的新闻");
-                Intent intent2 = new Intent(MainActivity.this,ManagerNews.class);
-                intent2.putExtra("id",Tool.getCurrentManager().getManagerId());
+                Intent intent2 = new Intent(MainActivity.this, ManagerNews.class);
+                intent2.putExtra("id", Tool.getCurrentManager().getManagerId());
                 startActivity(intent2);
                 break;
         }
@@ -291,16 +299,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this, NewsMessageActivity.class);
         intent.putExtra("news_list", (Serializable) newsListFrag.dataNews);
         intent.putExtra("start_pos", pos);
-        intent.putExtra("mode",NewsMessageActivity.MODE_MANAGE);
+        intent.putExtra("mode", NewsMessageActivity.MODE_VISIT);
         startActivity(intent);
     }
 
     @Override
     public void onRefresh(final NewsListAdapter2 adapter, final List<News> oldList) {
         App.bitmapLruCache.evictAll();
-        Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
+        Controller.getInstance().RequestNews(new Controller.OnRequestNewsListener() {
             @Override
             public void onSuccess(final List<News> list) {
+                oldList.clear();
                 oldList.addAll(0, list);
                 Tool.runOnUiThread(new Runnable() {
                     @Override
@@ -312,32 +321,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailed(int state) {
-
+                Tool.toast("刷新失败");
             }
         });
     }
 
     @Override
     public void onLoad(final NewsListAdapter2 adapter, final List<News> oldList) {
-        Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
-            @Override
-            public void onSuccess(List<News> list) {
-                oldList.addAll(list);
-                Tool.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
+        try {
+            final Gson gson = new Gson();
+            Controller.RequestWithString2(RequestAdress.GET_NEWS_BEHIDE, gson.toJson(oldList.get(oldList.size() - 1)), new Controller.OnRequestListener() {
+                @Override
+                public void onSuccess(String json) {
+                    oldList.addAll((Collection<? extends News>) gson.fromJson(json, new TypeToken<List<News>>() {
+                    }.getType()));
+                    Tool.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
 
+                @Override
+                public void onFailed(int state) {
 
-                    }
-                });
-            }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-            @Override
-            public void onFailed(int state) {
-
-            }
-        });
     }
 
     long start = 0;
@@ -356,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
     /**
      * 权限请求结果
      *

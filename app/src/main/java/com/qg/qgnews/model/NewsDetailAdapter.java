@@ -9,8 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.Controller;
+import com.qg.qgnews.util.Tool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,21 +55,36 @@ public class NewsDetailAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
+
         View view = viewList.get(position);
-        RecyclerView viceFileList = (RecyclerView) view.findViewById(R.id.news_detial_vicefile_list);
-        TextView body = (TextView) view.findViewById(R.id.news_details_body);
+        final RecyclerView viceFileList = (RecyclerView) view.findViewById(R.id.news_detial_vicefile_list);
+        final TextView body = (TextView) view.findViewById(R.id.news_details_body);
+        final TextView writer = (TextView) view.findViewById(R.id.news_detial_writer);
         container.addView(view);
-        body.setText("wowowowo");
-        viceFileList.setLayoutManager(new LinearLayoutManager(App.context));
-        List<ViceFile> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            ViceFile v = new ViceFile();
-            v.setFilePath("http://fs.web.kugou.com/bec06d0d1a493bc098c44470793dea39/597deee7/G009/M02/06/15/SQ0DAFUJf-KAa_LnAD3gDgbvu7o702.mp3");
-            v.setFileName("附件" + i + ".mp3");
-            list.add(v);
-        }
-        viceFileList.setAdapter(new NewsDetialViecFileAdapter(context, list));
+        writer.setText("本文作者："+newsList.get(position).getNewsAuthor());
+        Controller.RequestNewsDetial(newsList.get(position).getNewsId(), new Controller.OnRequestListener() {
+            @Override
+            public void onSuccess(String json) {
+                Gson gson = new Gson();
+                final News news = gson.fromJson(json,News.class);
+                Tool.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        body.setText(news.getNewsBody());
+                        writer.setText(news.getNewsAuthor());
+                        viceFileList.setLayoutManager(new LinearLayoutManager(App.context));
+                        viceFileList.setAdapter(new NewsDetialViecFileAdapter(context, news.getFileList()));
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(int state) {
+
+            }
+        });
+
         return view;
     }
 

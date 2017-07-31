@@ -39,7 +39,7 @@ public class RequestAdress {
     /**
      * 请求新闻
      */
-    public static final String REQUEST_NEWS = HOST +"reader/read";
+    public static final String REQUEST_NEWS = HOST +"reader/flashnews";
     /**
      *  超级管理员添加管理员
      */
@@ -82,4 +82,7 @@ public class RequestAdress {
     public static final String SHOWOWNNEWS = HOST + "admin/showownnews";
 
     public static final String ADDMANAGER = HOST + "admin/addmanager";
+    public static final String GET_NEWS_DETIAL = HOST + "reader/newsdetail";
+    public static final String GET_NEWS_BEHIDE = HOST + "reader/read";
+
 }
