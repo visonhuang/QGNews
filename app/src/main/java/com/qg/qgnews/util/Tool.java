@@ -251,4 +251,19 @@ public class Tool {
         }
         return inSampleSize;
     }
+
+    //判断是否为图片
+    public static boolean isPicture(String imagePath){
+        String[] imageType = {"png", "jpeg", "bmp", "gif"};
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, options);
+        String type = options.outMimeType.substring(6);
+        for(String t : imageType){
+            if (t.equals(type)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

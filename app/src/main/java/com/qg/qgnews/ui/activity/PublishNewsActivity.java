@@ -1,12 +1,24 @@
 package com.qg.qgnews.ui.activity;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +26,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +51,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.qg.qgnews.util.Tool.decodeSampledBitmapFromFile;
 
 /**
  * Created by 黄伟烽 on 2017/7/27.
@@ -66,13 +81,20 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private static final int UPLOAD_CLOSE = 0;
     private static int UploadButtonMode = UPLOAD_CLOSE;
     private static boolean mIsPublishing;
+    private static final int GET_FILE = 0;
+    private static final int GET_PHOTO = 1;
+    private static final int TYPE_CHOOSE_COVER = 0;
+    private static final int TYPE_CHOOSE_FILE = 1;
+    private static  int ChoosePhotoType = TYPE_CHOOSE_COVER;
+    private static boolean hasChooseCover;
 
     private List<String> mFileList = new ArrayList<>();
-    private FileAdapter adapter;
+    private FileAdapter mAdapter;
     private static StopUploadListener mStopUploadListener;
-    TopBarBaseActivity.OnClickListener onClickListenerTopLeft;
-    TopBarBaseActivity.OnClickListener onClickListenerTopRight;
-    String menuStr;
+    private TopBarBaseActivity.OnClickListener onClickListenerTopLeft;
+    private TopBarBaseActivity.OnClickListener onClickListenerTopRight;
+    private String mMenuStr;
+    private Bitmap mCoverBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,8 +168,8 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(manager);
-        adapter = new FileAdapter(mFileList);
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = new FileAdapter(mFileList);
+        mRecyclerView.setAdapter(mAdapter);
 
         mTitleText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         mContentText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1500)});
@@ -168,9 +190,8 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 News news = new News(1,1,newsTitle,newsBody,newsAuthor,newsTime,newsUuid,
                         newsFace, filesUuid, null);
                 String filePath = "/storage/emulated/0/DCIM/Camera/IMG_20170711_232637.jpg";
-                Bitmap bitmap = BitmapFactory.decodeFile(filePath);
 
-                String response = Request.upLoadNews(news, null, getFilePathArray(mFileList), new UploadListener() {
+                String response = Request.upLoadNews(news, mCoverBitmap, getFilePathArray(mFileList), new UploadListener() {
                     @Override
                     public void showProgress() {
                         Tool.toast("文件开始上传");
@@ -231,8 +252,16 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 }
                 break;
             case R.id.activity_publish_upload_cover_button:
+                ChoosePhotoType = TYPE_CHOOSE_COVER;
+                if(ContextCompat.checkSelfPermission(PublishNewsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(PublishNewsActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }else {
+                    openAlbum();
+                }
                 break;
             case R.id.activity_publish_upload_file_button:
+                ChoosePhotoType = TYPE_CHOOSE_FILE;
                 mUploadCoverLinear.setVisibility(View.GONE);
                 mUploadFileLinear.setVisibility(View.GONE);
                 mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.enter));
@@ -242,12 +271,52 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 PulsButtonMode = PLUS_CLOSE;
                 break;
             case R.id.add_pic_image:
+                ChoosePhotoType = TYPE_CHOOSE_FILE;
+                if(ContextCompat.checkSelfPermission(PublishNewsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(PublishNewsActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }else {
+                    openAlbum();
+                }
                 break;
             case R.id.add_file_image:
-                Intent intent = new Intent(PublishNewsActivity.this, FileSelector.class);
-                intent.putExtra(FileSelector.KEY_MODE, FileSelector.MODE_FILE);
-                intent.putExtra(FileSelector.KEY_MAX, 10 - mFileList.size());
-                startActivityForResult(intent, 1);
+                if(ContextCompat.checkSelfPermission(PublishNewsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(PublishNewsActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                }else {
+                    openFileSeletor();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void openFileSeletor() {
+        Intent intent = new Intent(PublishNewsActivity.this, FileSelector.class);
+        intent.putExtra(FileSelector.KEY_MODE, FileSelector.MODE_FILE);
+        intent.putExtra(FileSelector.KEY_MAX, 10 - mFileList.size());
+        startActivityForResult(intent, GET_FILE);
+    }
+
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, GET_PHOTO);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 1:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    openAlbum();
+                }
+                break;
+            case 2:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    openFileSeletor();
+                }
                 break;
             default:
                 break;
@@ -328,18 +397,92 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode != RESULT_OK){
+        switch (requestCode){
+            case GET_FILE:
+                Bundle bundle = data.getBundleExtra("map_key");
+                Map<String,File> fileMap = (Map<String, File>) bundle.getSerializable("map_key");
+                for (String s : fileMap.keySet()) {
+                    mFileList.add(s);
+                }
+                mAdapter.freshFileList(mFileList);
+                mAdapter.notifyDataSetChanged();
+                break;
+            case GET_PHOTO:
+                if(resultCode == RESULT_OK){
+                    if(Build.VERSION.SDK_INT >= 19){
+                        handleImageOnKitKat(data);
+                    }else {
+                        handleImageBeforeKitKat(data);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    // 4.4以下系统使用这个方法处理选取相册图片返回的Intent
+    private void handleImageBeforeKitKat(Intent data) {
+        Uri uri = data.getData();
+        String imagePath = getImagePath(uri, null);
+        dealWithImagePath(imagePath);
+    }
+
+    // 4.4及以上系统使用这个方法处理选取相册图片返回的Intent
+    @TargetApi(19)
+    private void handleImageOnKitKat(Intent data) {
+        Log.d("88888888888","handleImageOnKitKat");
+        String imagePath = null;
+        Uri uri = data.getData();
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            // 如果是document类型的Uri，则通过document id处理
+            String docId = DocumentsContract.getDocumentId(uri);
+            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String id = docId.split(":")[1]; // 解析出数字格式的id
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            // 如果是content类型的Uri，则使用普通方式处理
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            // 如果是file类型的Uri，直接获取图片路径即可
+            imagePath = uri.getPath();
+        }
+        dealWithImagePath(imagePath);
+    }
+
+    // 通过Uri和selection来获取真实的图片路径
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    private void dealWithImagePath(String imagePath){
+        if(ChoosePhotoType == TYPE_CHOOSE_FILE){
+            mFileList.add(imagePath);
+            mAdapter.notifyDataSetChanged();
             return;
         }
-        if(requestCode == 1){
-            Bundle bundle = data.getBundleExtra("map_key");
-            Map<String,File> fileMap = (Map<String, File>) bundle.getSerializable("map_key");
-            for (String s : fileMap.keySet()) {
-                mFileList.add(s);
+        if(ChoosePhotoType == TYPE_CHOOSE_COVER){
+            if (hasChooseCover == false){
+                Tool.toast("封面选择成功");
+            }else {
+                Tool.toast("封面修改成功");
             }
+            hasChooseCover = true;
+            mCoverBitmap = Tool.decodeSampledBitmapFromFile(imagePath, 1080, 750);
         }
-        adapter.freshFileList(mFileList);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -384,8 +527,8 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         this.onClickListenerTopLeft = onClickListener;
     }
 
-    protected void setTopRightButton(String menuStr, TopBarBaseActivity.OnClickListener onClickListener){
-        this.menuStr = menuStr;
+    protected void setTopRightButton(String mMenuStr, TopBarBaseActivity.OnClickListener onClickListener){
+        this.mMenuStr = mMenuStr;
         this.onClickListenerTopRight = onClickListener;
     }
 
@@ -397,7 +540,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!TextUtils.isEmpty(menuStr)){
+        if (!TextUtils.isEmpty(mMenuStr)){
             getMenuInflater().inflate(R.menu.menu_activity_base_top_bar, menu);
         }
         return true;
@@ -405,8 +548,8 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!TextUtils.isEmpty(menuStr)){
-            menu.findItem(R.id.menu_1).setTitle(menuStr);
+        if (!TextUtils.isEmpty(mMenuStr)){
+            menu.findItem(R.id.menu_1).setTitle(mMenuStr);
         }
         return super.onPrepareOptionsMenu(menu);
     }
