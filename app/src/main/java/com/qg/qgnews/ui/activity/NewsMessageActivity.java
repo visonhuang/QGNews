@@ -1,8 +1,11 @@
 package com.qg.qgnews.ui.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.IBinder;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.DownLoadServer;
 import com.qg.qgnews.controller.adapter.FragmentPagerAdapterNewsMessage;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.model.NewsDetailAdapter;
@@ -30,6 +34,20 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
     List<News> newsList;
     List<View> viewList;
     int startPos;
+    public DownLoadServer.DownLoadBinder binder;
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            binder = (DownLoadServer.DownLoadBinder) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +56,8 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
         Intent intent = getIntent();
         newsList = (List<News>) intent.getSerializableExtra("news_list");
         startPos = intent.getIntExtra("start_pos", 0);
+        Intent intent1 = new Intent(this,DownLoadServer.class);
+        bindService(intent1,connection,BIND_AUTO_CREATE);
         initView();
     }
 
@@ -95,6 +115,12 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(connection);
+        super.onDestroy();
     }
     //viewpager华东监听
 }

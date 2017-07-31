@@ -66,7 +66,7 @@ public class UrlListAdapter extends ArrayAdapter<File> {
             view = convertView;
             viewHolder = (ViewHolder) view.getTag();
         }
-        viewHolder.textView.setText("\t\t" + file.getPath().substring(file.getPath().lastIndexOf('/') + 1));
+        viewHolder.textView.setText(file.getPath().substring(file.getPath().lastIndexOf('/') + 1));
 
         //设置图标
         String[] fileInfo = file.toString().split("\\.");

@@ -6,7 +6,7 @@ package com.qg.qgnews.controller.adapter;
 
 public interface DownLoadListener {
 
-    void onProgress(int pro);
+    void onProgress(int pro,String fileName);
 
     void onSuccess();
 

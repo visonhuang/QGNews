@@ -45,7 +45,7 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
     private int mode = MODE_FILE;
     private UrlListAdapter adapter;
     Map<String, File> selectedFiles = new HashMap<>();
-    public  int maxSelected = 10;
+    public int maxSelected = 10;
 
     @Override
     protected int getContentView() {
@@ -54,20 +54,13 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
 
     @Override
     protected void init(Bundle savedInstanceState) {
-        //申请读写权限
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }//申请权限
-        while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-        }
         Intent intent = getIntent();
-        mode = intent.getIntExtra(KEY_MODE,MODE_PATH);
-        maxSelected = intent.getIntExtra(KEY_MAX,0);
+        mode = intent.getIntExtra(KEY_MODE, MODE_PATH);
+        maxSelected = intent.getIntExtra(KEY_MAX, 0);
 
         switch (mode) {
             case MODE_FILE:
-                setTitle("选择上传文件0/"+maxSelected);
+                setTitle("选择上传文件0/" + maxSelected);
                 setTopRightButton("确认", R.drawable.selector_ok, new OnClickListener() {
                     @Override
                     public void onClick() {
@@ -76,7 +69,7 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("map_key", (Serializable) selectedFiles);
                         intent.putExtra("map_key", bundle);
-                        setResult(RESULT_OK,intent);
+                        setResult(RESULT_OK, intent);
                         finish();
                         //TODO 选择文件逻辑
                     }
@@ -99,6 +92,11 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
         setTopLeftButton(R.drawable.ic_back, new OnClickListener() {
             @Override
             public void onClick() {
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("map_key", (Serializable) selectedFiles);
+                intent.putExtra("map_key", bundle);
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });
@@ -124,7 +122,7 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
         LayoutAnimationController lac = new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.item_in));
         lac.setOrder(LayoutAnimationController.ORDER_NORMAL);
         urlList.setLayoutAnimation(lac);
-        adapter = new UrlListAdapter(this, R.layout.url_tiem, Arrays.asList(file.listFiles()), mode, selectedFiles,maxSelected);
+        adapter = new UrlListAdapter(this, R.layout.url_tiem, Arrays.asList(file.listFiles()), mode, selectedFiles, maxSelected);
         adapter.setOnSelectedFilesChangedListener(this);
         urlList.setAdapter(adapter);
         where.setText(now.getPath().replaceAll("/", " > ").replace("> storage > emulated > 0", "内部储存器"));
@@ -133,7 +131,12 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         if (level == 0) {
-            super.onBackPressed();
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("map_key", (Serializable) selectedFiles);
+            intent.putExtra("map_key", bundle);
+            setResult(RESULT_OK, intent);
+            finish();
         } else {
             level--;
             now = now.getParentFile();
@@ -160,37 +163,20 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
                     Tool.toast("已达到上限");
                     return;
                 }
-                Tool.toast("添加"+now.listFiles()[position].getPath());
+                Tool.toast("添加" + now.listFiles()[position].getPath());
                 selectedFiles.put(now.listFiles()[position].getPath(), now.listFiles()[position]);
             } else {
                 selectedFiles.remove(now.listFiles()[position].getPath());
-                Tool.toast("移除"+now.listFiles()[position].getPath());
+                Tool.toast("移除" + now.listFiles()[position].getPath());
             }
-            setTitle("选择上传文件"+ selectedFiles.size()+"/"+maxSelected);
+            setTitle("选择上传文件" + selectedFiles.size() + "/" + maxSelected);
         }
 
     }
 
-    /**
-     * 权限请求结果
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            } else {
-                finish();
-            }
-        }
-    }
 
     @Override
     public void onChanged() {
-        setTitle("选择上传文件"+ selectedFiles.size()+"/"+maxSelected);
+        setTitle("选择上传文件" + selectedFiles.size() + "/" + maxSelected);
     }
 }

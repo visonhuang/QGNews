@@ -147,8 +147,12 @@ public class Tool {
     }
 
     public static String getFileSavePath() {
-        SharedPreferences sp = App.context.getSharedPreferences("Manager", Context.MODE_PRIVATE);
-        return sp.getString("path", Environment.getDownloadCacheDirectory().getPath());
+        SharedPreferences sp = App.context.getSharedPreferences("path", Context.MODE_PRIVATE);
+        File file = new File(sp.getString("path", Environment.getExternalStorageDirectory().getPath())+"//"+"QgNewsDownload");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file.getPath();
     }
 
     /**

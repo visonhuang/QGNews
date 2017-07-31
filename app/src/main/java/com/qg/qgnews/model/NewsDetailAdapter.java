@@ -54,7 +54,8 @@ public class NewsDetailAdapter extends PagerAdapter {
         List<ViceFile> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             ViceFile v = new ViceFile();
-            v.setFileName("  附件" + i + ".mp3");
+            v.setFilePath("http://fs.web.kugou.com/bec06d0d1a493bc098c44470793dea39/597deee7/G009/M02/06/15/SQ0DAFUJf-KAa_LnAD3gDgbvu7o702.mp3");
+            v.setFileName("附件" + i + ".mp3");
             list.add(v);
         }
         viceFileList.setAdapter(new NewsDetialViecFileAdapter(context, list));

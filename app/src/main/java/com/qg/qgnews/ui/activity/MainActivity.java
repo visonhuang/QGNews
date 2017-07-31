@@ -1,10 +1,15 @@
 package com.qg.qgnews.ui.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -106,6 +111,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.main_menu_select_download_path:
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    return super.onOptionsItemSelected(item);
+                }//申请权限
                 Intent intent = new Intent(this, FileSelector.class);
                 intent.putExtra("mode", FileSelector.MODE_PATH);
                 startActivity(new Intent(this, FileSelector.class));
@@ -277,9 +286,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void OnItemClickListener(View v, int pos, News news) {
-        Intent intent = new Intent(this,NewsMessageActivity.class);
+        Intent intent = new Intent(this, NewsMessageActivity.class);
         intent.putExtra("news_list", (Serializable) newsListFrag.dataNews);
-        intent.putExtra("start_pos",pos);
+        intent.putExtra("start_pos", pos);
         startActivity(intent);
     }
 
@@ -340,6 +349,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             for (Activity activity : App.getActivityStack()) {
                 activity.finish();
+            }
+        }
+    }
+    /**
+     * 权限请求结果
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(this, FileSelector.class);
+                intent.putExtra("mode", FileSelector.MODE_PATH);
+                startActivity(new Intent(this, FileSelector.class));
+            } else {
+                finish();
             }
         }
     }
