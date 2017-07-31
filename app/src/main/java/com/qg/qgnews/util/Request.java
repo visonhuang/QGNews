@@ -39,6 +39,7 @@ public class Request {
 
     private static BufferedOutputStream ds;
     private static boolean mIsStopUpload;
+    public static String session = "0";
     /**
      * @param idFrom 从这个id往下请求十条新闻
      * @return 新闻列表，最大十条
@@ -81,13 +82,19 @@ public class Request {
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
             httpURLConnection.setRequestProperty("Charset", "utf-8");
-            httpURLConnection.setRequestProperty("Cookie", Tool.getSessionId());
+            httpURLConnection.setRequestProperty("Cookie",session);
             // 设置DataOutputStream
             ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
             ds.write(content.getBytes());
                /* close streams */
             ds.flush();
-            Tool.saveSessionId(httpURLConnection);
+            String cookieValue = httpURLConnection.getHeaderField("Set-Cookie");
+            if (session.equals("0")) {
+                session= cookieValue.substring(0, cookieValue.indexOf(";"));
+
+            }
+            Log.d("asdasd",session);
+           // Tool.saveSessionId(httpURLConnection);
             inputStream = httpURLConnection.getInputStream();
             inputStreamReader = new InputStreamReader(inputStream, "utf-8");
             reader = new BufferedReader(inputStreamReader);

@@ -57,6 +57,8 @@ public class ForgetPassword extends Fragment {
 
     private TimeCount time;
 
+    String sessionid;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -101,6 +103,7 @@ public class ForgetPassword extends Fragment {
             @Override
             public void onClick(View view) {
                 time.start();
+                Log.d(TAG, "onClick: 333333333333333333333333333333333333333333");
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -110,7 +113,7 @@ public class ForgetPassword extends Fragment {
                         manager.setManagerAccount(user.getText().toString());
                         String line = gson.toJson(manager);
                         Log.d(TAG, line);
-                        String response = Request.RequestWithString("http://192.168.3.65:8080/admin/sendverifycode",line);
+                        String response = Request.RequestWithString("http://192.168.43.142:8080/admin/sendverifycode",line);
                         Log.d(TAG, line);
                         FeedBack feedBack = gson.fromJson(response,FeedBack.class);
                         int state = feedBack.getState();
@@ -128,7 +131,7 @@ public class ForgetPassword extends Fragment {
                             Tool.toast("邮箱格式不正确");
                         }
                     }
-                });
+                }).start();
             }
         });
 
@@ -136,41 +139,46 @@ public class ForgetPassword extends Fragment {
             @Override
             public void onClick(View view) {
                 //设置新密码
-                Gson gson = new Gson();
-                String nameS = user.getText().toString();
-                String passwordS = password.getText().toString();
-                String numberS = number.getText().toString();
-                Map<String,String> map = new HashMap<String, String>();
-                map.put("managerAccount",nameS);
-                map.put("verifyCode",passwordS);
-                map.put("managerPassword",numberS);
-                String line = gson.toJson(map);
-                String reponse = Request.RequestWithString("http://192.168.3.65:8080/admin/setnewpassword",line);
-                FeedBack feedBack = gson.fromJson(reponse,FeedBack.class);
-                int state = feedBack.getState();
-                if (state == 1) {
-                    Tool.toast("修改密码成功");
-                } else if (state == 3) {
-                    Tool.toast("邮箱不存在");
-                } else if (state == 4) {
-                    Tool.toast("邮箱为空");
-                } else if (state == 5) {
-                    Tool.toast("密码为空");
-                } else if (state == 6) {
-                    Tool.toast("邮箱格式不正确");
-                } else if (state == 8) {
-                    Tool.toast("密码错误");
-                } else if (state == 9) {
-                    Tool.toast("账户未激活");
-                } else if (state == 10) {
-                    Tool.toast("账户未审批");
-                } else if (state == 11) {
-                    Tool.toast("账户被封了");
-                } else if (state == 5000) {
-                    Tool.toast("服务器异常");
-                }
-
-
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gson gson = new Gson();
+                        String nameS = user.getText().toString();
+                        String passwordS = password.getText().toString();
+                        String numberS = number.getText().toString();
+                        Map<String,String> map = new HashMap<String, String>();
+                        map.put("managerAccount",nameS);
+                        map.put("managerPassword",passwordS);
+                        map.put("verifyCode",numberS);
+                        String line = gson.toJson(map);
+                        Log.d(TAG, line);
+                        String response = Request.RequestWithString("http://192.168.43.142:8080/admin/setnewpassword",line);
+                        Log.d(TAG, response);
+                        FeedBack feedBack = gson.fromJson(response,FeedBack.class);
+                        int state = feedBack.getState();
+                        if (state == 1) {
+                            Tool.toast("修改密码成功");
+                        } else if (state == 3) {
+                            Tool.toast("邮箱不存在");
+                        } else if (state == 4) {
+                            Tool.toast("邮箱为空");
+                        } else if (state == 5) {
+                            Tool.toast("密码为空");
+                        } else if (state == 6) {
+                            Tool.toast("邮箱格式不正确");
+                        } else if (state == 8) {
+                            Tool.toast("密码错误");
+                        } else if (state == 9) {
+                            Tool.toast("账户未激活");
+                        } else if (state == 10) {
+                            Tool.toast("账户未审批");
+                        } else if (state == 11) {
+                            Tool.toast("账户被封了");
+                        } else if (state == 5000) {
+                            Tool.toast("服务器异常");
+                        }
+                    }
+                }).start();
 
             }
         });

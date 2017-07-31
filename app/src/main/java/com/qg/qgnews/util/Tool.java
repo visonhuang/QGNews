@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.MimeTypeFilter;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -272,14 +273,16 @@ public class Tool {
             String cookieValue = connection.getHeaderField("Set-Cookie");
             String sessionId = cookieValue.substring(0, cookieValue.indexOf(";"));
             SharedPreferences.Editor editor = App.context.getSharedPreferences("sessionId", Context.MODE_PRIVATE).edit();
-            editor.putString("sessionId", sessionId.split("=")[1]);
+            editor.putString("sessionId", sessionId);
+            Log.d("存入asdasdasd",sessionId);
             editor.apply();
         }
 
     }
 
     public static String getSessionId() {
-        SharedPreferences sp = App.context.getSharedPreferences("path", Context.MODE_PRIVATE);
+        SharedPreferences sp = App.context.getSharedPreferences("sessionId", Context.MODE_PRIVATE);
+        Log.d("取出asdasdasd",sp.getString("sessionId","0"));
         return sp.getString("sessionId","0");
     }
 }
