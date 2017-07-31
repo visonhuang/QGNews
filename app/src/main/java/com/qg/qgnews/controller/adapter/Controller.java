@@ -64,7 +64,6 @@ public class Controller {
 
 
     }
-
     public static void RequestNewsDetial(final int newsId, final OnRequestListener listener) {
         new Thread(new Runnable() {
             @Override
