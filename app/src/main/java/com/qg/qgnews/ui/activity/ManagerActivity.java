@@ -51,13 +51,13 @@ public class ManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.manager_activity_toolbar);
+  /*      Toolbar toolbar = (Toolbar) findViewById(R.id.manager_activity_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
-        }
+        }  */
 
         tabLayout = (TabLayout) findViewById(R.id.manager_tabLayout);
         viewPager = (ViewPager) findViewById(R.id.manager_viewPager);
@@ -131,6 +131,7 @@ public class ManagerActivity extends AppCompatActivity {
                 break;
             case R.id.manager_menu_check:
                 //查看附件下载
+
                 break;
             default:
         }

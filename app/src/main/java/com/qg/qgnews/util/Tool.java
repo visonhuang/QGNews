@@ -168,7 +168,8 @@ public class Tool {
     }
 
     public static boolean isEmail(String email) {
-        return true;
+
+        return email.matches("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
     }
 
     public static int getFileIcon(File file) {

@@ -13,19 +13,19 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_width="28dp"
+            android:layout_height="wrap_content" />
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="top"
-            android:src="@drawable/login_user"/>
+            android:src="@drawable/login_user" />
 
         <EditText
             android:id="@+id/user"
-            android:layout_width="280dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="50dp"
             android:ems="10"
             android:hint="UserName"
@@ -36,12 +36,11 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_width="28dp"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -69,9 +68,8 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_width="28dp"
+            android:layout_height="wrap_content" />
 
         <ImageView
             android:layout_width="40dp"
@@ -81,7 +79,8 @@
 
         <EditText
             android:id="@+id/password"
-            android:layout_width="280dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="50dp"
             android:ems="10"
             android:hint="Password"
@@ -95,9 +94,8 @@
             android:visibility="gone"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_width="28dp"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -126,7 +124,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="33dp"
+            android:layout_width="30dp"
             android:layout_height="wrap_content" />
 
         <Button
@@ -137,7 +135,7 @@
             android:text="登录" />
 
         <TextView
-            android:layout_width="33dp"
+            android:layout_width="30dp"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
@@ -151,7 +149,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="33dp"
+            android:layout_width="30dp"
             android:layout_height="wrap_content" />
 
         <Button
@@ -162,10 +160,14 @@
             android:text="注册" />
 
         <TextView
-            android:layout_width="33dp"
+            android:layout_width="30dp"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="3dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

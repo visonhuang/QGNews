@@ -56,6 +56,7 @@ public class ManagerPersonE extends Fragment {
             switch (msg.what) {
                 case OK :
                     //刷新ListView（部分管理员）
+                    refreshLayout.setRefreshing(false);
                     ManagerPersonEAdapter managerPersonEAdapter = new ManagerPersonEAdapter(getContext(),R.layout.manager_item,managers);
                     listView.setAdapter(managerPersonEAdapter);
                     break;
@@ -74,7 +75,7 @@ public class ManagerPersonE extends Fragment {
         setViewOnclick();
 
 
-        Manager manager = new Manager();
+  /*      Manager manager = new Manager();
         manager.setManagerName("6666");
         manager.setManagerStatus("待审批");
         for (int i = 0;i < 10;i++) {
@@ -82,7 +83,7 @@ public class ManagerPersonE extends Fragment {
         }
 
         ManagerPersonEAdapter managerPersonEAdapter = new ManagerPersonEAdapter(getContext(),R.layout.manager_item,managers);
-        listView.setAdapter(managerPersonEAdapter);
+        listView.setAdapter(managerPersonEAdapter);  */
 
 
 
@@ -97,7 +98,7 @@ public class ManagerPersonE extends Fragment {
                     @Override
                     public void run() {
                         //接受数据
-                        String respose = Request.RequestWithNoString("http://ip:80/admin/showmanagerapproval");
+                        String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
                         Gson gson = new Gson();
                         FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                         String data = feedBack.getData();
@@ -108,7 +109,7 @@ public class ManagerPersonE extends Fragment {
                         handler.sendMessage(message);
 
                     }
-                });
+                }).start();
             }
         });
 
@@ -116,7 +117,8 @@ public class ManagerPersonE extends Fragment {
             @Override
             public void run() {
                 //接受数据
-                String respose = Request.RequestWithNoString("http://ip:80/admin/showmanagerapproval");
+                String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                Log.d(TAG, "77777777777" + respose);
                 Gson gson = new Gson();
                 FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                 String data = feedBack.getData();
@@ -127,7 +129,7 @@ public class ManagerPersonE extends Fragment {
                 handler.sendMessage(message);
 
             }
-        });
+        }).start();
 
 
         return view;
@@ -149,7 +151,7 @@ public class ManagerPersonE extends Fragment {
 
                 Log.d(TAG, "onItemClick: 999999999999999999999999999");
 
-                if (managerStatus.equals("待审批")) {
+                if (managerStatus.equals("未审批")) {
                     Log.d(TAG, "onItemClick: 00000000000000000000000000");
                     final AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     alert.setTitle("审批中");
@@ -172,6 +174,24 @@ public class ManagerPersonE extends Fragment {
                                         Tool.toast("已通过审批");
                                     }
                                     Status.statusResponse(feedBack.getState());
+                                }
+                            }).start();
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //接受数据
+                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                                    Log.d(TAG, "77777777777" + respose);
+                                    Gson gson = new Gson();
+                                    FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                                    String data = feedBack.getData();
+                                    managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+
+                                    Message message = new Message();
+                                    message.what = OK;
+                                    handler.sendMessage(message);
+
                                 }
                             }).start();
                         }
@@ -198,6 +218,28 @@ public class ManagerPersonE extends Fragment {
                                 }
                             }).start();
 
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //接受数据
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                                    Gson gson = new Gson();
+                                    FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                                    String data = feedBack.getData();
+                                    managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+
+                                    Message message = new Message();
+                                    message.what = OK;
+                                    handler.sendMessage(message);
+
+                                    Log.d(TAG, "888888888888888888" + "已拒绝");
+                                }
+                            }).start();
 
                         }
                     });
@@ -217,7 +259,7 @@ public class ManagerPersonE extends Fragment {
                 String password = manager.getManagerPassword();
                 final int id = manager.getManagerId();
 
-                if (managerStatus.equals("待审批")) {
+                if (managerStatus.equals("未审批")) {
                     final AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     alert.setTitle("审批中");
                     alert.setMessage("姓名：" + name + "\n" + "账号：" + account + "\n" + "密码：" + password);
@@ -243,6 +285,23 @@ public class ManagerPersonE extends Fragment {
                                 }
                             }).start();
 
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //接受数据
+                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                                    Log.d(TAG, "77777777777" + respose);
+                                    Gson gson = new Gson();
+                                    FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                                    String data = feedBack.getData();
+                                    managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+
+                                    Message message = new Message();
+                                    message.what = OK;
+                                    handler.sendMessage(message);
+
+                                }
+                            }).start();
 
                         }
                     });
@@ -268,6 +327,23 @@ public class ManagerPersonE extends Fragment {
                                 }
                             }).start();
 
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //接受数据
+                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                                    Log.d(TAG, "77777777777" + respose);
+                                    Gson gson = new Gson();
+                                    FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                                    String data = feedBack.getData();
+                                    managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+
+                                    Message message = new Message();
+                                    message.what = OK;
+                                    handler.sendMessage(message);
+
+                                }
+                            }).start();
                         }
                     });
                     alert.create().show();

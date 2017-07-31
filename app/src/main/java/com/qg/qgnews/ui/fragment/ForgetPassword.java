@@ -113,22 +113,26 @@ public class ForgetPassword extends Fragment {
                         manager.setManagerAccount(user.getText().toString());
                         String line = gson.toJson(manager);
                         Log.d(TAG, line);
-                        String response = Request.RequestWithString("http://192.168.43.142:8080/admin/sendverifycode",line);
+                        String response = Request.RequestWithSession("http://192.168.43.141:8080/admin/sendverifycode",line,true);
                         Log.d(TAG, line);
                         FeedBack feedBack = gson.fromJson(response,FeedBack.class);
-                        int state = feedBack.getState();
-                        if (state == 1) {
-                            Tool.toast("发送验证码成功");
-                        } else if (state == 5000) {
-                            Tool.toast("服务器异常");
-                        } else if (state == 3) {
-                            Tool.toast("邮箱不存在");
-                        } else if (state == 4) {
-                            Tool.toast("邮箱为空");
-                        } else if (state == 5) {
-                            Tool.toast("密码为空");
-                        } else if (state == 6) {
-                            Tool.toast("邮箱格式不正确");
+                        if (feedBack == null) {
+                            Tool.toast("服务器无返回");
+                        } else {
+                            int state = feedBack.getState();
+                            if (state == 1) {
+                                Tool.toast("发送验证码成功");
+                            } else if (state == 5000) {
+                                Tool.toast("服务器异常");
+                            } else if (state == 3) {
+                                Tool.toast("邮箱不存在");
+                            } else if (state == 4) {
+                                Tool.toast("邮箱为空");
+                            } else if (state == 5) {
+                                Tool.toast("密码为空");
+                            } else if (state == 6) {
+                                Tool.toast("邮箱格式不正确");
+                            }
                         }
                     }
                 }).start();
@@ -152,7 +156,7 @@ public class ForgetPassword extends Fragment {
                         map.put("verifyCode",numberS);
                         String line = gson.toJson(map);
                         Log.d(TAG, line);
-                        String response = Request.RequestWithString("http://192.168.43.142:8080/admin/setnewpassword",line);
+                        String response = Request.RequestWithSession("http://192.168.43.141:8080/admin/setnewpassword",line,false);
                         Log.d(TAG, response);
                         FeedBack feedBack = gson.fromJson(response,FeedBack.class);
                         int state = feedBack.getState();

@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
@@ -40,14 +39,19 @@ public class Request {
 
     private static BufferedOutputStream ds;
     private static boolean mIsStopUpload;
-
+    public static String session = "0";
     /**
+     * @param idFrom 从这个id往下请求十条新闻
      * @return 新闻列表，最大十条
      */
-    public static FeedBack RequestNews() {
+    public static FeedBack RequestNews(int idFrom) {
         Gson gson = new Gson();
-
-        return gson.fromJson(RequestWithNoString(RequestAdress.REQUEST_NEWS), FeedBack.class);
+        //模拟数据
+        List<News> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add(new News());
+        }
+        return new FeedBack(1, gson.toJson(list));
     }
 
     /**
@@ -57,7 +61,6 @@ public class Request {
      */
     @NonNull
     public static String RequestWithString(String URl, String content) {
-        Log.d("asdasd", content);
         String end = "\r\n";
         String twoHyphens = "--";
         String boundary = "*****";
@@ -65,7 +68,7 @@ public class Request {
         InputStream inputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader reader = null;
-        StringBuffer resultBuffer = new StringBuffer("{\"state\":0}");
+        StringBuffer resultBuffer = new StringBuffer();
         String tempLine = null;
         try {
             URL url = new URL(URl);
@@ -89,11 +92,12 @@ public class Request {
             inputStreamReader = new InputStreamReader(inputStream, "utf-8");
             reader = new BufferedReader(inputStreamReader);
             tempLine = null;
+            resultBuffer = new StringBuffer();
+
             while ((tempLine = reader.readLine()) != null) {
                 resultBuffer.append(tempLine);
                 resultBuffer.append("\n");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -129,8 +133,8 @@ public class Request {
                     e.printStackTrace();
                 }
             }
+            return resultBuffer.toString();
         }
-        return resultBuffer.toString();
     }
 
     /**
@@ -139,7 +143,7 @@ public class Request {
      * @param files 附件路径数组
      * @return feedback字符串，若有异常则为  ""
      */
-    public static String upLoadNews(News news, Bitmap cover, final String[] files, final PublishNewsActivity.UploadListener listener) {
+    public static String upLoadNews(News news, Bitmap cover,final String[] files, final PublishNewsActivity.UploadListener listener) {
         PublishNewsActivity.setStopUploadListener(new PublishNewsActivity.StopUploadListener() {
             @Override
             public void stopUpload() {
@@ -179,17 +183,17 @@ public class Request {
 
 
             //上传封面
-            if (cover != null) {
+           if (cover != null) {
                 ds.write((twoHyphens + boundary + end).getBytes());
-                ds.write(("Content-Disposition: form-data; " + "name=\"file" + "\";filename=\"" + "index.png"
+                ds.write(("Content-Disposition: form-data; " + "name=\"file" + "\";filename=\"" + "/index.png"
                         + "\"" + end).getBytes());
                 ds.write(("Content-Type: application/octet-stream; charset=UTF-8").getBytes());
                 ds.write((end + end).getBytes());
                 ByteArrayInputStream coverIps = Tool.Bitmap2Bytes(cover);
                 byte[] b = new byte[1024];
                 int lenth;
-                while ((lenth = coverIps.read(b)) != -1) {
-                    if (mIsStopUpload) {
+                while((lenth=coverIps.read(b)) != -1){
+                    if(mIsStopUpload){
                         ds.close();
                         return null;
                     }
@@ -200,7 +204,7 @@ public class Request {
                 Tool.toast("封面上传完成");
             }
 
-            new AsyncTask<Void, Integer, Boolean>() {
+            new AsyncTask<Void, Integer, Boolean>(){
 
                 @Override
                 protected void onPostExecute(Boolean aBoolean) {
@@ -212,10 +216,10 @@ public class Request {
                     //上传附件
                     long uploadedBytes = 0;
                     long sumBytes = 0;
-                    for (String filePath : files) {
+                    for(String filePath : files){
                         sumBytes += new File(filePath).length();
                     }
-                    try {
+                    try{
                         for (int i = 0; i < files.length; i++) {
                             System.out.println("上传文件" + i);
                             String uploadFile = files[i];
@@ -229,13 +233,13 @@ public class Request {
                             byte[] buffer = new byte[bufferSize];
                             int length;
                             while ((length = fStream.read(buffer)) != -1) {
-                                if (mIsStopUpload) {
+                                if(mIsStopUpload){
                                     ds.close();
                                     return null;
                                 }
                                 ds.write(buffer, 0, length);
                                 uploadedBytes += length;
-                                publishProgress((int) (100 * uploadedBytes / sumBytes));
+                                publishProgress((int)(100 * uploadedBytes / sumBytes));
                                 Log.d("上传中", "");
                             }
                             ds.write(end.getBytes());
@@ -245,7 +249,7 @@ public class Request {
                         ds.write((twoHyphens + boundary + twoHyphens + end).getBytes());
                /* close streams */
                         ds.flush();
-                    } catch (Exception e) {
+                    }catch (Exception e){
                         e.printStackTrace();
                         return false;
                     }
@@ -387,12 +391,10 @@ public class Request {
                     e.printStackTrace();
                 }
             }
-            Log.d("asdasd", resultBuffer.toString());
             return resultBuffer.toString();
         }
     }
-
-    public static Bitmap getCover(String url) {
+    public static Bitmap getCover(String url){
         InputStream inputStream = null;
         try {
             URLConnection urlConnection = new URL(url).openConnection();
@@ -421,15 +423,16 @@ public class Request {
         return BitmapFactory.decodeResource(App.context.getResources(), R.drawable.cover_not_found);
     }
 
-    public static FeedBack RequestWithString2(String URl, String content) {
-        Log.d("asdasd", content);
+
+    public static String RequestWithSession(String URl, String content,boolean isGetSession) {
         String end = "\r\n";
         String twoHyphens = "--";
         String boundary = "*****";
         BufferedOutputStream ds = null;
         InputStream inputStream = null;
         InputStreamReader inputStreamReader = null;
-        StringBuffer resultBuffer = new StringBuffer("{\"state\":0}");
+        BufferedReader reader = null;
+        StringBuffer resultBuffer = new StringBuffer();
         String tempLine = null;
         try {
             URL url = new URL(URl);
@@ -443,18 +446,30 @@ public class Request {
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
             httpURLConnection.setRequestProperty("Charset", "utf-8");
+            if (!isGetSession) {
+                httpURLConnection.setRequestProperty("Cookie",session);
+            }
             // 设置DataOutputStream
             ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
             ds.write(content.getBytes());
                /* close streams */
             ds.flush();
+            Log.d("asdasd",session);
             // Tool.saveSessionId(httpURLConnection);
+            String cookieValue = httpURLConnection.getHeaderField("Set-Cookie");
+            if (isGetSession) {
+                session = cookieValue.substring(0, cookieValue.indexOf(";"));
+            }
             inputStream = httpURLConnection.getInputStream();
             inputStreamReader = new InputStreamReader(inputStream, "utf-8");
-            JsonReader reader = new JsonReader(new InputStreamReader(inputStream));
-            reader.setLenient(true);
-            Gson gson = new Gson();
-            return gson.fromJson(reader, FeedBack.class);
+            reader = new BufferedReader(inputStreamReader);
+            tempLine = null;
+            resultBuffer = new StringBuffer();
+
+            while ((tempLine = reader.readLine()) != null) {
+                resultBuffer.append(tempLine);
+                resultBuffer.append("\n");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -466,7 +481,14 @@ public class Request {
                     e.printStackTrace();
                 }
             }
-
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
             if (inputStreamReader != null) {
                 try {
                     inputStreamReader.close();
@@ -483,8 +505,8 @@ public class Request {
                     e.printStackTrace();
                 }
             }
+            return resultBuffer.toString();
         }
-        return new FeedBack(0, "");
     }
 
 }

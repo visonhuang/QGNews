@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
@@ -25,8 +36,14 @@ import com.qg.qgnews.util.Tool;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by linzongzhan on 2017/7/29.
@@ -103,13 +120,32 @@ public class Regiister extends Fragment {
                         @Override
                         public void run() {
                             Gson gson = new Gson();
+                      /*      Gson gson = new GsonBuilder().
+                                    registerTypeAdapter(Double.class, (JsonSerializer<Double>) (src, typeOfSrc, context) -> {
+                                        if (src == src.longValue())
+                                            return new JsonPrimitive(src.longValue());
+                                        return new JsonPrimitive(src);
+                                    }).create(); */
                             Manager manager = new Manager();
                             manager.setManagerAccount(user.getText().toString());
                             manager.setManagerPassword(password.getText().toString());
                             manager.setManagerName(userName.getText().toString());
                             String line = gson.toJson(manager);
-                            String response = Request.RequestWithString("http://192.168.43.142:8080/admin/addaccount",line);
+                            String response = Request.RequestWithString("http://192.168.43.141:8080/admin/addaccount",line);
                             Gson gson1 = new Gson();
+                            Log.d(TAG, response);
+                     /*       Gson gson1 = new GsonBuilder().
+                                    registerTypeAdapter(Double.class, (JsonSerializer<Double>) (src, typeOfSrc, context) -> {
+                                        if (src == src.longValue())
+                                            return new JsonPrimitive(src.longValue());
+                                        return new JsonPrimitive(src);
+                                    }).create();  */
+
+
+
+                         //   Map<String, Integer> map = gson1.fromJson(response, new TypeToken<Map<String, Integer>>(){}.getType());
+                       //     System.out.println(map);
+                       //     Log.d("3333333333333333", map+"");
                             FeedBack feedBack = gson1.fromJson(response,FeedBack.class);
                             int state = feedBack.getState();
                             if (state == 1) {

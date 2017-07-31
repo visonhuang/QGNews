@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -26,8 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ManagerNews extends AppCompatActivity {
+public class ManagerNews extends AppCompatActivity implements NewsListFrag.OnNewsItemClickListener {
 
+    private static final String TAG = "ManagerNews";
+    
     int id;
 
     private FeedBack feedBack;
@@ -40,11 +44,14 @@ public class ManagerNews extends AppCompatActivity {
 
     public static final int GET = 1;
 
+    NewsListFrag fragment;
+
     private Handler handler = new Handler() {
         public void handleMessage (Message message) {
             switch (message.what) {
                 case GET:
-                    NewsListFrag fragment = new NewsListFrag();
+                     fragment = new NewsListFrag();
+                    fragment.setOnNewsItemClickListener(ManagerNews.this);
                     fragment.setOnRefreshOrLoadIngListener(new NewsListFrag.OnRefreshOrLoadIngListener() {
                         @Override
                         public void onRefresh(NewsListAdapter2 adapter, List<News> oldList) {
@@ -60,6 +67,7 @@ public class ManagerNews extends AppCompatActivity {
 
                         }
                     });
+                    replaceFragment(fragment);
                     break;
                 default:
             }
@@ -85,7 +93,11 @@ public class ManagerNews extends AppCompatActivity {
                 map.put("managerId",id);
                 String line = gson.toJson(map);
 
+                Log.d(TAG, "0000000000000000" + line);
+
                 String respose = Request.RequestWithString(RequestAdress.SHOWOWNNEWS,line);
+
+                Log.d(TAG, "111111111111111" + respose);
                 feedBack = gson.fromJson(respose,FeedBack.class);
                 String data = feedBack.getData();
                 newsLists = gson.fromJson(data,new TypeToken<List<News>>(){}.getType());
@@ -101,12 +113,17 @@ public class ManagerNews extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.manager_news_frameLayout,fragment);
-        fragmentTransaction.addToBackStack(null);
+      //  fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
     private void getMessage () {
         Intent intent = getIntent();
         id = intent.getIntExtra("id",0);
+    }
+
+    @Override
+    public void OnItemClickListener(View v, int pos, News news) {
+
     }
 }

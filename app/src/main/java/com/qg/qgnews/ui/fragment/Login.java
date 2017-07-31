@@ -100,7 +100,7 @@ public class Login extends Fragment {
             @Override
             public void onClick(View view) {
                 String email = user.getText().toString();
-                if (user.getText().toString().equals("1") && password.getText().toString().equals("1")) {
+         /*       if (user.getText().toString().equals("1") && password.getText().toString().equals("1")) {
                     Intent intent = new Intent(getContext(),MainActivity.class);
                     intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
                     startActivity(intent);
@@ -112,8 +112,8 @@ public class Login extends Fragment {
                     startActivity(intent);
                     LoginActivity loginActivity = (LoginActivity) getActivity();
         //            loginActivity.finish();
-                }
-         /*       if (!Tool.isEmail(email)) {
+                }*/
+                if (!Tool.isEmail(email)) {
                     Log.d(TAG, ""+email);
                     Tool.toast("邮箱格式不正确");
                 } else {
@@ -126,49 +126,54 @@ public class Login extends Fragment {
                             manager.setManagerAccount(user.getText().toString());
                             manager.setManagerPassword(password.getText().toString());
                             String line = gson.toJson(manager);
-                            String respose = Request.RequestWithString("http://192.168.43.142:8080/admin/login",line);
+                            String respose = Request.RequestWithString("http://192.168.43.141:8080/admin/login",line);
                             Gson gson1 = new Gson();
                             FeedBack feedBack = gson1.fromJson(respose,FeedBack.class);
-                            int state = feedBack.getState();
-                            if (state == 1) {
-                                //进入主界面
-                                Manager message = gson1.fromJson(feedBack.getData(),Manager.class);
-                                Tool.setCurrentManager(message);
-                                Intent intent = new Intent(getContext(), MainActivity.class);
-                                if (message.getManagerSuper() == 1) {
-                                    intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
-                                } else if (message.getManagerSuper() == 0) {
-                                    intent.putExtra("visit_mode",MainActivity.MODE_SUPPER_MANAGER);
+                            if (feedBack == null) {
+                                Tool.toast("服务器无返回");
+                            } else {
+                                int state = feedBack.getState();
+                                if (state == 1) {
+                                    //进入主界面
+                                    Manager message = gson1.fromJson(feedBack.getData(),Manager.class);
+                                    Tool.setCurrentManager(message);
+                                    Intent intent = new Intent(getContext(), MainActivity.class);
+                                    if (message.getManagerSuper() == 1) {
+                                        intent.putExtra("visit_mode",MainActivity.MODE_SUPPER_MANAGER);
+                                    } else if (message.getManagerSuper() == 0) {
+                                        intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
+                                    }
+                                    startActivity(intent);
+                                    LoginActivity loginActivity = (LoginActivity) getActivity();
+                                    //        loginActivity.finish();
+                                    Tool.toast("登录成功");
+                                } else if (state == 3) {
+                                    Tool.toast("邮箱不存在");
+                                } else if (state == 4) {
+                                    Tool.toast("邮箱为空");
+                                } else if (state == 5) {
+                                    Tool.toast("密码为空");
+                                } else if (state == 6) {
+                                    Tool.toast("邮箱格式不正确");
+                                } else if (state == 8) {
+                                    Tool.toast("密码错误");
+                                } else if (state == 9) {
+                                    Tool.toast("账户未激活");
+                                } else if (state == 10) {
+                                    Tool.toast("账户未审批");
+                                } else if (state == 11) {
+                                    Tool.toast("账户被封了");
+                                } else if (state == 5000) {
+                                    Tool.toast("服务器异常");
+                                } else if (state == 17) {
+                                    Tool.toast("账户已登录，不能重复登录");
                                 }
-                                startActivity(intent);
-                                LoginActivity loginActivity = (LoginActivity) getActivity();
-                        //        loginActivity.finish();
-                                Tool.toast("登录成功");
-                            } else if (state == 3) {
-                                Tool.toast("邮箱不存在");
-                            } else if (state == 4) {
-                                Tool.toast("邮箱为空");
-                            } else if (state == 5) {
-                                Tool.toast("密码为空");
-                            } else if (state == 6) {
-                                Tool.toast("邮箱格式不正确");
-                            } else if (state == 8) {
-                                Tool.toast("密码错误");
-                            } else if (state == 9) {
-                                Tool.toast("账户未激活");
-                            } else if (state == 10) {
-                                Tool.toast("账户未审批");
-                            } else if (state == 11) {
-                                Tool.toast("账户被封了");
-                            } else if (state == 5000) {
-                                Tool.toast("服务器异常");
-                            } else if (state == 17) {
-                                Tool.tosat("账户已登录，不能重复登录");
                             }
+
                         }
                     }).start();
 
-                } */
+                }
             }
         });
 
