@@ -73,6 +73,11 @@ public class RequestAdress {
      */
     public static final String LOGOUT = HOST +"admin/logout";
 
+    public static final String AGRESS_APPLY = HOST + "admin/managerapproval";
 
+    public static final String DISAGRESS_APPLY = HOST + "admin/approvalrefuse";
 
+    public static final String RESTRICTACCOUNT = HOST + "admin/restrictaccount";
+
+    public static final String SHOWOWNNEWS = HOST + "admin/showownnews";
 }

@@ -118,7 +118,15 @@ public class ForgetPassword extends Fragment {
                             Tool.toast("发送验证码成功");
                         } else if (state == 5000) {
                             Tool.toast("服务器异常");
-                        } //等等等等等等等等
+                        } else if (state == 3) {
+                            Tool.toast("邮箱不存在");
+                        } else if (state == 4) {
+                            Tool.toast("邮箱为空");
+                        } else if (state == 5) {
+                            Tool.toast("密码为空");
+                        } else if (state == 6) {
+                            Tool.toast("邮箱格式不正确");
+                        }
                     }
                 });
             }
@@ -127,7 +135,7 @@ public class ForgetPassword extends Fragment {
         change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //注册
+                //设置新密码
                 Gson gson = new Gson();
                 String nameS = user.getText().toString();
                 String passwordS = password.getText().toString();
@@ -135,13 +143,31 @@ public class ForgetPassword extends Fragment {
                 Map<String,String> map = new HashMap<String, String>();
                 map.put("managerAccount",nameS);
                 map.put("verifyCode",passwordS);
-                map.put("managerPassword",nameS);
+                map.put("managerPassword",numberS);
                 String line = gson.toJson(map);
                 String reponse = Request.RequestWithString("http://192.168.3.65:8080/admin/setnewpassword",line);
                 FeedBack feedBack = gson.fromJson(reponse,FeedBack.class);
                 int state = feedBack.getState();
                 if (state == 1) {
                     Tool.toast("修改密码成功");
+                } else if (state == 3) {
+                    Tool.toast("邮箱不存在");
+                } else if (state == 4) {
+                    Tool.toast("邮箱为空");
+                } else if (state == 5) {
+                    Tool.toast("密码为空");
+                } else if (state == 6) {
+                    Tool.toast("邮箱格式不正确");
+                } else if (state == 8) {
+                    Tool.toast("密码错误");
+                } else if (state == 9) {
+                    Tool.toast("账户未激活");
+                } else if (state == 10) {
+                    Tool.toast("账户未审批");
+                } else if (state == 11) {
+                    Tool.toast("账户被封了");
+                } else if (state == 5000) {
+                    Tool.toast("服务器异常");
                 }
 
 
