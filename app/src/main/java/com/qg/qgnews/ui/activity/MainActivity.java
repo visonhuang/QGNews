@@ -291,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this, NewsMessageActivity.class);
         intent.putExtra("news_list", (Serializable) newsListFrag.dataNews);
         intent.putExtra("start_pos", pos);
+        intent.putExtra("mode",NewsMessageActivity.MODE_MANAGE);
         startActivity(intent);
     }
 
