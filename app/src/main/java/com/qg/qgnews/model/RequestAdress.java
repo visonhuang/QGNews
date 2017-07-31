@@ -10,7 +10,7 @@ public class RequestAdress {
     /**
      * 上传新闻url
      */
-    public static final String UPLOAD_NEWS = HOST + "Hello/admin/addnews";
+    public static final String UPLOAD_NEWS = HOST + "admin/addnews";
     /**
      * 删除新闻
      */

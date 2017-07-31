@@ -44,7 +44,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_weight="4"
-                app:cardBackgroundColor="#90ffffff">
+                app:cardBackgroundColor="#e0ffffff">
 
                 <EditText
                     android:id="@+id/news_title_text"
@@ -165,7 +165,7 @@
                         android:layout_marginLeft="15dp"
                         android:layout_marginRight="15dp"
                         android:layout_marginTop="15dp"
-                        app:cardBackgroundColor="#90ffffff"
+                        app:cardBackgroundColor="#e0ffffff"
                         app:cardCornerRadius="4dp">
 
 
@@ -207,7 +207,7 @@
                     android:id="@+id/file_container_linear"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:background="#90ffffff"
+                    android:background="#f0ffffff"
                     android:orientation="vertical"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentStart="true"

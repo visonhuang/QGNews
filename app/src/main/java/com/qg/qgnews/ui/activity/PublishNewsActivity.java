@@ -30,6 +30,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -99,6 +101,18 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT);
+        }
         setContentView(R.layout.activity_publish_news);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -185,7 +199,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 String newsAuthor = "我是新闻作者";
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();
-                String newsFace = null;
+                String newsFace = "343";
                 String filesUuid = UUID.randomUUID().toString();
                 News news = new News(1,1,newsTitle,newsBody,newsAuthor,newsTime,newsUuid,
                         newsFace, filesUuid, null);
@@ -481,7 +495,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 Tool.toast("封面修改成功");
             }
             hasChooseCover = true;
-            mCoverBitmap = Tool.decodeSampledBitmapFromFile(imagePath, 1080, 750);
+            mCoverBitmap = Tool.decodeSampledBitmapFromFile(imagePath, 540, 375);
         }
     }
 
@@ -507,7 +521,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         }
         return false;
     }
-    
+
     public static void setStopUploadListener(StopUploadListener listener){
         mStopUploadListener = listener;
     }
