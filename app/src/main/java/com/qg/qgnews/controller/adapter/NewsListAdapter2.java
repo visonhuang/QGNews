@@ -12,8 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.News;
+import com.qg.qgnews.model.PicAsnycTask;
 
 import java.util.List;
 
@@ -43,6 +45,7 @@ public class NewsListAdapter2 extends ArrayAdapter<News> {
             itemView = convertView;
             holder = (ViewHolder) itemView.getTag();
         }
+        new PicAsnycTask(holder.cover,getItem(position), App.bitmapLruCache).execute();
         //TODO 显示新闻
         return itemView;
     }

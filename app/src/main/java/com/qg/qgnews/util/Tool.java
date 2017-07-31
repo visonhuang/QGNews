@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -148,7 +149,7 @@ public class Tool {
 
     public static String getFileSavePath() {
         SharedPreferences sp = App.context.getSharedPreferences("path", Context.MODE_PRIVATE);
-        File file = new File(sp.getString("path", Environment.getExternalStorageDirectory().getPath())+"//"+"QgNewsDownload");
+        File file = new File(sp.getString("path", Environment.getExternalStorageDirectory().getPath()) + "//" + "QgNewsDownload");
         if (!file.exists()) {
             file.mkdirs();
         }
@@ -191,6 +192,7 @@ public class Tool {
             return R.drawable.ic_unknow;
         }
     }
+
     public static int getFileIcon(String file) {
         if (file == null) {
             throw new IllegalArgumentException("filename 不能为空");
@@ -213,9 +215,8 @@ public class Tool {
     }
 
     /**
-     *
-     * @param pathName 图片路径
-     * @param reqWidth 控件的宽
+     * @param pathName  图片路径
+     * @param reqWidth  控件的宽
      * @param reqHeight 控件的高
      * @return
      */
@@ -230,9 +231,8 @@ public class Tool {
     }
 
     /**
-     *
-     * @param options 源图片属性
-     * @param reqWidth 控件的宽
+     * @param options   源图片属性
+     * @param reqWidth  控件的宽
      * @param reqHeight 控件的高
      * @return
      */
@@ -253,17 +253,33 @@ public class Tool {
     }
 
     //判断是否为图片
-    public static boolean isPicture(String imagePath){
+    public static boolean isPicture(String imagePath) {
         String[] imageType = {"png", "jpeg", "bmp", "gif"};
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(imagePath, options);
         String type = options.outMimeType.substring(6);
-        for(String t : imageType){
-            if (t.equals(type)){
+        for (String t : imageType) {
+            if (t.equals(type)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static void saveSessionId(HttpURLConnection connection) {
+        if (connection != null) {
+            String cookieValue = connection.getHeaderField("Set-Cookie");
+            String sessionId = cookieValue.substring(0, cookieValue.indexOf(";"));
+            SharedPreferences.Editor editor = App.context.getSharedPreferences("sessionId", Context.MODE_PRIVATE).edit();
+            editor.putString("sessionId", sessionId);
+            editor.apply();
+        }
+
+    }
+
+    public static String getSessionId() {
+        SharedPreferences sp = App.context.getSharedPreferences("path", Context.MODE_PRIVATE);
+        return sp.getString("sessionId","0");
     }
 }

@@ -295,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onRefresh(final NewsListAdapter2 adapter, final List<News> oldList) {
+        App.bitmapLruCache.evictAll();
         Controller.getInstance().RequestNews(0, new Controller.OnRequestNewsListener() {
             @Override
             public void onSuccess(final List<News> list) {
