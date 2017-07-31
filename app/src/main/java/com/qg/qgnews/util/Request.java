@@ -1,11 +1,15 @@
 package com.qg.qgnews.util;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.qg.qgnews.App;
+import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.model.RequestAdress;
@@ -35,6 +39,7 @@ public class Request {
 
     private static BufferedOutputStream ds;
     private static boolean mIsStopUpload;
+    public static String session = "0";
     /**
      * @param idFrom 从这个id往下请求十条新闻
      * @return 新闻列表，最大十条
@@ -77,11 +82,19 @@ public class Request {
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
             httpURLConnection.setRequestProperty("Charset", "utf-8");
+            httpURLConnection.setRequestProperty("Cookie",session);
             // 设置DataOutputStream
             ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
             ds.write(content.getBytes());
                /* close streams */
             ds.flush();
+            String cookieValue = httpURLConnection.getHeaderField("Set-Cookie");
+            if (session.equals("0")) {
+                session= cookieValue.substring(0, cookieValue.indexOf(";"));
+
+            }
+            Log.d("asdasd",session);
+           // Tool.saveSessionId(httpURLConnection);
             inputStream = httpURLConnection.getInputStream();
             inputStreamReader = new InputStreamReader(inputStream, "utf-8");
             reader = new BufferedReader(inputStreamReader);
@@ -387,6 +400,34 @@ public class Request {
             }
             return resultBuffer.toString();
         }
+    }
+    public static Bitmap getCover(String url){
+        InputStream inputStream = null;
+        try {
+            URLConnection urlConnection = new URL(url).openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.setConnectTimeout(5000);
+            httpURLConnection.setReadTimeout(5000);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setRequestMethod("GET");
+            inputStream = httpURLConnection.getInputStream();
+            return BitmapFactory.decodeStream(inputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        return BitmapFactory.decodeResource(App.context.getResources(), R.drawable.cover_not_found);
     }
 
 }

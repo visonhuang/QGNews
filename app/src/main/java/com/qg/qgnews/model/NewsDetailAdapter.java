@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
@@ -21,10 +22,12 @@ import java.util.List;
 public class NewsDetailAdapter extends PagerAdapter {
     private List<View> viewList;
     Context context;
+    List<News> newsList;
 
-    public NewsDetailAdapter(List<View> viewList, Context context) {
+    public NewsDetailAdapter(List<View> viewList, List<News> newsList,Context context) {
         this.viewList = viewList;
         this.context = context;
+        this.newsList = newsList;
     }
 
     @Override
@@ -41,6 +44,9 @@ public class NewsDetailAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position,
                             Object object) {
+        if (position == viewList.size()) {
+            position--;
+        }
         // TODO Auto-generated method stub
         container.removeView(viewList.get(position));
     }
@@ -49,7 +55,9 @@ public class NewsDetailAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View view = viewList.get(position);
         RecyclerView viceFileList = (RecyclerView) view.findViewById(R.id.news_detial_vicefile_list);
+        TextView body = (TextView) view.findViewById(R.id.news_details_body);
         container.addView(view);
+        body.setText("wowowowo");
         viceFileList.setLayoutManager(new LinearLayoutManager(App.context));
         List<ViceFile> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -60,5 +68,10 @@ public class NewsDetailAdapter extends PagerAdapter {
         }
         viceFileList.setAdapter(new NewsDetialViecFileAdapter(context, list));
         return view;
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
     }
 }

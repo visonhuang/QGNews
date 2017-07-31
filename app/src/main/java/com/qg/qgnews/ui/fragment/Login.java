@@ -70,8 +70,6 @@ public class Login extends Fragment {
         viewOnclick();
         editViewOnclick();
 
-        Log.d(TAG, "onCreateVi88888888888888888888888888888888888888888888888888888888888888888888e");
-
         return view;
     }
 

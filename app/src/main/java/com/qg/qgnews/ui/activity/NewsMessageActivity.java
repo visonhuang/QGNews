@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -35,7 +37,11 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
     CollapsingToolbarLayout coll;
     List<News> newsList;
     List<View> viewList;
+    public static final int MODE_VISIT = 0;
+    public static final int MODE_MANAGE = 1;
+    private int mode = MODE_VISIT;
     int startPos;
+    int posNow;
     public DownLoadServer.DownLoadBinder binder;
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -58,8 +64,9 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
         Intent intent = getIntent();
         newsList = (List<News>) intent.getSerializableExtra("news_list");
         startPos = intent.getIntExtra("start_pos", 0);
-        Intent intent1 = new Intent(this,DownLoadServer.class);
-        bindService(intent1,connection,BIND_AUTO_CREATE);
+        mode = intent.getIntExtra("mode", MODE_VISIT);
+        Intent intent1 = new Intent(this, DownLoadServer.class);
+        bindService(intent1, connection, BIND_AUTO_CREATE);
         initView();
     }
 
@@ -93,11 +100,27 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
         for (int i = 0; i < newsList.size(); i++) {
             viewList.add(LayoutInflater.from(this).inflate(R.layout.news_details, null, false));
         }
-        viewPager.setAdapter(new NewsDetailAdapter(viewList,this));
+        viewPager.setAdapter(new NewsDetailAdapter(viewList, newsList,this));
         viewPager.setCurrentItem(startPos, true);
         viewPager.setOnPageChangeListener(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (mode == MODE_MANAGE) {
+            getMenuInflater().inflate(R.menu.news_detial_menu, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        newsList.remove(posNow);
+        viewList.remove(posNow);
+        viewPager.removeAllViews();
+        viewPager.getAdapter().notifyDataSetChanged();
+        return super.onOptionsItemSelected(item);
+    }
 
     //viewpager华东监听
     @Override
@@ -107,6 +130,7 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
 
     @Override
     public void onPageSelected(int position) {
+        posNow = position;
         if (position % 2 == 0) {
             cover.setImageResource(R.drawable.example);
         } else {
