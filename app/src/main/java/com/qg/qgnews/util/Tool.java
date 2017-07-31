@@ -272,7 +272,7 @@ public class Tool {
             String cookieValue = connection.getHeaderField("Set-Cookie");
             String sessionId = cookieValue.substring(0, cookieValue.indexOf(";"));
             SharedPreferences.Editor editor = App.context.getSharedPreferences("sessionId", Context.MODE_PRIVATE).edit();
-            editor.putString("sessionId", sessionId);
+            editor.putString("sessionId", sessionId.split("=")[1]);
             editor.apply();
         }
 
