@@ -208,7 +208,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 News news = new News(1,1,newsTitle,newsBody,newsAuthor,newsTime,newsUuid,
                         newsFace, filesUuid, null);
 
-                String response = Request.upLoadNews(news, mCoverBitmap, getFilePathArray(mFileList), new UploadListener() {
+                Request.upLoadNews(news, mCoverBitmap, getFilePathArray(mFileList), new UploadListener() {
                     @Override
                     public void showProgress() {
                         Tool.toast("文件开始上传");
@@ -222,19 +222,29 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void finishUpload() {
                     }
+
+                    @Override
+                    public void dealResult(String response) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        }).start();
+                        FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
+                        int status = feedBack.getState();
+                        if(status == 1){
+                            Tool.toast("新闻发布完成");
+                            mFab.setImageResource(R.drawable.ic_ok);
+                            mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
+                        }
+                        else if(status == 5000){
+                            Tool.toast("新闻发布失败");
+                        }
+                        mIsPublishing = false;
+                    }
                 });
 
-//                FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
-//                int status = feedBack.getState();
-//                if(status == 1){
-//                    Tool.toast("新闻发布完成");
-//                    mFab.setImageResource(R.drawable.ic_ok);
-//                    mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
-//                }
-//                else if(status == 5000){
-//                    Tool.toast("新闻发布失败");
-//                }
-                mIsPublishing = false;
             }
         }).start();
     }
@@ -538,6 +548,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         void showProgress();
         void freshProgress(int progress);
         void finishUpload();
+        void dealResult(String response);
     }
 
     public interface StopUploadListener{
