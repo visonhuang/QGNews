@@ -1,13 +1,19 @@
 package com.qg.qgnews.controller.adapter;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.qg.qgnews.App;
 import com.qg.qgnews.R;
+import com.qg.qgnews.ui.activity.PublishNewsActivity;
 import com.qg.qgnews.util.Tool;
 
 import java.io.File;
@@ -40,9 +46,37 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>{
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_item, parent, false);
-        ViewHolder holder = new ViewHolder(view);
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_item, parent, false);
+
+        final ViewHolder holder = new ViewHolder(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view.startAnimation(AnimationUtils.loadAnimation(parent.getContext(), R.anim.on_click));
+            }
+        });
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new AlertDialog.Builder(App.getActivityStack().lastElement())
+                        .setMessage("是否移除该附件")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(PublishNewsActivity.mIsPublishing){
+                                    return;
+                                }
+                                mMyFileList.remove(holder.getAdapterPosition());
+                                Tool.toast("移除附件成功");
+                                notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+                return  true;
+            }
+        });
         return holder;
     }
 

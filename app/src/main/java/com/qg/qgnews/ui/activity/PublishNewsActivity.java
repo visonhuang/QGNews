@@ -82,7 +82,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private static final int UPLOAD_OPEN = 1;
     private static final int UPLOAD_CLOSE = 0;
     private static int UploadButtonMode = UPLOAD_CLOSE;
-    private static boolean mIsPublishing;
+    public static boolean mIsPublishing;
     private static final int GET_FILE = 0;
     private static final int GET_PHOTO = 1;
     private static final int TYPE_CHOOSE_COVER = 0;
@@ -96,6 +96,8 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private TopBarBaseActivity.OnClickListener onClickListenerTopLeft;
     private TopBarBaseActivity.OnClickListener onClickListenerTopRight;
     private String mMenuStr;
+    private String mOldTitle;
+    private String mOldContent;
     private Bitmap mCoverBitmap;
 
     @Override
@@ -194,16 +196,17 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         new Thread(new Runnable() {
             @Override
             public void run() {
+                mOldTitle = mTitleText.getText().toString();
+                mOldContent = mContentText.getText().toString();
                 String newsTitle = mTitleText.getText().toString();
                 String newsBody = mContentText.getText().toString();
                 String newsAuthor = "我是新闻作者";
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();
-                String newsFace = "343";
+                String newsFace = "有封面";
                 String filesUuid = UUID.randomUUID().toString();
                 News news = new News(1,1,newsTitle,newsBody,newsAuthor,newsTime,newsUuid,
                         newsFace, filesUuid, null);
-                String filePath = "/storage/emulated/0/DCIM/Camera/IMG_20170711_232637.jpg";
 
                 String response = Request.upLoadNews(news, mCoverBitmap, getFilePathArray(mFileList), new UploadListener() {
                     @Override
@@ -221,16 +224,16 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
 
-                FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
-                int status = feedBack.getState();
-                if(status == 1){
-                    Tool.toast("新闻发布完成");
-                    mFab.setImageResource(R.drawable.ic_ok);
-                    mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
-                }
-                else if(status == 5000){
-                    Tool.toast("新闻发布失败");
-                }
+//                FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
+//                int status = feedBack.getState();
+//                if(status == 1){
+//                    Tool.toast("新闻发布完成");
+//                    mFab.setImageResource(R.drawable.ic_ok);
+//                    mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
+//                }
+//                else if(status == 5000){
+//                    Tool.toast("新闻发布失败");
+//                }
                 mIsPublishing = false;
             }
         }).start();
@@ -252,6 +255,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
             case R.id.floating_button:
                 if (UploadButtonMode == UPLOAD_OPEN){
                     hideUpleadLinear();
+                    mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.floating_button_exit));
                     UploadButtonMode = UPLOAD_CLOSE;
                 }
                 else if (PulsButtonMode == PLUS_CLOSE) {
@@ -301,6 +305,9 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     openFileSeletor();
                 }
                 break;
+            case R.id.news_title_text:
+            case R.id.title_content_text:
+                hideUpleadLinear();
             default:
                 break;
         }
@@ -355,7 +362,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
             }
         });
-        mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.floating_button_exit));
+
         mFileContainLinear.startAnimation(exit);
 
     }
@@ -486,6 +493,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         if(ChoosePhotoType == TYPE_CHOOSE_FILE){
             mFileList.add(imagePath);
             mAdapter.notifyDataSetChanged();
+            Tool.toast("添加文件成功");
             return;
         }
         if(ChoosePhotoType == TYPE_CHOOSE_COVER){

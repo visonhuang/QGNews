@@ -161,10 +161,8 @@ public class Tool {
      * 把Bitmap转ByteArrayInputStream
      */
     public static ByteArrayInputStream Bitmap2Bytes(Bitmap bm) {
-        Log.d("size", bm.getAllocationByteCount()+"");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        Log.d("size", baos.size()+"");
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         return bais;
     }

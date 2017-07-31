@@ -40,6 +40,7 @@ public class Request {
     private static BufferedOutputStream ds;
     private static boolean mIsStopUpload;
     public static String session = "0";
+    public static StringBuffer resultBuffer;
     /**
      * @param idFrom 从这个id往下请求十条新闻
      * @return 新闻列表，最大十条
@@ -229,6 +230,7 @@ public class Request {
                         long sumBytes = 0;
                         for (String filePath : files) {
                             sumBytes += new File(filePath).length();
+                            Log.d("fileleng", sumBytes+"");
                         }
 
                         for (int i = 0; i < files.length; i++) {
@@ -249,8 +251,11 @@ public class Request {
                                     return null;
                                 }
                                 ds.write(buffer, 0, length);
+                                ds.flush();
                                 uploadedBytes += length;
                                 publishProgress((int) (100 * uploadedBytes / sumBytes));
+
+                                Log.d("fileleng", (int) (100 * uploadedBytes / sumBytes)+"");
                                 Log.d("上传中", "");
                             }
                             ds.write(end.getBytes());
@@ -260,13 +265,14 @@ public class Request {
                         ds.write((twoHyphens + boundary + twoHyphens + end).getBytes());
                    /* close streams */
                         ds.flush();
+                        Tool.toast("文件上传完");
 
                         //读取反馈
                         inputStream = httpURLConnection.getInputStream();
                         inputStreamReader = new InputStreamReader(inputStream, "utf-8");
                         reader = new BufferedReader(inputStreamReader);
                         tempLine = null;
-                        StringBuffer resultBuffer = new StringBuffer();
+                        resultBuffer = new StringBuffer();
                         while ((tempLine = reader.readLine()) != null) {
                             resultBuffer.append(tempLine);
                             resultBuffer.append("\n");
