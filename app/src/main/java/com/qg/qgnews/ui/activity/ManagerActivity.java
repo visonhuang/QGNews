@@ -22,9 +22,13 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.MyFragmentPagerAdapter;
+import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
+import com.qg.qgnews.model.RequestAdress;
+import com.qg.qgnews.model.Status;
 import com.qg.qgnews.ui.fragment.ManagerPerson;
 import com.qg.qgnews.ui.fragment.ManagerPersonE;
+import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
 
 import java.util.ArrayList;
@@ -101,10 +105,25 @@ public class ManagerActivity extends AppCompatActivity {
                             if (!Tool.isEmail(addManagerAccount.getText().toString())) {
                                 Tool.toast("管理员账户格式错误");
                             } else {
-                           /*     Gson gson = new Gson();
-                                Manager manager = new Manager();
-                                manager.setManagerAccount(addManagerAccount.getText().toString());
-                                manager.setManagerPassword(addManagerPassword.getText());   */
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Gson gson = new Gson();
+                                        Manager manager = new Manager();
+                                        manager.setManagerAccount(addManagerAccount.getText().toString());
+                                        manager.setManagerPassword(addManagerPassword.getText().toString());
+                                        manager.setManagerName(addManagerName.getText().toString());
+                                        String line = gson.toJson(manager);
+                                        String response = Request.RequestWithString(RequestAdress.ADDMANAGER,line);
+                                        FeedBack feedBack = gson.fromJson(response,FeedBack.class);
+                                        int status = feedBack.getState();
+                                        if (status == 1) {
+                                            Tool.toast("添加管理员成功");
+                                        }
+                                        Status.statusResponse(status);
+                                    }
+                                }).start();
+
                             }
                         }
                     }

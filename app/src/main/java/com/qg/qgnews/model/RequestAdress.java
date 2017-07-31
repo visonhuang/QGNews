@@ -80,4 +80,6 @@ public class RequestAdress {
     public static final String RESTRICTACCOUNT = HOST + "admin/restrictaccount";
 
     public static final String SHOWOWNNEWS = HOST + "admin/showownnews";
+
+    public static final String ADDMANAGER = HOST + "admin/addmanager";
 }
