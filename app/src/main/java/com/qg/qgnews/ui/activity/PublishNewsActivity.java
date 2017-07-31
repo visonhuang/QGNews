@@ -30,6 +30,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -80,7 +82,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private static final int UPLOAD_OPEN = 1;
     private static final int UPLOAD_CLOSE = 0;
     private static int UploadButtonMode = UPLOAD_CLOSE;
-    private static boolean mIsPublishing;
+    public static boolean mIsPublishing;
     private static final int GET_FILE = 0;
     private static final int GET_PHOTO = 1;
     private static final int TYPE_CHOOSE_COVER = 0;
@@ -94,11 +96,25 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private TopBarBaseActivity.OnClickListener onClickListenerTopLeft;
     private TopBarBaseActivity.OnClickListener onClickListenerTopRight;
     private String mMenuStr;
+    private String mOldTitle;
+    private String mOldContent;
     private Bitmap mCoverBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT);
+        }
         setContentView(R.layout.activity_publish_news);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -180,16 +196,17 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         new Thread(new Runnable() {
             @Override
             public void run() {
+                mOldTitle = mTitleText.getText().toString();
+                mOldContent = mContentText.getText().toString();
                 String newsTitle = mTitleText.getText().toString();
                 String newsBody = mContentText.getText().toString();
                 String newsAuthor = "我是新闻作者";
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();
-                String newsFace = null;
+                String newsFace = "有封面";
                 String filesUuid = UUID.randomUUID().toString();
                 News news = new News(1,1,newsTitle,newsBody,newsAuthor,newsTime,newsUuid,
                         newsFace, filesUuid, null);
-                String filePath = "/storage/emulated/0/DCIM/Camera/IMG_20170711_232637.jpg";
 
                 String response = Request.upLoadNews(news, mCoverBitmap, getFilePathArray(mFileList), new UploadListener() {
                     @Override
@@ -207,16 +224,16 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
 
-                FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
-                int status = feedBack.getState();
-                if(status == 1){
-                    Tool.toast("新闻发布完成");
-                    mFab.setImageResource(R.drawable.ic_ok);
-                    mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
-                }
-                else if(status == 5000){
-                    Tool.toast("新闻发布失败");
-                }
+//                FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
+//                int status = feedBack.getState();
+//                if(status == 1){
+//                    Tool.toast("新闻发布完成");
+//                    mFab.setImageResource(R.drawable.ic_ok);
+//                    mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
+//                }
+//                else if(status == 5000){
+//                    Tool.toast("新闻发布失败");
+//                }
                 mIsPublishing = false;
             }
         }).start();
@@ -238,6 +255,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
             case R.id.floating_button:
                 if (UploadButtonMode == UPLOAD_OPEN){
                     hideUpleadLinear();
+                    mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.floating_button_exit));
                     UploadButtonMode = UPLOAD_CLOSE;
                 }
                 else if (PulsButtonMode == PLUS_CLOSE) {
@@ -287,6 +305,9 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     openFileSeletor();
                 }
                 break;
+            case R.id.news_title_text:
+            case R.id.title_content_text:
+                hideUpleadLinear();
             default:
                 break;
         }
@@ -341,7 +362,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
             }
         });
-        mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.floating_button_exit));
+
         mFileContainLinear.startAnimation(exit);
 
     }
@@ -472,6 +493,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         if(ChoosePhotoType == TYPE_CHOOSE_FILE){
             mFileList.add(imagePath);
             mAdapter.notifyDataSetChanged();
+            Tool.toast("添加文件成功");
             return;
         }
         if(ChoosePhotoType == TYPE_CHOOSE_COVER){
@@ -481,7 +503,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 Tool.toast("封面修改成功");
             }
             hasChooseCover = true;
-            mCoverBitmap = Tool.decodeSampledBitmapFromFile(imagePath, 1080, 750);
+            mCoverBitmap = Tool.decodeSampledBitmapFromFile(imagePath, 540, 375);
         }
     }
 
@@ -507,7 +529,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         }
         return false;
     }
-    
+
     public static void setStopUploadListener(StopUploadListener listener){
         mStopUploadListener = listener;
     }
