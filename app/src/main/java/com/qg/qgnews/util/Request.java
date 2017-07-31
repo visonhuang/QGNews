@@ -62,85 +62,85 @@ public class Request {
      */
     @NonNull
     public static String RequestWithString(String URl, String content) {
-//        String end = "\r\n";
-//        String twoHyphens = "--";
-//        String boundary = "*****";
-//        BufferedOutputStream ds = null;
-//        InputStream inputStream = null;
-//        InputStreamReader inputStreamReader = null;
-//        BufferedReader reader = null;
-//        StringBuffer resultBuffer = new StringBuffer();
-//        String tempLine = null;
-//        try {
-//            URL url = new URL(URl);
-//            URLConnection urlConnection = url.openConnection();
-//            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
-//            httpURLConnection.setConnectTimeout(5000);
-//            httpURLConnection.setReadTimeout(5000);
-//            httpURLConnection.setDoInput(true);
-//            httpURLConnection.setDoOutput(true);
-//            httpURLConnection.setUseCaches(false);
-//            httpURLConnection.setRequestMethod("POST");
-//            httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-//            httpURLConnection.setRequestProperty("Charset", "utf-8");
-//            httpURLConnection.setRequestProperty("Cookie",session);
-//            // 设置DataOutputStream
-//            ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
-//            ds.write(content.getBytes());
-//               /* close streams */
-//            ds.flush();
-//            String cookieValue = httpURLConnection.getHeaderField("Set-Cookie");
-//            if (session.equals("0")) {
-//                session= cookieValue.substring(0, cookieValue.indexOf(";"));
-//
-//            }
-//            Log.d("asdasd",session);
-//           // Tool.saveSessionId(httpURLConnection);
-//            inputStream = httpURLConnection.getInputStream();
-//            inputStreamReader = new InputStreamReader(inputStream, "utf-8");
-//            reader = new BufferedReader(inputStreamReader);
-//            tempLine = null;
-//            resultBuffer = new StringBuffer();
-//
-//            while ((tempLine = reader.readLine()) != null) {
-//                resultBuffer.append(tempLine);
-//                resultBuffer.append("\n");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (ds != null) {
-//                try {
-//                    ds.close();
-//                } catch (IOException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (reader != null) {
-//                try {
-//                    reader.close();
-//                } catch (IOException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (inputStreamReader != null) {
-//                try {
-//                    inputStreamReader.close();
-//                } catch (IOException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (inputStream != null) {
-//                try {
-//                    inputStream.close();
-//                } catch (IOException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
+        String end = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        BufferedOutputStream ds = null;
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader reader = null;
+        StringBuffer resultBuffer = new StringBuffer();
+        String tempLine = null;
+        try {
+            URL url = new URL(URl);
+            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.setConnectTimeout(5000);
+            httpURLConnection.setReadTimeout(5000);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            httpURLConnection.setRequestProperty("Charset", "utf-8");
+            httpURLConnection.setRequestProperty("Cookie",session);
+            // 设置DataOutputStream
+            ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
+            ds.write(content.getBytes());
+               /* close streams */
+            ds.flush();
+            String cookieValue = httpURLConnection.getHeaderField("Set-Cookie");
+            if (session.equals("0")) {
+                session= cookieValue.substring(0, cookieValue.indexOf(";"));
+
+            }
+            Log.d("asdasd",session);
+           // Tool.saveSessionId(httpURLConnection);
+            inputStream = httpURLConnection.getInputStream();
+            inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            reader = new BufferedReader(inputStreamReader);
+            tempLine = null;
+            resultBuffer = new StringBuffer();
+
+            while ((tempLine = reader.readLine()) != null) {
+                resultBuffer.append(tempLine);
+                resultBuffer.append("\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ds != null) {
+                try {
+                    ds.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (inputStreamReader != null) {
+                try {
+                    inputStreamReader.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
             return resultBuffer.toString();
 
     }
