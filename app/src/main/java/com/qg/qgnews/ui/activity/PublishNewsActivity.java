@@ -97,8 +97,6 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private TopBarBaseActivity.OnClickListener onClickListenerTopLeft;
     private TopBarBaseActivity.OnClickListener onClickListenerTopRight;
     private String mMenuStr;
-    private String mOldTitle;
-    private String mOldContent;
     private Bitmap mCoverBitmap;
 
     @Override
@@ -156,7 +154,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     return;
                 }
                 if(mIsPublishing == true){
-                    Tool.toast("不能重复发布");
+                    Tool.toast("新闻正发布中...");
                     return;
                 }
                 mIsPublishing = true;
@@ -220,14 +218,6 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
             public void run() {
                 String newsTitle = mTitleText.getText().toString();
                 String newsBody = mContentText.getText().toString();
-                if(mTitleText != null && mContentText != null){
-                    if(newsTitle.equals(mOldTitle) || newsBody.equals(mOldContent)){
-                        Tool.toast("相同的新闻不可重复发布");
-                        return;
-                    }
-                }
-                mOldTitle = mTitleText.getText().toString();
-                mOldContent = mContentText.getText().toString();
                 String newsAuthor = "我是新闻作者";
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();
@@ -265,6 +255,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                             Tool.toast("新闻发布完成");
                             mFab.setImageResource(R.drawable.ic_ok);
                             mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
+                            finish();
                         }
                         else if(status == 5000){
                             Tool.toast("新闻发布失败");
