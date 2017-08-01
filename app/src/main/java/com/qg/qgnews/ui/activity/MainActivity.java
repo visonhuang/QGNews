@@ -138,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onQueryTextSubmit(String query) {
                 App.bitmapLruCache.evictAll();
-                Controller.getInstance().
                 return false;
             }
 
