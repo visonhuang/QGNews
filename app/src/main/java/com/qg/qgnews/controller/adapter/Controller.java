@@ -23,20 +23,16 @@ import java.util.List;
 public class Controller {
     private static Controller controller;
     private static Gson gson = new Gson();
-
     public static Controller getInstance() {
         if (controller == null) {
             controller = new Controller();
         }
         return controller;
     }
-
     public interface OnRequestNewsListener {
         void onSuccess(List<News> list);
-
         void onFailed(int state);
     }
-
     public interface OnRequestListener {
         void onSuccess(String json);
 
@@ -83,7 +79,6 @@ public class Controller {
                     e.printStackTrace();
                     listener.onFailed(-1);
                 }
-
             }
         }).start();
     }
