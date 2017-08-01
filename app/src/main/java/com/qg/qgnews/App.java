@@ -85,4 +85,5 @@ public class App extends Application {
         context = getApplicationContext();
         setActivityLifecycleCallbacks();
     }
+
 }
