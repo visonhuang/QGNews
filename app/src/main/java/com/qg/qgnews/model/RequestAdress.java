@@ -41,6 +41,10 @@ public class RequestAdress {
      */
     public static final String REQUEST_NEWS = HOST +"reader/flashnews";
     /**
+     * 搜索新聞
+     */
+    public static final String SEARCH_NEWS = HOST + "reader/searchnews";
+    /**
      *  超级管理员添加管理员
      */
     public static final String ADD_ACCOUNT = HOST +"admin/addaccount";
@@ -84,5 +88,8 @@ public class RequestAdress {
     public static final String ADDMANAGER = HOST + "admin/addmanager";
     public static final String GET_NEWS_DETIAL = HOST + "reader/newsdetail";
     public static final String GET_NEWS_BEHIDE = HOST + "reader/read";
+    public static final String GET_VIEC_FILE_DOWNLOAD_DETAIL = HOST + "admin/downloaddetail";
+    public static final String POST_NEWS_DOWNLOAD_DETAIL = HOST + "reader/downloadfile";
+
 
 }

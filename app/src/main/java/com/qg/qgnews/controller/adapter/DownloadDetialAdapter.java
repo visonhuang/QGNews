@@ -33,7 +33,6 @@ public class DownloadDetialAdapter extends ArrayAdapter<DownloadDetial> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
         DownloadDetial detial = getItem(position);
         View itemView;
         ViewHolder holder;
@@ -45,7 +44,8 @@ public class DownloadDetialAdapter extends ArrayAdapter<DownloadDetial> {
             itemView = convertView;
             holder = (ViewHolder) itemView.getTag();
         }
-        //TODO 显示新闻
+        holder.time.setText(detial.getDownloadTime());
+        holder.name.setText(detial.getDownloader());
         return itemView;
     }
 

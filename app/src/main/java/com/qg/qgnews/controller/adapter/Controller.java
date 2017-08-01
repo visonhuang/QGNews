@@ -65,9 +65,17 @@ public class Controller {
                 }
             }
         }).start();
-
-
     }
+//
+//    public static void SearchNews(final OnRequestNewsListener listener){
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                FeedBack feedBack = Request.SearchNews();
+//            }
+//        }).start();
+//    }
+
     //详情请求
     public static void RequestNewsDetial(final int newsId, final OnRequestListener listener) {
         new Thread(new Runnable() {

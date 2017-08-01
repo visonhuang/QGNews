@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.Controller;
+import com.qg.qgnews.ui.activity.NewsMessageActivity;
 import com.qg.qgnews.util.Tool;
 
 import java.util.ArrayList;
@@ -26,11 +27,13 @@ public class NewsDetailAdapter extends PagerAdapter {
     private List<View> viewList;
     Context context;
     List<News> newsList;
+    private int mode = NewsMessageActivity.MODE_VISIT;
 
-    public NewsDetailAdapter(List<View> viewList, List<News> newsList,Context context) {
+    public NewsDetailAdapter(List<View> viewList, List<News> newsList, Context context, int mode) {
         this.viewList = viewList;
         this.context = context;
         this.newsList = newsList;
+        this.mode = mode;
     }
 
     @Override
@@ -62,19 +65,19 @@ public class NewsDetailAdapter extends PagerAdapter {
         final TextView body = (TextView) view.findViewById(R.id.news_details_body);
         final TextView writer = (TextView) view.findViewById(R.id.news_detial_writer);
         container.addView(view);
-        writer.setText("本文作者："+newsList.get(position).getNewsAuthor());
+        writer.setText("本文作者：" + newsList.get(position).getNewsAuthor());
         Controller.RequestNewsDetial(newsList.get(position).getNewsId(), new Controller.OnRequestListener() {
             @Override
             public void onSuccess(String json) {
                 Gson gson = new Gson();
-                final News news = gson.fromJson(json,News.class);
+                final News news = gson.fromJson(json, News.class);
                 Tool.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         body.setText(news.getNewsBody());
-                        writer.setText(news.getNewsAuthor());
+                        writer.setText("本文作者：" + news.getNewsAuthor());
                         viceFileList.setLayoutManager(new LinearLayoutManager(App.context));
-                        viceFileList.setAdapter(new NewsDetialViecFileAdapter(context, news.getFileList()));
+                        viceFileList.setAdapter(new NewsDetialViecFileAdapter(context, news.getFileList(),mode));
                     }
                 });
             }

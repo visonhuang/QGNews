@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-
     }
 
     private void initView() {
@@ -138,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         s.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Tool.toast("点击了搜索");
+                App.bitmapLruCache.evictAll();
                 return false;
             }
 
@@ -333,6 +332,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Controller.RequestWithString2(RequestAdress.GET_NEWS_BEHIDE, gson.toJson(oldList.get(oldList.size() - 1)), new Controller.OnRequestListener() {
                 @Override
                 public void onSuccess(String json) {
+                    Tool.toast("加载完毕");
                     oldList.addAll((Collection<? extends News>) gson.fromJson(json, new TypeToken<List<News>>() {
                     }.getType()));
                     Tool.runOnUiThread(new Runnable() {

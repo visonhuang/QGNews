@@ -19,8 +19,10 @@ import com.qg.qgnews.ui.activity.PublishNewsActivity;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,17 +43,11 @@ public class Request {
     public static String session = "0";
     public static StringBuffer resultBuffer;
     /**
-     * @param idFrom 从这个id往下请求十条新闻
      * @return 新闻列表，最大十条
      */
     public static FeedBack RequestNews() {
         Gson gson = new Gson();
-        //模拟数据
-        List<News> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            list.add(new News());
-        }
-        return new FeedBack(1, gson.toJson(list));
+        return gson.fromJson(RequestWithNoString(RequestAdress.REQUEST_NEWS), FeedBack.class);
     }
 
     /**
@@ -68,7 +64,7 @@ public class Request {
         InputStream inputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader reader = null;
-        StringBuffer resultBuffer = new StringBuffer();
+        StringBuffer resultBuffer = new StringBuffer("{\"state\":0}");
         String tempLine = null;
         try {
             URL url = new URL(URl);
@@ -82,25 +78,16 @@ public class Request {
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
             httpURLConnection.setRequestProperty("Charset", "utf-8");
-            httpURLConnection.setRequestProperty("Cookie",session);
             // 设置DataOutputStream
             ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
             ds.write(content.getBytes());
                /* close streams */
             ds.flush();
-            String cookieValue = httpURLConnection.getHeaderField("Set-Cookie");
-            if (session.equals("0")) {
-                session= cookieValue.substring(0, cookieValue.indexOf(";"));
-
-            }
-            Log.d("asdasd",session);
-           // Tool.saveSessionId(httpURLConnection);
+            // Tool.saveSessionId(httpURLConnection);
             inputStream = httpURLConnection.getInputStream();
             inputStreamReader = new InputStreamReader(inputStream, "utf-8");
             reader = new BufferedReader(inputStreamReader);
             tempLine = null;
-            resultBuffer = new StringBuffer();
-
             while ((tempLine = reader.readLine()) != null) {
                 resultBuffer.append(tempLine);
                 resultBuffer.append("\n");
@@ -140,8 +127,8 @@ public class Request {
                     e.printStackTrace();
                 }
             }
-            return resultBuffer.toString();
         }
+        return resultBuffer.toString();
     }
 
     /**
@@ -264,7 +251,7 @@ public class Request {
                         ds.write((twoHyphens + boundary + twoHyphens + end).getBytes());
                    /* close streams */
                         ds.flush();
-                        Tool.toast("文件上传完");
+                        Tool.toast("文件上传完成");
 
                         //读取反馈
                         inputStream = httpURLConnection.getInputStream();
@@ -407,7 +394,8 @@ public class Request {
             return resultBuffer.toString();
         }
     }
-    public static Bitmap getCover(String url){
+
+    public static Bitmap getCover(String url) {
         InputStream inputStream = null;
         try {
             URLConnection urlConnection = new URL(url).openConnection();
@@ -501,4 +489,5 @@ public class Request {
         }
         return new FeedBack(0, "");
     }
+
 }
