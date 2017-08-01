@@ -10,4 +10,7 @@
     <color name="divider">#BDBDBD</color>
     <color name="darkGreen">#4caf50</color>
     <color name="orange">#fe5722</color>
+    <color name="colcorGrey">#f0f2f5</color>
+    <color name="colcorDeepGrey">#40403b</color>
+    <color name="colcorWhite">#ffffffff</color>
 </resources>

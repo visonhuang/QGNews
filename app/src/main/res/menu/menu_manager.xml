@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/manager_menu_add"
-        android:title="添加管理员"/>
+        android:title="添加管理员"
+        android:icon="@drawable/manager_add1"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/manager_menu_check"
-        android:title="查看附件下载"/>
+        android:title="查看附件下载"
+        android:icon="@drawable/file_download"
+        app:showAsAction="ifRoom"/>
 
 
 </menu>

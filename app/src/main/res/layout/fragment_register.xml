@@ -24,8 +24,9 @@
 
         <EditText
             android:id="@+id/register_user"
-            android:layout_width="280dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_weight="1"
             android:ems="10"
             android:hint="请输入邮箱"/>
 
@@ -37,9 +38,8 @@
             android:visibility="gone"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_width="33dp"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -77,8 +77,9 @@
 
         <EditText
             android:id="@+id/register_password"
-            android:layout_width="280dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_weight="1"
             android:ems="10"
             android:inputType="textPassword"
             android:hint="请输入密码"/>
@@ -91,9 +92,8 @@
             android:visibility="gone"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_width="33dp"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -131,8 +131,9 @@
 
         <EditText
             android:id="@+id/register_userName"
-            android:layout_width="280dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_weight="1"
             android:ems="10"
             android:hint="请输入姓名" />
 
@@ -144,9 +145,8 @@
             android:visibility="gone"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_width="33dp"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

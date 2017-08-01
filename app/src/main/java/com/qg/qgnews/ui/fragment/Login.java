@@ -1,6 +1,7 @@
 package com.qg.qgnews.ui.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -70,6 +71,9 @@ public class Login extends Fragment {
         viewOnclick();
         editViewOnclick();
 
+        login.setClickable(false);
+        login.setBackgroundColor(Color.parseColor("#d6d7d7"));
+
         return view;
     }
 
@@ -100,6 +104,7 @@ public class Login extends Fragment {
             @Override
             public void onClick(View view) {
                 String email = user.getText().toString();
+                String passwordText = password.getText().toString();
          /*       if (user.getText().toString().equals("1") && password.getText().toString().equals("1")) {
                     Intent intent = new Intent(getContext(),MainActivity.class);
                     intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
@@ -116,6 +121,8 @@ public class Login extends Fragment {
                 if (!Tool.isEmail(email)) {
                     Log.d(TAG, ""+email);
                     Tool.toast("邮箱格式不正确");
+                } else if (passwordText.equals("")) {
+                    Tool.toast("密码不能为空");
                 } else {
                     //请求参数
                     new Thread(new Runnable() {
@@ -172,7 +179,6 @@ public class Login extends Fragment {
 
                         }
                     }).start();
-
                 }
             }
         });
@@ -226,15 +232,23 @@ public class Login extends Fragment {
                 if (text.length() == 0) {
                     userState.setVisibility(View.GONE);
                     userImage.setVisibility(View.GONE);
+                    login.setClickable(false);
+                    login.setBackgroundColor(Color.parseColor("#d6d7d7"));
                 } else {
                     if (Tool.isEmail(text)) {
                         userImage.setVisibility(View.VISIBLE);
                         userState.setVisibility(View.GONE);
                         userImage.setImageResource(R.drawable.state_true);
+                        if (password.getText().toString().length() > 5 && password.getText().toString().length() < 21) {
+                            login.setClickable(true);
+                            login.setBackgroundColor(Color.parseColor("#30b0ff"));
+                        }
                     } else {
                         userImage.setVisibility(View.GONE);
                         userState.setVisibility(View.VISIBLE);
                         userState.setText("输入的邮箱格式错误");
+                        login.setClickable(false);
+                        login.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     }
                 }
             }
@@ -263,14 +277,22 @@ public class Login extends Fragment {
                         passwordImage.setVisibility(View.GONE);
                         passwordState.setVisibility(View.VISIBLE);
                         passwordState.setText("输入的密码不能低于6位");
+                        login.setClickable(false);
+                        login.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     } else if (text.length() > 20) {
                         passwordImage.setVisibility(View.GONE);
                         passwordState.setVisibility(View.VISIBLE);
                         passwordState.setText("输入的密码不能多与20位");
+                        login.setClickable(false);
+                        login.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     } else {
                         passwordState.setVisibility(View.GONE);
                         passwordImage.setVisibility(View.VISIBLE);
                         passwordImage.setImageResource(R.drawable.state_true);
+                        if (Tool.isEmail(user.getText().toString())) {
+                            login.setClickable(true);
+                            login.setBackgroundColor(Color.parseColor("#30b0ff"));
+                        }
                     }
                 }
 

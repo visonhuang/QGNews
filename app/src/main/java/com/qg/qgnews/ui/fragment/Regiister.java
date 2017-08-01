@@ -1,5 +1,6 @@
 package com.qg.qgnews.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -85,6 +86,9 @@ public class Regiister extends Fragment {
         viewOnClick();
         editViewOnClick();
 
+        register.setClickable(false);
+        register.setBackgroundColor(Color.parseColor("#d6d7d7"));
+
 
         return view;
     }
@@ -134,43 +138,35 @@ public class Regiister extends Fragment {
                             String response = Request.RequestWithString("http://192.168.43.141:8080/admin/addaccount",line);
                             Gson gson1 = new Gson();
                             Log.d(TAG, response);
-                     /*       Gson gson1 = new GsonBuilder().
-                                    registerTypeAdapter(Double.class, (JsonSerializer<Double>) (src, typeOfSrc, context) -> {
-                                        if (src == src.longValue())
-                                            return new JsonPrimitive(src.longValue());
-                                        return new JsonPrimitive(src);
-                                    }).create();  */
-
-
-
-                         //   Map<String, Integer> map = gson1.fromJson(response, new TypeToken<Map<String, Integer>>(){}.getType());
-                       //     System.out.println(map);
-                       //     Log.d("3333333333333333", map+"");
                             FeedBack feedBack = gson1.fromJson(response,FeedBack.class);
-                            int state = feedBack.getState();
-                            if (state == 1) {
-                                //注册成功
-                                Tool.toast("注册成功");
-                            } else if (state == 5000) {
-                                Tool.toast("服务器出错");
-                            } else if (state == 2) {
-                                Tool.toast("用户名存在");
-                            } else if (state == 3) {
-                                Tool.toast("邮箱不存在");
-                            } else if (state == 4) {
-                                Tool.toast("邮箱为空");
-                            } else if (state == 5) {
-                                Tool.toast("密码为空");
-                            } else if (state == 6) {
-                                Tool.toast("邮箱格式不正确");
-                            } else if (state == 8) {
-                                Tool.toast("密码错误");
-                            } else if (state == 9) {
-                                Tool.toast("账户未激活");
-                            } else if (state == 10) {
-                                Tool.toast("账户未审批");
-                            } else if (state == 11) {
-                                Tool.toast("账户被封了");
+                            if (feedBack == null) {
+                                Tool.toast("服务器无返回");
+                            } else {
+                                int state = feedBack.getState();
+                                if (state == 1) {
+                                    //注册成功
+                                    Tool.toast("注册成功");
+                                } else if (state == 5000) {
+                                    Tool.toast("服务器出错");
+                                } else if (state == 2) {
+                                    Tool.toast("用户名存在");
+                                } else if (state == 3) {
+                                    Tool.toast("邮箱不存在");
+                                } else if (state == 4) {
+                                    Tool.toast("邮箱为空");
+                                } else if (state == 5) {
+                                    Tool.toast("密码为空");
+                                } else if (state == 6) {
+                                    Tool.toast("邮箱格式不正确");
+                                } else if (state == 8) {
+                                    Tool.toast("密码错误");
+                                } else if (state == 9) {
+                                    Tool.toast("账户未激活");
+                                } else if (state == 10) {
+                                    Tool.toast("账户未审批");
+                                } else if (state == 11) {
+                                    Tool.toast("账户被封了");
+                                }
                             }
                         }
                     }).start();
@@ -198,15 +194,23 @@ public class Regiister extends Fragment {
                 if (email.length() == 0) {
                     userState.setVisibility(View.GONE);
                     userImage.setVisibility(View.GONE);
+                    register.setClickable(false);
+                    register.setBackgroundColor(Color.parseColor("#d6d7d7"));
                 } else {
                     if (Tool.isEmail(email)) {
                         userState.setVisibility(View.GONE);
                         userImage.setVisibility(View.VISIBLE);
                         userImage.setImageResource(R.drawable.state_true);
+                        if (password.getText().toString().length() > 5 && password.getText().toString().length() < 21) {
+                            register.setClickable(true);
+                            register.setBackgroundColor(Color.parseColor("#30b0ff"));
+                        }
                     } else {
                         userImage.setVisibility(View.GONE);
                         userState.setVisibility(View.VISIBLE);
                         userState.setText("邮箱格式错误");
+                        register.setClickable(false);
+                        register.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     }
                 }
             }
@@ -230,19 +234,29 @@ public class Regiister extends Fragment {
                 if (text.length() == 0) {
                     passwordState.setVisibility(View.GONE);
                     passwordImage.setVisibility(View.GONE);
+                    register.setClickable(false);
+                    register.setBackgroundColor(Color.parseColor("#d6d7d7"));
                 } else {
                     if (text.length() < 6) {
                         passwordImage.setVisibility(View.GONE);
                         passwordState.setVisibility(View.VISIBLE);
                         passwordState.setText("输入的密码不能少于6位");
+                        register.setClickable(false);
+                        register.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     } else if (text.length() > 20) {
                         passwordImage.setVisibility(View.GONE);
                         passwordState.setVisibility(View.VISIBLE);
                         passwordState.setText("输入的密码不能多于20位");
+                        register.setClickable(false);
+                        register.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     } else {
                         passwordState.setVisibility(View.GONE);
                         passwordImage.setVisibility(View.VISIBLE);
                         passwordImage.setImageResource(R.drawable.state_true);
+                        if (Tool.isEmail(user.getText().toString())) {
+                            register.setClickable(true);
+                            register.setBackgroundColor(Color.parseColor("#30b0ff"));
+                        }
                     }
                 }
             }

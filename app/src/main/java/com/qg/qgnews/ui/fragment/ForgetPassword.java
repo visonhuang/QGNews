@@ -1,5 +1,6 @@
 package com.qg.qgnews.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -34,6 +35,8 @@ import static android.content.ContentValues.TAG;
  */
 
 public class ForgetPassword extends Fragment {
+
+    private int buttonState = 1; //1为验证码按钮还没计时，0为验证码在计时
 
     private View view;
 
@@ -74,6 +77,9 @@ public class ForgetPassword extends Fragment {
         viewOnClick();
         editViewOnClick();
 
+        number_button.setClickable(false);
+        change.setClickable(false);
+
 
         return view;
     }
@@ -103,7 +109,6 @@ public class ForgetPassword extends Fragment {
             @Override
             public void onClick(View view) {
                 time.start();
-                Log.d(TAG, "onClick: 333333333333333333333333333333333333333333");
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -205,15 +210,28 @@ public class ForgetPassword extends Fragment {
                 if (text.length() == 0) {
                     userState.setVisibility(View.GONE);
                     userImage.setVisibility(View.GONE);
+                    change.setClickable(false);
+                    change.setBackgroundColor(Color.parseColor("#d6d7d7"));
                 } else {
                     if (Tool.isEmail(text)) {
                         userImage.setVisibility(View.VISIBLE);
                         userState.setVisibility(View.GONE);
                         userImage.setImageResource(R.drawable.state_true);
+                        if (buttonState == 1) {
+                            number_button.setClickable(true);
+                            number_button.setBackgroundColor(Color.parseColor("#30b0ff"));
+                        }
+                        if (password.getText().toString().length() > 5 && password.getText().toString().length() <21 && !number.getText().toString().equals("")) {
+                            change.setClickable(true);
+                            change.setBackgroundColor(Color.parseColor("#30b0ff"));
+                        }
                     } else {
                         userImage.setVisibility(View.GONE);
                         userState.setVisibility(View.VISIBLE);
                         userState.setText("输入的邮箱格式错误");
+                        change.setClickable(false);
+                        change.setBackgroundColor(Color.parseColor("#d6d7d7"));
+
                     }
                 }
             }
@@ -237,19 +255,29 @@ public class ForgetPassword extends Fragment {
                 if (text.length() == 0) {
                     passwordState.setVisibility(View.GONE);
                     passwordImage.setVisibility(View.GONE);
+                    change.setClickable(false);
+                    change.setBackgroundColor(Color.parseColor("#d6d7d7"));
                 } else {
                     if (text.length() < 6) {
                         passwordImage.setVisibility(View.GONE);
                         passwordState.setVisibility(View.VISIBLE);
                         passwordState.setText("输入的密码不能低于6位");
+                        change.setClickable(false);
+                        change.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     } else if (text.length() > 20) {
                         passwordImage.setVisibility(View.GONE);
                         passwordState.setVisibility(View.VISIBLE);
                         passwordState.setText("输入的密码不能多与20位");
+                        change.setClickable(false);
+                        change.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     } else {
                         passwordState.setVisibility(View.GONE);
                         passwordImage.setVisibility(View.VISIBLE);
                         passwordImage.setImageResource(R.drawable.state_true);
+                        if (Tool.isEmail(user.getText().toString()) && !number.getText().toString().equals("")) {
+                            change.setClickable(true);
+                            change.setBackgroundColor(Color.parseColor("#30b0ff"));
+                        }
                     }
                 }
 
@@ -271,12 +299,16 @@ public class ForgetPassword extends Fragment {
         public void onFinish() {
             number_button.setClickable(true);
             number_button.setText("获得验证码");
+            buttonState = 1;
+            number_button.setBackgroundColor(Color.parseColor("#30b0ff"));
         }
 
         @Override
         public void onTick(long l) {
             number_button.setClickable(false);
             number_button.setText("剩余" + (int)(l/1000) + "秒");
+            number_button.setBackgroundColor(Color.parseColor("#d6d7d7"));
+            buttonState = 0;
         }
     }
 }

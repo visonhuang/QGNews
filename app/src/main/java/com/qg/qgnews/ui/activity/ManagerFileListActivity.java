@@ -102,13 +102,17 @@ public class ManagerFileListActivity extends AppCompatActivity {
                 map.put("managerId", Tool.getCurrentManager().getManagerId());
                 String line = gson.toJson(map);
 
-                String respose = Request.RequestWithString("http://ip:80/admin/downloadtime",line);
+                String respose = Request.RequestWithString("http://192.168.43.141:8080/admin/downloadtime",line);
                 FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
-                int state = feedBack.getState();
-                if (state == 1) {
+                if (feedBack == null) {
+                    Tool.toast("服务器无返回");
+                } else {
+                    int state = feedBack.getState();
+                    if (state == 1) {
 
+                    }
+                    Status.statusResponse(state);
                 }
-                Status.statusResponse(state);
 
             }
         }).start();
@@ -127,13 +131,17 @@ public class ManagerFileListActivity extends AppCompatActivity {
                         map.put("managerId", Tool.getCurrentManager().getManagerId());
                         String line = gson.toJson(map);
 
-                        String respose = Request.RequestWithString("http://ip:80/admin/downloadtime",line);
+                        String respose = Request.RequestWithString("http:/192.168.43.141:8080/admin/downloadtime",line);
                         FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
-                        int state = feedBack.getState();
-                        if (state == 1) {
+                        if (feedBack == null) {
+                            Tool.toast("服务器无返回");
+                        } else {
+                            int state = feedBack.getState();
+                            if (state == 1) {
 
+                            }
+                            Status.statusResponse(state);
                         }
-                        Status.statusResponse(state);
 
                     }
                 }).start();
@@ -171,13 +179,17 @@ public class ManagerFileListActivity extends AppCompatActivity {
                         map.put("filesId",id);
                         String line = gson.toJson(map);
 
-                        String response = Request.RequestWithString("http://ip:80/admin/downloaddetial",line);
+                        String response = Request.RequestWithString("http:/192.168.43.141:8080/admin/downloaddetial",line);
                         FeedBack feedBack = gson.fromJson(response,FeedBack.class);
-                        int state = feedBack.getState();
-                        if (state == 1) {
+                        if (feedBack == null) {
+                            Tool.toast("服务器无返回");
+                        } else {
+                            int state = feedBack.getState();
+                            if (state == 1) {
 
+                            }
+                            Status.statusResponse(state);
                         }
-                        Status.statusResponse(state);
                     }
                 }).start();
             }
@@ -217,13 +229,13 @@ public class ManagerFileListActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
 
-            DownloadDetial downloadDetial = getItem(position);
-
-            fileName = (TextView) view.findViewById(R.id.file_name);
-            fileDownTimes = (TextView) view.findViewById(R.id.file_downtimes);
-
-            fileName.setText("文件名：" + downloadDetial.getDownloadName());
-            fileDownTimes.setText("下载次数：" + downloadDetial.getDownloadTime());
+//            DownloadDetial downloadDetial = getItem(position);
+//
+//            fileName = (TextView) view.findViewById(R.id.file_name);
+//            fileDownTimes = (TextView) view.findViewById(R.id.file_downtimes);
+//
+//            fileName.setText("文件名：" + downloadDetial.getDownloadName());
+//            fileDownTimes.setText("下载次数：" + downloadDetial.getDownloadTime());
 
 
 

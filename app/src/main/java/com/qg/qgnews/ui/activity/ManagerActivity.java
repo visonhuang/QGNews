@@ -1,6 +1,7 @@
 package com.qg.qgnews.ui.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -51,13 +52,13 @@ public class ManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager);
 
-  /*      Toolbar toolbar = (Toolbar) findViewById(R.id.manager_activity_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.manager_activity_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
-        }  */
+        }
 
         tabLayout = (TabLayout) findViewById(R.id.manager_tabLayout);
         viewPager = (ViewPager) findViewById(R.id.manager_viewPager);
@@ -127,10 +128,12 @@ public class ManagerActivity extends AppCompatActivity {
                             }
                         }
                     }
-                });
+                }).show();
                 break;
             case R.id.manager_menu_check:
                 //查看附件下载
+                Intent intent = new Intent(ManagerActivity.this,ManagerFileListActivity.class);
+                startActivity(intent);
 
                 break;
             default:
