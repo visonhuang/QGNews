@@ -180,6 +180,8 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         mAddFileImage.setOnClickListener(this);
         mUploadFileButton.setOnClickListener(this);
         mUploadCoverButton.setOnClickListener(this);
+        mContentText.setOnClickListener(this);
+        mTitleText.setOnClickListener(this);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -340,8 +342,9 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     openFileSeletor();
                 }
                 break;
-            case R.id.news_title_text:
+
             case R.id.title_content_text:
+            case R.id.news_title_text:
                 hideUpleadLinear();
                 break;
             default:
