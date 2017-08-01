@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-
     }
 
     private void initView() {
@@ -138,7 +137,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         s.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Tool.toast("点击了搜索");
+                App.bitmapLruCache.evictAll();
+                Controller.getInstance().
                 return false;
             }
 

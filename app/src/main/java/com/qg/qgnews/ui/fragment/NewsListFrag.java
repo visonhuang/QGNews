@@ -55,7 +55,6 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public interface OnRefreshOrLoadIngListener {
         void onRefresh(NewsListAdapter2 adapter, List<News> oldList);
-
         void onLoad(NewsListAdapter2 adapter, List<News> oldList);
     }
 

@@ -41,6 +41,10 @@ public class RequestAdress {
      */
     public static final String REQUEST_NEWS = HOST +"reader/flashnews";
     /**
+     * 搜索新聞
+     */
+    public static final String SEARCH_NEWS = HOST + "reader/searchnews";
+    /**
      *  超级管理员添加管理员
      */
     public static final String ADD_ACCOUNT = HOST +"admin/addaccount";

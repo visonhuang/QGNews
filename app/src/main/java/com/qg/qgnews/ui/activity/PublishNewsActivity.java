@@ -222,12 +222,12 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 mOldContent = mContentText.getText().toString();
                 String newsTitle = mTitleText.getText().toString();
                 String newsBody = mContentText.getText().toString();
-                if(mTitleText != null && mContentText != null){
-                    if(newsTitle.equals(mOldTitle) || newsBody.equals(mOldContent)){
-                        Tool.toast("相同的新闻不可重复发布");
-                        return;
-                    }
-                }
+//                if(mTitleText != null && mContentText != null){
+//                    if(newsTitle.equals(mOldTitle) || newsBody.equals(mOldContent)){
+//                        Tool.toast("相同的新闻不可重复发布");
+//                        return;
+//                    }
+//                }
                 String newsAuthor = "我是新闻作者";
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();

@@ -251,7 +251,7 @@ public class Request {
                         ds.write((twoHyphens + boundary + twoHyphens + end).getBytes());
                    /* close streams */
                         ds.flush();
-                        Tool.toast("文件上传完");
+                        Tool.toast("文件上传完成");
 
                         //读取反馈
                         inputStream = httpURLConnection.getInputStream();
