@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/activity_public_linear"
               android:layout_width="match_parent"
               android:background="@drawable/artical_background1"
               android:orientation="vertical"

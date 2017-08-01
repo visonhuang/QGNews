@@ -29,6 +29,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -37,6 +38,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -69,6 +71,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private LinearLayout mUploadCoverLinear;
     private LinearLayout mUploadFileLinear;
     private LinearLayout mFileContainLinear;
+    private RelativeLayout mFloatLinear;
     private TextView tvTitle;
     private TextView mTitleText;
     private TextView mContentText;
@@ -173,6 +176,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         mUploadFileLinear = (LinearLayout) findViewById(R.id.activity_public_upload_file_linearlayout);
         mUploadCoverLinear = (LinearLayout) findViewById(R.id.activity_public_upload_cover_linearlayout);
         mFileContainLinear = (LinearLayout) findViewById(R.id.file_container_linear);
+        mFloatLinear = (RelativeLayout) findViewById(R.id.floating_linear);
         mFab.setOnClickListener(this);
         mAddPicImage.setOnClickListener(this);
         mAddFileImage.setOnClickListener(this);
@@ -208,6 +212,29 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     hideUpleadLinear();
                     return;
                 }
+            }
+        });
+
+        mFloatLinear.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float startY = 0, endY = 0;
+
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        startY = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        endY = event.getY();
+                        float dy = endY - startY;
+                        if (dy > 20){
+                            hideUpleadLinear();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return true;
             }
         });
     }
@@ -617,4 +644,5 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         }
         return true;
     }
+
 }
