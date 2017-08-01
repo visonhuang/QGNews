@@ -58,7 +58,6 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +83,9 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
         coll = (CollapsingToolbarLayout) findViewById(R.id.activity_news_message_coll);
         cover = (ImageView) findViewById(R.id.activity_news_message_news_cover);
         setSupportActionBar(toolbar);
+        //初始化
+        onPageSelected(startPos);
+
         coll.setExpandedTitleColor(Color.WHITE);
         coll.setCollapsedTitleTextColor(Color.WHITE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -102,7 +104,7 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
         for (int i = 0; i < newsList.size(); i++) {
             viewList.add(LayoutInflater.from(this).inflate(R.layout.news_details, null, false));
         }
-        viewPager.setAdapter(new NewsDetailAdapter(viewList, newsList,this));
+        viewPager.setAdapter(new NewsDetailAdapter(viewList, newsList, this, mode));
         viewPager.setCurrentItem(startPos, true);
         viewPager.setOnPageChangeListener(this);
     }
@@ -133,8 +135,8 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
     @Override
     public void onPageSelected(int position) {
         posNow = position;
-        //
-        new PicAsnycTask(cover,newsList.get(position), App.bitmapLruCache).execute();
+        new PicAsnycTask(cover, newsList.get(position), App.bitmapLruCache).execute();
+        Log.d("title", newsList.get(position).getNewsTitle());
         coll.setTitle(newsList.get(position).getNewsTitle());
     }
 

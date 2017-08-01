@@ -84,5 +84,8 @@ public class RequestAdress {
     public static final String ADDMANAGER = HOST + "admin/addmanager";
     public static final String GET_NEWS_DETIAL = HOST + "reader/newsdetail";
     public static final String GET_NEWS_BEHIDE = HOST + "reader/read";
+    public static final String GET_VIEC_FILE_DOWNLOAD_DETAIL = HOST + "admin/downloaddetail";
+    public static final String POST_NEWS_DOWNLOAD_DETAIL = HOST + "reader/downloadfile";
+
 
 }

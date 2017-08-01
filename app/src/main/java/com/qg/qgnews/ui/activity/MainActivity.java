@@ -333,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Controller.RequestWithString2(RequestAdress.GET_NEWS_BEHIDE, gson.toJson(oldList.get(oldList.size() - 1)), new Controller.OnRequestListener() {
                 @Override
                 public void onSuccess(String json) {
+                    Tool.toast("加载完毕");
                     oldList.addAll((Collection<? extends News>) gson.fromJson(json, new TypeToken<List<News>>() {
                     }.getType()));
                     Tool.runOnUiThread(new Runnable() {

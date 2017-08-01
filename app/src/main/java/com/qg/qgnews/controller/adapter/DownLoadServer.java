@@ -12,7 +12,10 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.qg.qgnews.R;
+import com.qg.qgnews.model.DownloadDetial;
+import com.qg.qgnews.model.RequestAdress;
 import com.qg.qgnews.model.ViceFile;
 import com.qg.qgnews.util.Tool;
 
@@ -37,7 +40,7 @@ public class DownLoadServer extends Service {
 
     public class DownLoadBinder extends Binder {
         public void startDownload(ViceFile viceFile) {
-            downLoadFileTask = new DownLoadFileTask(listener);
+            downLoadFileTask = new DownLoadFileTask(listener, viceFile);
             downLoadFileTask.execute(viceFile.getFilePath(), viceFile.getFileName());
             startForeground(1, getNotification("下载" + viceFile.getFileName(), 0));
             Tool.toast("开始下载");
@@ -52,15 +55,29 @@ public class DownLoadServer extends Service {
 
     private DownLoadListener listener = new DownLoadListener() {
         @Override
-        public void onProgress(int pro,String fileName) {
-            getNotificationManager().notify(1, getNotification(fileName+"下载中", pro));
+        public void onProgress(int pro, String fileName) {
+            getNotificationManager().notify(1, getNotification(fileName + "下载中", pro));
         }
 
         @Override
-        public void onSuccess() {
+        public void onSuccess(ViceFile v) {
             downLoadFileTask = null;
             //关闭通知
             stopForeground(true);
+            DownloadDetial downloadDetial = new DownloadDetial();
+            downloadDetial.setFileId(v.getFileId());
+            downloadDetial.setDownloader("565916548");
+            Controller.RequestWithString2(RequestAdress.POST_NEWS_DOWNLOAD_DETAIL, new Gson().toJson(downloadDetial), new Controller.OnRequestListener() {
+                @Override
+                public void onSuccess(String json) {
+
+                }
+
+                @Override
+                public void onFailed(int state) {
+
+                }
+            });
             Tool.toast("下载完成");
         }
 
@@ -100,13 +117,16 @@ public class DownLoadServer extends Service {
         public static final int SUCCESS = 0;
         public static final int FAILED = 1;
         public static final int CANCEL = 2;
+        public static final int EXIST = 3;
         private boolean isCanceled = false;
         private int lastProgress;
         private DownLoadListener downLoadListener;
         private String fileName;
+        private ViceFile viceFile;
 
-        public DownLoadFileTask(DownLoadListener downLoadListener) {
+        public DownLoadFileTask(DownLoadListener downLoadListener, ViceFile viceFile) {
             this.downLoadListener = downLoadListener;
+            this.viceFile = viceFile;
         }
 
         @Override
@@ -127,7 +147,7 @@ public class DownLoadServer extends Service {
                 //文件已存在，结束
                 saveFile = new File(Tool.getFileSavePath() + "//" + params[1]);
                 if (saveFile.exists()) {
-                    return SUCCESS;
+                    return EXIST;
                 }
                 //获得文件长度
                 long contentLen = httpURLConnection.getContentLength();
@@ -166,7 +186,7 @@ public class DownLoadServer extends Service {
         @Override
         protected void onProgressUpdate(Integer... values) {
             if (downLoadListener != null && values[0] > lastProgress) {
-                downLoadListener.onProgress(values[0],fileName);
+                downLoadListener.onProgress(values[0], fileName);
                 lastProgress = values[0];
             }
 
@@ -176,13 +196,16 @@ public class DownLoadServer extends Service {
         protected void onPostExecute(Integer integer) {
             switch (integer) {
                 case SUCCESS:
-                    downLoadListener.onSuccess();
+                    downLoadListener.onSuccess(viceFile);
                     break;
                 case CANCEL:
                     downLoadListener.onCanceled();
                     break;
                 case FAILED:
                     downLoadListener.onFailed();
+                    break;
+                case EXIST:
+                    Tool.toast("文件已存在");
                     break;
                 default:
                     break;

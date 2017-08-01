@@ -46,7 +46,6 @@ public class Request {
      */
     public static FeedBack RequestNews() {
         Gson gson = new Gson();
-
         return gson.fromJson(RequestWithNoString(RequestAdress.REQUEST_NEWS), FeedBack.class);
     }
 
