@@ -218,8 +218,6 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mOldTitle = mTitleText.getText().toString();
-                mOldContent = mContentText.getText().toString();
                 String newsTitle = mTitleText.getText().toString();
                 String newsBody = mContentText.getText().toString();
                 if(mTitleText != null && mContentText != null){
@@ -228,6 +226,8 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                         return;
                     }
                 }
+                mOldTitle = mTitleText.getText().toString();
+                mOldContent = mContentText.getText().toString();
                 String newsAuthor = "我是新闻作者";
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();
