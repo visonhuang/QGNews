@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
@@ -435,4 +436,69 @@ public class Request {
         return BitmapFactory.decodeResource(App.context.getResources(), R.drawable.cover_not_found);
     }
 
+    public static FeedBack RequestWithString2(String URl, String content) {
+        Log.d("asdasd", content);
+        String end = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        BufferedOutputStream ds = null;
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        StringBuffer resultBuffer = new StringBuffer("{\"state\":0}");
+        String tempLine = null;
+        try {
+            URL url = new URL(URl);
+            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.setConnectTimeout(5000);
+            httpURLConnection.setReadTimeout(5000);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            httpURLConnection.setRequestProperty("Charset", "utf-8");
+            // 设置DataOutputStream
+            ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
+            ds.write(content.getBytes());
+               /* close streams */
+            ds.flush();
+            // Tool.saveSessionId(httpURLConnection);
+            inputStream = httpURLConnection.getInputStream();
+            inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            JsonReader reader = new JsonReader(new InputStreamReader(inputStream));
+            reader.setLenient(true);
+            Gson gson = new Gson();
+            return gson.fromJson(reader, FeedBack.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ds != null) {
+                try {
+                    ds.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            if (inputStreamReader != null) {
+                try {
+                    inputStreamReader.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        return new FeedBack(0, "");
+    }
 }

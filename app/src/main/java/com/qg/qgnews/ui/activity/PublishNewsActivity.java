@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.qg.qgnews.util.Tool.decodeSampledBitmapFromFile;
+import static com.qg.qgnews.util.Tool.toast;
 
 /**
  * Created by 黄伟烽 on 2017/7/27.
@@ -189,6 +190,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
         mTitleText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         mContentText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1500)});
+
         mTitleText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -218,6 +220,12 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 mOldContent = mContentText.getText().toString();
                 String newsTitle = mTitleText.getText().toString();
                 String newsBody = mContentText.getText().toString();
+                if(mTitleText != null && mContentText != null){
+                    if(newsTitle.equals(mOldTitle) || newsBody.equals(mOldContent)){
+                        Tool.toast("相同的新闻不可重复发布");
+                        return;
+                    }
+                }
                 String newsAuthor = "我是新闻作者";
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();
@@ -284,7 +292,6 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 if (UploadButtonMode == UPLOAD_OPEN){
                     hideUpleadLinear();
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.floating_button_exit));
-                    UploadButtonMode = UPLOAD_CLOSE;
                 }
                 else if (PulsButtonMode == PLUS_CLOSE) {
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_to_45));
@@ -336,6 +343,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
             case R.id.news_title_text:
             case R.id.title_content_text:
                 hideUpleadLinear();
+                break;
             default:
                 break;
         }
@@ -392,7 +400,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         });
 
         mFileContainLinear.startAnimation(exit);
-
+        UploadButtonMode = UPLOAD_CLOSE;
     }
 
     private void hideButtons() {

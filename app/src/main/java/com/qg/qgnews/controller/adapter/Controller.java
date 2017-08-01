@@ -14,6 +14,13 @@ import com.qg.qgnews.util.Tool;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 /**
@@ -108,6 +115,7 @@ public class Controller {
             }
         }).start();
     }
+
 
     public static void RequestWithString2(final String url, final String json, final OnRequestListener listener){
         new Thread(new Runnable() {
