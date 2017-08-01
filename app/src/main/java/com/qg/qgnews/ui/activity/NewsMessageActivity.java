@@ -133,7 +133,9 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
     @Override
     public void onPageSelected(int position) {
         posNow = position;
+        //
         new PicAsnycTask(cover,newsList.get(position), App.bitmapLruCache).execute();
+        coll.setTitle(newsList.get(position).getNewsTitle());
     }
 
     @Override
