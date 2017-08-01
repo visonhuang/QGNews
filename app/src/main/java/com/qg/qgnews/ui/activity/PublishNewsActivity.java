@@ -29,6 +29,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -37,6 +38,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -55,6 +57,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.qg.qgnews.util.Tool.decodeSampledBitmapFromFile;
+import static com.qg.qgnews.util.Tool.toast;
 
 /**
  * Created by 黄伟烽 on 2017/7/27.
@@ -68,6 +71,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private LinearLayout mUploadCoverLinear;
     private LinearLayout mUploadFileLinear;
     private LinearLayout mFileContainLinear;
+    private RelativeLayout mFloatLinear;
     private TextView tvTitle;
     private TextView mTitleText;
     private TextView mContentText;
@@ -96,8 +100,6 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private TopBarBaseActivity.OnClickListener onClickListenerTopLeft;
     private TopBarBaseActivity.OnClickListener onClickListenerTopRight;
     private String mMenuStr;
-    private String mOldTitle;
-    private String mOldContent;
     private Bitmap mCoverBitmap;
 
     @Override
@@ -155,7 +157,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     return;
                 }
                 if(mIsPublishing == true){
-                    Tool.toast("不能重复发布");
+                    Tool.toast("新闻正发布中...");
                     return;
                 }
                 mIsPublishing = true;
@@ -174,11 +176,14 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         mUploadFileLinear = (LinearLayout) findViewById(R.id.activity_public_upload_file_linearlayout);
         mUploadCoverLinear = (LinearLayout) findViewById(R.id.activity_public_upload_cover_linearlayout);
         mFileContainLinear = (LinearLayout) findViewById(R.id.file_container_linear);
+        mFloatLinear = (RelativeLayout) findViewById(R.id.floating_linear);
         mFab.setOnClickListener(this);
         mAddPicImage.setOnClickListener(this);
         mAddFileImage.setOnClickListener(this);
         mUploadFileButton.setOnClickListener(this);
         mUploadCoverButton.setOnClickListener(this);
+        mContentText.setOnClickListener(this);
+        mTitleText.setOnClickListener(this);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -189,15 +194,55 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
         mTitleText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         mContentText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1500)});
-        mIsPublishing = false;
+
+        mTitleText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    hideUpleadLinear();
+                    return;
+                }
+            }
+        });
+
+        mContentText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    hideUpleadLinear();
+                    return;
+                }
+            }
+        });
+
+        mFloatLinear.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float startY = 0, endY = 0;
+
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        startY = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        endY = event.getY();
+                        float dy = endY - startY;
+                        if (dy > 20){
+                            hideUpleadLinear();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     private void publishNews() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mOldTitle = mTitleText.getText().toString();
-                mOldContent = mContentText.getText().toString();
                 String newsTitle = mTitleText.getText().toString();
                 String newsBody = mContentText.getText().toString();
                 String newsAuthor = "我是新闻作者";
@@ -208,7 +253,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 News news = new News(1,1,newsTitle,newsBody,newsAuthor,newsTime,newsUuid,
                         newsFace, filesUuid, null);
 
-                String response = Request.upLoadNews(news, mCoverBitmap, getFilePathArray(mFileList), new UploadListener() {
+                Request.upLoadNews(news, mCoverBitmap, getFilePathArray(mFileList), new UploadListener() {
                     @Override
                     public void showProgress() {
                         Tool.toast("文件开始上传");
@@ -222,19 +267,30 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void finishUpload() {
                     }
+
+                    @Override
+                    public void dealResult(String response) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        }).start();
+                        FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
+                        int status = feedBack.getState();
+                        if(status == 1){
+                            Tool.toast("新闻发布完成");
+                            mFab.setImageResource(R.drawable.ic_ok);
+                            mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
+                            finish();
+                        }
+                        else if(status == 5000){
+                            Tool.toast("新闻发布失败");
+                        }
+                        mIsPublishing = false;
+                    }
                 });
 
-//                FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
-//                int status = feedBack.getState();
-//                if(status == 1){
-//                    Tool.toast("新闻发布完成");
-//                    mFab.setImageResource(R.drawable.ic_ok);
-//                    mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
-//                }
-//                else if(status == 5000){
-//                    Tool.toast("新闻发布失败");
-//                }
-                mIsPublishing = false;
             }
         }).start();
     }
@@ -256,7 +312,6 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 if (UploadButtonMode == UPLOAD_OPEN){
                     hideUpleadLinear();
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.floating_button_exit));
-                    UploadButtonMode = UPLOAD_CLOSE;
                 }
                 else if (PulsButtonMode == PLUS_CLOSE) {
                     mFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_to_45));
@@ -305,9 +360,11 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                     openFileSeletor();
                 }
                 break;
-            case R.id.news_title_text:
+
             case R.id.title_content_text:
+            case R.id.news_title_text:
                 hideUpleadLinear();
+                break;
             default:
                 break;
         }
@@ -364,7 +421,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         });
 
         mFileContainLinear.startAnimation(exit);
-
+        UploadButtonMode = UPLOAD_CLOSE;
     }
 
     private void hideButtons() {
@@ -538,6 +595,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         void showProgress();
         void freshProgress(int progress);
         void finishUpload();
+        void dealResult(String response);
     }
 
     public interface StopUploadListener{
@@ -586,4 +644,5 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         }
         return true;
     }
+
 }

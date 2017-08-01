@@ -5,19 +5,28 @@ package com.qg.qgnews.model;
  */
 
 public class DownloadDetial {
-    private String downloadName;
+    private String downloader;
+    private int fileId;
     private String downloadTime;
 
-    public String getDownloadName() {
-        return downloadName;
+    public int getFileId() {
+        return fileId;
     }
 
-    public void setDownloadName(String downloadName) {
-        this.downloadName = downloadName;
+    public String getDownloader() {
+        return downloader;
     }
 
     public String getDownloadTime() {
         return downloadTime;
+    }
+
+    public void setDownloader(String downloader) {
+        this.downloader = downloader;
+    }
+
+    public void setFileId(int fileId) {
+        this.fileId = fileId;
     }
 
     public void setDownloadTime(String downloadTime) {

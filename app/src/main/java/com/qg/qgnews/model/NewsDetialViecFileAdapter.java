@@ -12,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.Controller;
 import com.qg.qgnews.controller.adapter.DownloadDetialAdapter;
 import com.qg.qgnews.ui.activity.NewsMessageActivity;
 import com.qg.qgnews.util.Tool;
@@ -28,10 +31,12 @@ import java.util.List;
 public class NewsDetialViecFileAdapter extends RecyclerView.Adapter<NewsDetialViecFileAdapter.ViewHolder> {
     NewsMessageActivity newsMessageActivity;
     List<ViceFile> viceFileList;
+    private int mode = NewsMessageActivity.MODE_VISIT;
 
-    public NewsDetialViecFileAdapter(Context context, List<ViceFile> viceFileList) {
+    public NewsDetialViecFileAdapter(Context context, List<ViceFile> viceFileList, int mode) {
         this.newsMessageActivity = (NewsMessageActivity) context;
         this.viceFileList = viceFileList;
+        this.mode = mode;
     }
 
     @Override
@@ -47,12 +52,25 @@ public class NewsDetialViecFileAdapter extends RecyclerView.Adapter<NewsDetialVi
         holder.downLoadCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<DownloadDetial> list1 = new ArrayList<>();
-                for (int i = 0; i < 30; i++) {
-                    DownloadDetial d = new DownloadDetial();
-                    list1.add(d);
-                }
-                showDonwloadDetialDialog(list1);
+                Controller.RequestWithString2(RequestAdress.GET_VIEC_FILE_DOWNLOAD_DETAIL, "{\"filesId\":" + viceFileList.get(holder.getAdapterPosition()).getFileId() + "}", new Controller.OnRequestListener() {
+                    @Override
+                    public void onSuccess(String json) {
+                        final List<DownloadDetial> detials = new Gson().fromJson(json, new TypeToken<List<DownloadDetial>>() {
+                        }.getType());
+                        Tool.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showDonwloadDetialDialog(detials);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailed(int state) {
+
+                    }
+                });
+
             }
         });
         return holder;
@@ -63,7 +81,12 @@ public class NewsDetialViecFileAdapter extends RecyclerView.Adapter<NewsDetialVi
         ViceFile viceFile = viceFileList.get(position);
         holder.fileIcon.setImageResource(Tool.getFileIcon(viceFile.getFileName()));
         holder.viceFileName.setText(viceFile.getFileName());
-        holder.downLoadCount.setVisibility(View.VISIBLE);
+        if (mode == NewsMessageActivity.MODE_VISIT) {
+            holder.downLoadCount.setVisibility(View.GONE);
+        } else {
+            holder.downLoadCount.setText("被下载" + viceFile.getFileDownLoadTime() + "次");
+            holder.downLoadCount.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -75,6 +98,7 @@ public class NewsDetialViecFileAdapter extends RecyclerView.Adapter<NewsDetialVi
         TextView viceFileName;
         ImageView fileIcon;
         TextView downLoadCount;
+
         public ViewHolder(View itemView) {
             super(itemView);
             viceFileName = (TextView) itemView.findViewById(R.id.url);
@@ -107,6 +131,7 @@ public class NewsDetialViecFileAdapter extends RecyclerView.Adapter<NewsDetialVi
         dialog.setView(view);
         dialog.show();
     }
+
     private void showDonwloadDetialDialog(List<DownloadDetial> list) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(App.getActivityStack().lastElement());
         dialog.setTitle("附件下载情况");
@@ -114,7 +139,7 @@ public class NewsDetialViecFileAdapter extends RecyclerView.Adapter<NewsDetialVi
         View view = LayoutInflater.from(newsMessageActivity).inflate(R.layout.download_count_liat, null, false);
         ListView listView = (ListView) view.findViewById(R.id.download_detial_list);
         dialog.setView(view);
-        listView.setAdapter(new DownloadDetialAdapter(App.getActivityStack().lastElement(),R.layout.download_detial_item,list));
+        listView.setAdapter(new DownloadDetialAdapter(App.getActivityStack().lastElement(), R.layout.download_detial_item, list));
         dialog.show();
     }
 }
