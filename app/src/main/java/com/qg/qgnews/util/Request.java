@@ -43,7 +43,7 @@ public class Request {
      * @param idFrom 从这个id往下请求十条新闻
      * @return 新闻列表，最大十条
      */
-    public static FeedBack RequestNews(int idFrom) {
+    public static FeedBack RequestNews() {
         Gson gson = new Gson();
         //模拟数据
         List<News> list = new ArrayList<>();
@@ -140,7 +140,7 @@ public class Request {
                 }
             }
             return resultBuffer.toString();
-
+        }
     }
 
     /**

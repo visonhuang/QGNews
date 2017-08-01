@@ -189,7 +189,25 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
         mTitleText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         mContentText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1500)});
-        mIsPublishing = false;
+        mTitleText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    hideUpleadLinear();
+                    return;
+                }
+            }
+        });
+
+        mContentText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    hideUpleadLinear();
+                    return;
+                }
+            }
+        });
     }
 
     private void publishNews() {
