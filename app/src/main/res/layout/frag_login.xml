@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colcorGrey"
+    android:background="#ffffff"
     android:orientation="vertical"
     >
 
@@ -81,7 +81,7 @@
         android:id="@+id/im_earth"
         android:layout_width="248dp"
         android:layout_height="240dp"
-        app:srcCompat="@drawable/ic_earth"
+        app:srcCompat="@drawable/qg"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="64dp"
         android:layout_marginRight="8dp"
