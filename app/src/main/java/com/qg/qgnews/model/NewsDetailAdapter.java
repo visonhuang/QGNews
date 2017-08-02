@@ -53,6 +53,9 @@ public class NewsDetailAdapter extends PagerAdapter {
         if (position == viewList.size()) {
             position--;
         }
+        if (position == -1) {
+            position++;
+        }
         // TODO Auto-generated method stub
         container.removeView(viewList.get(position));
     }

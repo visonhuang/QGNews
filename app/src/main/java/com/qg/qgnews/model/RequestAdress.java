@@ -118,9 +118,4 @@ public class RequestAdress {
      *
      */
     public static final String POST_NEWS_DOWNLOAD_DETAIL = HOST + "reader/downloadfile";
-    public static final String HEART_BEAT = HOST + "reader/downloadfile";
-
-
-
-
 }

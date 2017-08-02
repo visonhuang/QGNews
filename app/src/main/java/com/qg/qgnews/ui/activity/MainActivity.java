@@ -345,13 +345,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Controller.RequestWithString2(RequestAdress.SEARCH_NEWS, "{\"newsTitle\":\"" + searchContent + "\"}", new Controller.OnRequestListener() {
                 @Override
                 public void onSuccess(String json) {
-                    Log.d("搜索成功",json);
                     oldList.clear();
                     oldList.addAll(0, new Gson().fromJson(json, new TypeToken<List<News>>() {
                     }.getType()));
                     Tool.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            newsListFrag.error.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -359,18 +359,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public void onFailed(int state) {
+                    Tool.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            newsListFrag.error.setImageResource(R.drawable.search_failed);
+                            newsListFrag.error.setVisibility(View.VISIBLE);
+                            oldList.clear();
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
 
+                    Tool.toast("没有");
                 }
             });
         } else {
             Controller.getInstance().RequestNews(new Controller.OnRequestNewsListener() {
                 @Override
                 public void onSuccess(final List<News> list) {
+
                     oldList.clear();
                     oldList.addAll(0, list);
                     Tool.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (list.size() == 0){
+                                newsListFrag.error.setImageResource(R.drawable.loading_failed);
+                                newsListFrag.error.setVisibility(View.VISIBLE);
+                            } else {
+                                newsListFrag.error.setVisibility(View.GONE);
+                            }
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -378,6 +395,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public void onFailed(int state) {
+                    oldList.clear();
+                    Tool.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            newsListFrag.error.setImageResource(R.drawable.loading_failed);
+                            newsListFrag.error.setVisibility(View.VISIBLE);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                     Tool.toast("刷新失败");
                 }
             });
@@ -467,6 +493,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
+        App.isManager = false;
         super.onDestroy();
     }
 

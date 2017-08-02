@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.qg.qgnews.R;
@@ -29,10 +30,11 @@ import java.util.List;
  * Created by 小吉哥哥 on 2017/7/27.
  */
 
-public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, RefreshLayout.OnLoadListener {
+public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, RefreshLayout.OnLoadListener, AdapterView.OnItemLongClickListener {
     private ListView newList;
     private NewsListAdapter2 adapter;
     private RefreshLayout refreshLayout;
+    public ImageView error;
     public List<News> dataNews = new ArrayList<>();
 
     @Override
@@ -48,10 +50,22 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        if (onNewsItemLongClickListener != null) {
+            onNewsItemLongClickListener.OnItemLongClick(view,position,dataNews.get(position),adapter);
+        }
+        return true;
+    }
+
 
     public interface OnNewsItemClickListener {
         void OnItemClickListener(View v, int pos, News news);
     }
+    public interface OnNewsItemLongClickListener {
+        void OnItemLongClick(View v, int pos, News news,NewsListAdapter2 adapter);
+    }
+
 
     public interface OnRefreshOrLoadIngListener {
         void onRefresh(NewsListAdapter2 adapter, List<News> oldList);
@@ -59,7 +73,12 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private OnNewsItemClickListener onNewsItemClickListener = null;
+    private OnNewsItemLongClickListener onNewsItemLongClickListener = null;
     private OnRefreshOrLoadIngListener onRefreshOrLoadIngListener = null;
+
+    public void setOnNewsItemLongClickListener(OnNewsItemLongClickListener onNewsItemLongClickListener) {
+        this.onNewsItemLongClickListener = onNewsItemLongClickListener;
+    }
 
     public void setOnRefreshOrLoadIngListener(OnRefreshOrLoadIngListener onRefreshOrLoadIngListener) {
         this.onRefreshOrLoadIngListener = onRefreshOrLoadIngListener;
@@ -78,12 +97,14 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private void initView(View content) {
+        error = (ImageView) content.findViewById(R.id.news_list_error);
         newList = (ListView) content.findViewById(R.id.news_list);
         refreshLayout = (RefreshLayout) content.findViewById(R.id.refresh_layout);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setOnLoadListener(this);
         adapter = new NewsListAdapter2(getContext(), R.layout.news_item, dataNews);
         newList.setOnItemClickListener(NewsListFrag.this);
+        newList.setOnItemLongClickListener(this);
         newList.setAdapter(adapter);
         //onRefresh();
 

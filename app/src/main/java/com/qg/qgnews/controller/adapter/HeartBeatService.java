@@ -10,8 +10,12 @@ import android.os.SystemClock;
 import android.support.annotation.IntDef;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.qg.qgnews.App;
+import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.RequestAdress;
 import com.qg.qgnews.util.Request;
+import com.qg.qgnews.util.Tool;
 
 public class HeartBeatService extends Service {
     public HeartBeatService() {
@@ -25,22 +29,25 @@ public class HeartBeatService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    Log.d("==========","asdasdwdqwd12312312");
-                    Request.heartBeat(RequestAdress.HEART_BEAT);
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (App.isManager) {
+                            Log.d("==========","asdasdwdqwd12312312");
+                            FeedBack feedBack = Request.RequestWithString2(RequestAdress.LOGIN, new Gson().toJson(Tool.getCurrentManager()));
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                }
-
-            }
-        }).start();
-
+                }).start();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

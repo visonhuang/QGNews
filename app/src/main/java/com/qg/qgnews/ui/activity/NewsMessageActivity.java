@@ -117,36 +117,11 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mode == MODE_MANAGE) {
-            getMenuInflater().inflate(R.menu.news_detial_menu, menu);
-        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Controller.RequestWithString2(RequestAdress.DELETE_NEWS, "{\"newsId\":" + newsList.get(posNow).getNewsId() + "}", new Controller.OnRequestListener() {
-            @Override
-            public void onSuccess(String json) {
-                Tool.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (newsList.size() == 1) {
-                            finish();
-                        }
-                        //newsList.remove(posNow);
-                        viewList.remove(posNow);
-                        viewPager.removeAllViews();
-                        viewPager.getAdapter().notifyDataSetChanged();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailed(int state) {
-                Tool.toast("删除失败");
-            }
-        });
         return super.onOptionsItemSelected(item);
     }
 
@@ -159,6 +134,7 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
     @Override
     public void onPageSelected(int position) {
         posNow = position;
+        Log.d("当前在这一页", position + "");
         new PicAsnycTask(cover, newsList.get(position), App.bitmapLruCache).execute();
         Log.d("title", newsList.get(position).getNewsTitle());
         coll.setTitle(newsList.get(position).getNewsTitle());

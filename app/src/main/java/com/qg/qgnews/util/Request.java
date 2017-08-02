@@ -399,6 +399,7 @@ public class Request {
     }
 
     public static Bitmap getCover(String url) {
+        Log.d("图片链接",url);
         InputStream inputStream = null;
         try {
             URLConnection urlConnection = new URL(url).openConnection();
@@ -590,15 +591,16 @@ public class Request {
             URL url = new URL(URl);
             URLConnection urlConnection = url.openConnection();
             HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
-            httpURLConnection.setConnectTimeout(200);
+            httpURLConnection.setConnectTimeout(2000);
             httpURLConnection.setDoOutput(true);
             httpURLConnection.setUseCaches(false);
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
             httpURLConnection.setRequestProperty("Charset", "utf-8");
             ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
-            ds.write(("{\"managerId\":" + Tool.getCurrentManager().getManagerId() + "}").getBytes());
+            ds.write((new Gson().toJson(Tool.getCurrentManager())).getBytes());
             ds.flush();
+            System.out.println("发送心跳==="+new Gson().toJson(Tool.getCurrentManager()));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
