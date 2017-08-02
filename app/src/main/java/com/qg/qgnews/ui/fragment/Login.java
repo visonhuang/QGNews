@@ -11,15 +11,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.qg.qgnews.App;
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.Controller;
+import com.qg.qgnews.controller.adapter.HeartBeatService;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
+import com.qg.qgnews.model.RequestAdress;
 import com.qg.qgnews.ui.activity.LoginActivity;
 import com.qg.qgnews.ui.activity.MainActivity;
 import com.qg.qgnews.util.Request;
@@ -65,7 +72,7 @@ public class Login extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_login,container,false);
+        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_login, container, false);
 
         initView();
         viewOnclick();
@@ -80,14 +87,20 @@ public class Login extends Fragment {
     /**
      * 实例化控件
      */
-    private void initView () {
+    private void initView() {
+
+
+
+        ImageView earth = (ImageView) view.findViewById(R.id.earth_image);
+        Animation animation = AnimationUtils.loadAnimation(getActivity(),R.anim.route_360);
+        animation.setInterpolator(new LinearInterpolator());
+        earth.startAnimation(animation);
         user = (EditText) view.findViewById(R.id.user);
         password = (EditText) view.findViewById(R.id.password);
         login = (Button) view.findViewById(R.id.login);
         register = (Button) view.findViewById(R.id.register);
         forgetPassword = (TextView) view.findViewById(R.id.forget_password);
         vistor = (TextView) view.findViewById(R.id.visitor);
-
         userState = (TextView) view.findViewById(R.id.login_user_state);
         passwordState = (TextView) view.findViewById(R.id.login_password_state);
         userImage = (ImageView) view.findViewById(R.id.user_image);
@@ -97,7 +110,7 @@ public class Login extends Fragment {
     /**
      * 设置点击事件
      */
-    private void viewOnclick () {
+    private void viewOnclick() {
 
         //登录
         login.setOnClickListener(new View.OnClickListener() {
@@ -105,21 +118,8 @@ public class Login extends Fragment {
             public void onClick(View view) {
                 String email = user.getText().toString();
                 String passwordText = password.getText().toString();
-         /*       if (user.getText().toString().equals("1") && password.getText().toString().equals("1")) {
-                    Intent intent = new Intent(getContext(),MainActivity.class);
-                    intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
-                    startActivity(intent);
-                    LoginActivity loginActivity = (LoginActivity) getActivity();
-            //        loginActivity.finish();
-                } else if (user.getText().toString().equals("2") && password.getText().toString().equals("2")) {
-                    Intent intent = new Intent(getContext(),MainActivity.class);
-                    intent.putExtra("visit_mode",MainActivity.MODE_SUPPER_MANAGER);
-                    startActivity(intent);
-                    LoginActivity loginActivity = (LoginActivity) getActivity();
-        //            loginActivity.finish();
-                }*/
                 if (!Tool.isEmail(email)) {
-                    Log.d(TAG, ""+email);
+                    Log.d(TAG, "" + email);
                     Tool.toast("邮箱格式不正确");
                 } else if (passwordText.equals("")) {
                     Tool.toast("密码不能为空");
@@ -131,24 +131,27 @@ public class Login extends Fragment {
                             Gson gson = new Gson();
                             Manager manager = new Manager();
                             manager.setManagerAccount(user.getText().toString());
-                            manager.setManagerPassword(password.getText().toString());
+                            manager.setManagerPassword(Tool.encryption(password.getText().toString()));
                             String line = gson.toJson(manager);
-                            String respose = Request.RequestWithString("http://192.168.43.141:8080/admin/login",line);
                             Gson gson1 = new Gson();
-                            FeedBack feedBack = gson1.fromJson(respose,FeedBack.class);
+                            FeedBack feedBack = Request.RequestWithString2(RequestAdress.LOGIN, line);
                             if (feedBack == null) {
                                 Tool.toast("服务器无返回");
                             } else {
                                 int state = feedBack.getState();
                                 if (state == 1) {
+                                    App.isManager = true;
+                                    //开始心跳
+                                    getActivity().startService(new Intent(getActivity(), HeartBeatService.class));
                                     //进入主界面
-                                    Manager message = gson1.fromJson(feedBack.getData(),Manager.class);
+                                    Manager message = gson1.fromJson(feedBack.getData(), Manager.class);
+                                    Log.d("登陆===========", message.toString());
                                     Tool.setCurrentManager(message);
                                     Intent intent = new Intent(getContext(), MainActivity.class);
                                     if (message.getManagerSuper() == 1) {
-                                        intent.putExtra("visit_mode",MainActivity.MODE_SUPPER_MANAGER);
+                                        intent.putExtra("visit_mode", MainActivity.MODE_SUPPER_MANAGER);
                                     } else if (message.getManagerSuper() == 0) {
-                                        intent.putExtra("visit_mode",MainActivity.MODE_MANAGER);
+                                        intent.putExtra("visit_mode", MainActivity.MODE_MANAGER);
                                     }
                                     startActivity(intent);
                                     LoginActivity loginActivity = (LoginActivity) getActivity();
@@ -188,7 +191,7 @@ public class Login extends Fragment {
             @Override
             public void onClick(View view) {
                 LoginActivity loginActivity = (LoginActivity) getActivity();
-                loginActivity.replaceFragment(new Regiister(),"注册");
+                loginActivity.replaceFragment(new Regiister(), "注册");
                 LoginActivity.mode = LoginActivity.REGISTER;
             }
         });
@@ -198,7 +201,7 @@ public class Login extends Fragment {
             @Override
             public void onClick(View view) {
                 LoginActivity loginActivity = (LoginActivity) getActivity();
-                loginActivity.replaceFragment(new ForgetPassword(),"忘记密码");
+                loginActivity.replaceFragment(new ForgetPassword(), "忘记密码");
                 LoginActivity.mode = LoginActivity.FORGETPASSWORD;
             }
         });
@@ -206,11 +209,23 @@ public class Login extends Fragment {
         vistor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(),MainActivity.class);
-                intent.putExtra("visit_mode",MainActivity.MODE_VISITOR);
+                Controller.RequestWithString2(RequestAdress.REQUEST_NEWS, "{\"visitorUUID\":" + Tool.saveRandomUUID() + "}", new Controller.OnRequestListener() {
+                    @Override
+                    public void onSuccess(String json) {
+
+                    }
+
+                    @Override
+                    public void onFailed(int state) {
+
+                    }
+                });
+                App.isManager = false;
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.putExtra("visit_mode", MainActivity.MODE_VISITOR);
                 startActivity(intent);
                 LoginActivity loginActivity = (LoginActivity) getActivity();
-               // loginActivity.finish();
+                // loginActivity.finish();
             }
         });
     }
@@ -218,7 +233,7 @@ public class Login extends Fragment {
     /**
      * 编辑框监听
      */
-    private void editViewOnclick () {
+    private void editViewOnclick() {
         user.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

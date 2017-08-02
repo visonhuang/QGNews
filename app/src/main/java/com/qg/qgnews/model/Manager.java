@@ -71,4 +71,17 @@ public class Manager implements Serializable {
     public void setNewsList(List<News> newsList) {
         this.newsList = newsList;
     }
+
+    @Override
+    public String toString() {
+        return "Manager{" +
+                "managerId=" + managerId +
+                ", managerAccount='" + managerAccount + '\'' +
+                ", managerPassword='" + managerPassword + '\'' +
+                ", managerName='" + managerName + '\'' +
+                ", managerSuper=" + managerSuper +
+                ", managerStatus='" + managerStatus + '\'' +
+                ", newsList=" + newsList +
+                '}';
+    }
 }

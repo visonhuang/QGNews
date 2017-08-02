@@ -53,12 +53,12 @@ public class ManagerPersonE extends Fragment {
     private SwipeRefreshLayout refreshLayout;
 
     private Handler handler = new Handler() {
-        public void handleMessage (Message msg) {
+        public void handleMessage(Message msg) {
             switch (msg.what) {
-                case OK :
+                case OK:
                     //刷新ListView（部分管理员）
 
-                    ManagerPersonEAdapter managerPersonEAdapter = new ManagerPersonEAdapter(getContext(),R.layout.manager_item,managers);
+                    ManagerPersonEAdapter managerPersonEAdapter = new ManagerPersonEAdapter(getContext(), R.layout.manager_item, managers);
                     listView.setAdapter(managerPersonEAdapter);
                     refreshLayout.setRefreshing(false);
                     break;
@@ -70,7 +70,7 @@ public class ManagerPersonE extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_manager_person,container,false);
+        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_manager_person, container, false);
 
 
         listView = (ListView) view.findViewById(R.id.manager_person_listView);
@@ -88,10 +88,6 @@ public class ManagerPersonE extends Fragment {
         listView.setAdapter(managerPersonEAdapter);  */
 
 
-
-
-
-
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.manager_refresh);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -100,15 +96,28 @@ public class ManagerPersonE extends Fragment {
                     @Override
                     public void run() {
                         //接受数据
-                        String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
-                        Gson gson = new Gson();
-                        FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
-                        String data = feedBack.getData();
-                        managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+                        try {
+                            String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER_NOT_PASS);
+                            Gson gson = new Gson();
+                            FeedBack feedBack = gson.fromJson(respose, FeedBack.class);
+                            String data = feedBack.getData();
+                            managers = gson.fromJson(data, new TypeToken<List<Manager>>() {
+                            }.getType());
 
-                        Message message = new Message();
-                        message.what = OK;
-                        handler.sendMessage(message);
+                            Message message = new Message();
+                            message.what = OK;
+                            handler.sendMessage(message);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Tool.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    refreshLayout.setRefreshing(false);
+                                }
+                            });
+                            Tool.toast("好像出了点问题");
+                        }
 
                     }
                 }).start();
@@ -119,14 +128,15 @@ public class ManagerPersonE extends Fragment {
             @Override
             public void run() {
                 //接受数据
-                String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER_NOT_PASS);
                 Gson gson = new Gson();
-                FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                FeedBack feedBack = gson.fromJson(respose, FeedBack.class);
                 if (feedBack == null) {
                     Tool.toast("服务器无返回");
                 } else {
                     String data = feedBack.getData();
-                    managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+                    managers = gson.fromJson(data, new TypeToken<List<Manager>>() {
+                    }.getType());
 
                     Message message = new Message();
                     message.what = OK;
@@ -140,7 +150,7 @@ public class ManagerPersonE extends Fragment {
         return view;
     }
 
-    private void setViewOnclick () {
+    private void setViewOnclick() {
 
         //点击事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -167,11 +177,10 @@ public class ManagerPersonE extends Fragment {
                                 @Override
                                 public void run() {
                                     Gson gson = new Gson();
-                                    Map<String,Integer> map = new HashMap<String, Integer>();
-                                    map.put("managerId",id);
+                                    Map<String, Integer> map = new HashMap<String, Integer>();
+                                    map.put("managerId", id);
                                     String line = gson.toJson(map);
-                                    String reponse = Request.RequestWithString(RequestAdress.AGRESS_APPLY,line);
-                                    FeedBack feedBack = gson.fromJson(reponse,FeedBack.class);
+                                    FeedBack feedBack = Request.RequestWithString2(RequestAdress.AGRESS_APPLY, line);
                                     if (feedBack == null) {
                                         Tool.toast("服务器无返回");
                                     } else {
@@ -187,14 +196,15 @@ public class ManagerPersonE extends Fragment {
                                 @Override
                                 public void run() {
                                     //接受数据
-                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                                    String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER_NOT_PASS);
                                     Gson gson = new Gson();
-                                    FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                                    FeedBack feedBack = gson.fromJson(respose, FeedBack.class);
                                     if (feedBack == null) {
                                         Tool.toast("服务器无返回");
                                     } else {
                                         String data = feedBack.getData();
-                                        managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+                                        managers = gson.fromJson(data, new TypeToken<List<Manager>>() {
+                                        }.getType());
 
                                         Message message = new Message();
                                         message.what = OK;
@@ -215,11 +225,10 @@ public class ManagerPersonE extends Fragment {
                                 @Override
                                 public void run() {
                                     Gson gson = new Gson();
-                                    Map<String,Integer> map = new HashMap<String, Integer>();
-                                    map.put("managerId",id);
+                                    Map<String, Integer> map = new HashMap<String, Integer>();
+                                    map.put("managerId", id);
                                     String line = gson.toJson(map);
-                                    String reponse = Request.RequestWithString(RequestAdress.DISAGRESS_APPLY,line);
-                                    FeedBack feedBack = gson.fromJson(reponse,FeedBack.class);
+                                    FeedBack feedBack = Request.RequestWithString2(RequestAdress.DISAGRESS_APPLY, line);
                                     if (feedBack == null) {
                                         Tool.toast("服务器无返回");
                                     } else {
@@ -240,14 +249,15 @@ public class ManagerPersonE extends Fragment {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                                    String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER_NOT_PASS);
                                     Gson gson = new Gson();
-                                    FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                                    FeedBack feedBack = gson.fromJson(respose, FeedBack.class);
                                     if (feedBack == null) {
                                         Tool.toast("服务器无返回");
                                     } else {
                                         String data = feedBack.getData();
-                                        managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+                                        managers = gson.fromJson(data, new TypeToken<List<Manager>>() {
+                                        }.getType());
 
                                         Message message = new Message();
                                         message.what = OK;
@@ -289,11 +299,11 @@ public class ManagerPersonE extends Fragment {
                                 @Override
                                 public void run() {
                                     Gson gson = new Gson();
-                                    Map<String,Integer> map = new HashMap<String, Integer>();
-                                    map.put("managerId",id);
+                                    Map<String, Integer> map = new HashMap<String, Integer>();
+                                    map.put("managerId", id);
                                     String line = gson.toJson(map);
-                                    String reponse = Request.RequestWithString(RequestAdress.AGRESS_APPLY,line);
-                                    FeedBack feedBack = gson.fromJson(reponse,FeedBack.class);
+                                    String reponse = Request.RequestWithString(RequestAdress.AGRESS_APPLY, line);
+                                    FeedBack feedBack = gson.fromJson(reponse, FeedBack.class);
                                     if (feedBack == null) {
                                         Tool.toast("服务器无返回");
                                     } else {
@@ -309,14 +319,15 @@ public class ManagerPersonE extends Fragment {
                                 @Override
                                 public void run() {
                                     //接受数据
-                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                                    String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER_NOT_PASS);
                                     Gson gson = new Gson();
-                                    FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                                    FeedBack feedBack = gson.fromJson(respose, FeedBack.class);
                                     if (feedBack == null) {
                                         Tool.toast("服务器无返回");
                                     } else {
                                         String data = feedBack.getData();
-                                        managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+                                        managers = gson.fromJson(data, new TypeToken<List<Manager>>() {
+                                        }.getType());
 
                                         Message message = new Message();
                                         message.what = OK;
@@ -338,11 +349,11 @@ public class ManagerPersonE extends Fragment {
                                 @Override
                                 public void run() {
                                     Gson gson = new Gson();
-                                    Map<String,Integer> map = new HashMap<String, Integer>();
-                                    map.put("managerId",id);
+                                    Map<String, Integer> map = new HashMap<String, Integer>();
+                                    map.put("managerId", id);
                                     String line = gson.toJson(map);
-                                    String reponse = Request.RequestWithString(RequestAdress.DISAGRESS_APPLY,line);
-                                    FeedBack feedBack = gson.fromJson(reponse,FeedBack.class);
+                                    String reponse = Request.RequestWithString(RequestAdress.DISAGRESS_APPLY, line);
+                                    FeedBack feedBack = gson.fromJson(reponse, FeedBack.class);
                                     if (feedBack == null) {
                                         Tool.toast("服务器无返回");
                                     } else {
@@ -358,14 +369,15 @@ public class ManagerPersonE extends Fragment {
                                 @Override
                                 public void run() {
                                     //接受数据
-                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanagerapproval");
+                                    String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER_NOT_PASS);
                                     Gson gson = new Gson();
-                                    FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
+                                    FeedBack feedBack = gson.fromJson(respose, FeedBack.class);
                                     if (feedBack == null) {
                                         Tool.toast("服务器无返回");
                                     } else {
                                         String data = feedBack.getData();
-                                        managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
+                                        managers = gson.fromJson(data, new TypeToken<List<Manager>>() {
+                                        }.getType());
 
                                         Message message = new Message();
                                         message.what = OK;

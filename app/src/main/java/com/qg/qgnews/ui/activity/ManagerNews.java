@@ -15,7 +15,9 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.qg.qgnews.App;
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.Controller;
 import com.qg.qgnews.controller.adapter.NewsListAdapter2;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
@@ -23,107 +25,84 @@ import com.qg.qgnews.model.News;
 import com.qg.qgnews.model.RequestAdress;
 import com.qg.qgnews.ui.fragment.NewsListFrag;
 import com.qg.qgnews.util.Request;
+import com.qg.qgnews.util.Tool;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ManagerNews extends AppCompatActivity implements NewsListFrag.OnNewsItemClickListener {
-
-    private static final String TAG = "ManagerNews";
-    
-    int id;
-
-    private FeedBack feedBack;
+public class ManagerNews extends AppCompatActivity implements NewsListFrag.OnRefreshOrLoadIngListener, NewsListFrag.OnNewsItemClickListener {
 
     private TextView title;
-
-    private List<News> newsLists;
-
-    private Gson gson = new Gson();
-
-    public static final int GET = 1;
-
-    NewsListFrag fragment;
-
-    private Handler handler = new Handler() {
-        public void handleMessage (Message message) {
-            switch (message.what) {
-                case GET:
-                     fragment = new NewsListFrag();
-                    fragment.setOnNewsItemClickListener(ManagerNews.this);
-                    fragment.setOnRefreshOrLoadIngListener(new NewsListFrag.OnRefreshOrLoadIngListener() {
-                        @Override
-                        public void onRefresh(NewsListAdapter2 adapter, List<News> oldList) {
-                            oldList.clear();
-                            for (int i = 0; i < newsLists.size(); i++) {
-                                oldList.add(newsLists.get(i));
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onLoad(NewsListAdapter2 adapter, List<News> oldList) {
-
-                        }
-                    });
-                    replaceFragment(fragment);
-                    break;
-                default:
-            }
-        }
-    };
+    NewsListFrag frag;
+    private int managerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        managerId = getIntent().getIntExtra("id",0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager_news);
+        initView();
+    }
+
+    private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.manager_news_toolbar);
         setSupportActionBar(toolbar);
         title = (TextView) findViewById(R.id.manager_news_title);
         title.setText("新闻列表");
-
-        getMessage();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Map<String,Integer> map = new HashMap<String, Integer>();
-                map.put("managerId",id);
-                String line = gson.toJson(map);
-
-                Log.d(TAG, "0000000000000000" + line);
-
-                String respose = Request.RequestWithString(RequestAdress.SHOWOWNNEWS,line);
-
-                Log.d(TAG, "111111111111111" + respose);
-                feedBack = gson.fromJson(respose,FeedBack.class);
-                String data = feedBack.getData();
-                newsLists = gson.fromJson(data,new TypeToken<List<News>>(){}.getType());
-
-                Message message = new Message();
-                message.what = GET;
-                handler.sendMessage(message);
-            }
-        }).start();
+        frag = new NewsListFrag();
+        frag.setOnRefreshOrLoadIngListener(this);
+        frag.setOnNewsItemClickListener(this);
+        //显示newslistFrag
+        replaceFragment(frag);
     }
 
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.manager_news_frameLayout,fragment);
-      //  fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.manager_news_frameLayout, fragment);
         fragmentTransaction.commit();
     }
-
-    private void getMessage () {
-        Intent intent = getIntent();
-        id = intent.getIntExtra("id",0);
+    @Override
+    public void onRefresh(final NewsListAdapter2 adapter, final List<News> oldList) {
+        App.bitmapLruCache.evictAll();
+        Controller.RequestWithString2(RequestAdress.SHOW_OWN_NEWS, "{\"managerId\":" + managerId + "}", new Controller.OnRequestListener() {
+            @Override
+            public void onSuccess(String json) {
+                Log.d("我的新闻刷新返回",json);
+                oldList.clear();
+                oldList.addAll(0, new Gson().fromJson(json, new TypeToken<List<News>>() {
+                }.getType()));
+                Tool.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+            @Override
+            public void onFailed(int state) {
+            }
+        });
+    }
+    @Override
+    public void onLoad(final NewsListAdapter2 adapter, final List<News> oldList) {
+        Tool.toast("没有更多了");
+    }
+    @Override
+    public void OnItemClickListener(View v, int pos, News news) {
+        Intent intent = new Intent(this, NewsMessageActivity.class);
+        intent.putExtra("news_list", (Serializable) frag.dataNews);
+        intent.putExtra("start_pos", pos);
+        intent.putExtra("mode", NewsMessageActivity.MODE_MANAGE);
+        startActivity(intent);
     }
 
     @Override
-    public void OnItemClickListener(View v, int pos, News news) {
-
+    protected void onResume() {
+        super.onResume();
+        frag.onRefresh();
     }
 }

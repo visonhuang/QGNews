@@ -118,4 +118,20 @@ public class News implements Serializable{
     public void setFileList(List<ViceFile> fileList) {
         this.fileList = fileList;
     }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "newsId=" + newsId +
+                ", managerId=" + managerId +
+                ", newsTitle='" + newsTitle + '\'' +
+                ", newsBody='" + newsBody + '\'' +
+                ", newsAuthor='" + newsAuthor + '\'' +
+                ", newsTime='" + newsTime + '\'' +
+                ", newsUUID='" + newsUUID + '\'' +
+                ", newsFace='" + newsFace + '\'' +
+                ", filesUUID='" + filesUUID + '\'' +
+                ", fileList=" + fileList +
+                '}';
+    }
 }

@@ -44,7 +44,7 @@ public class ManagerFileListActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout refreshLayout;
 
-    private List<DownloadDetial> downloadDetials = new ArrayList<>();
+    private List<ViceFile> viceFiless = new ArrayList<>();
 
     private List<VisitorDownload> visitorDownloads = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class ManagerFileListActivity extends AppCompatActivity {
             switch (message.what) {
                 case MORE:
                     //刷新附件下载详情
-                    AdapterFile adapterFile = new AdapterFile(ManagerFileListActivity.this,R.layout.manager_file_list,downloadDetials);
+                    AdapterFile adapterFile = new AdapterFile(ManagerFileListActivity.this,R.layout.manager_file_list,viceFiless);
 
                     listView.setAdapter(adapterFile);
 
@@ -135,6 +135,12 @@ public class ManagerFileListActivity extends AppCompatActivity {
                         FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                         if (feedBack == null) {
                             Tool.toast("服务器无返回");
+                            Tool.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    refreshLayout.setRefreshing(false);
+                                }
+                            });
                         } else {
                             int state = feedBack.getState();
                             if (state == 1) {
@@ -210,7 +216,7 @@ public class ManagerFileListActivity extends AppCompatActivity {
     /**
      * 文件下载详情适配器
      */
-    class AdapterFile extends ArrayAdapter<DownloadDetial> {
+    class AdapterFile extends ArrayAdapter<ViceFile> {
 
         private int resourceId;
 
@@ -219,7 +225,7 @@ public class ManagerFileListActivity extends AppCompatActivity {
         private TextView fileDownTimes;
 
 
-        public AdapterFile(@NonNull Context context, @LayoutRes int resource, @NonNull List<DownloadDetial> objects) {
+        public AdapterFile(@NonNull Context context, @LayoutRes int resource, @NonNull List<ViceFile> objects) {
             super(context, resource, objects);
             resourceId = resource;
         }
@@ -229,13 +235,14 @@ public class ManagerFileListActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
 
-//            DownloadDetial downloadDetial = getItem(position);
-//
-//            fileName = (TextView) view.findViewById(R.id.file_name);
-//            fileDownTimes = (TextView) view.findViewById(R.id.file_downtimes);
-//
-//            fileName.setText("文件名：" + downloadDetial.getDownloadName());
-//            fileDownTimes.setText("下载次数：" + downloadDetial.getDownloadTime());
+            //  DownloadDetial downloadDetial = getItem(position);
+
+            ViceFile viceFile = getItem(position);
+            fileName = (TextView) view.findViewById(R.id.file_name);
+            fileDownTimes = (TextView) view.findViewById(R.id.file_downtimes);
+
+            fileName.setText("文件名：" + viceFile.getFileName());
+            fileDownTimes.setText("下载次数：" + viceFile.getFileDownLoadTime());
 
 
 

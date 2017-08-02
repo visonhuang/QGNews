@@ -98,11 +98,17 @@ public class ManagerPerson extends Fragment {
                     @Override
                     public void run() {
                         //接受数据
-                        String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanager");
+                        String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER);
                         Gson gson = new Gson();
                         FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                         if (feedBack == null) {
                             Tool.toast("服务器无返回");
+                            Tool.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    refreshLayout.setRefreshing(false);
+                                }
+                            });
                         } else {
                             String data = feedBack.getData();
                             managers = gson.fromJson(data,new TypeToken<List<Manager>>(){}.getType());
@@ -123,7 +129,7 @@ public class ManagerPerson extends Fragment {
             @Override
             public void run() {
                 //接受数据
-                String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanager");
+                String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER);
                 Gson gson = new Gson();
                 FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                 if (feedBack == null) {
@@ -195,7 +201,7 @@ public class ManagerPerson extends Fragment {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanager");
+                                    String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER);
                                     Gson gson = new Gson();
                                     FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                                     if (feedBack == null) {
@@ -249,7 +255,7 @@ public class ManagerPerson extends Fragment {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanager");
+                                    String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER);
                                     Gson gson = new Gson();
                                     FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                                     if (feedBack == null) {
@@ -339,7 +345,7 @@ public class ManagerPerson extends Fragment {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanager");
+                                    String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER);
                                     Gson gson = new Gson();
                                     FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                                     if (feedBack == null) {
@@ -393,7 +399,7 @@ public class ManagerPerson extends Fragment {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanager");
+                                    String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER);
                                     Gson gson = new Gson();
                                     FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                                     if (feedBack == null) {
@@ -473,7 +479,7 @@ public class ManagerPerson extends Fragment {
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
-                                                String respose = Request.RequestWithNoString("http://192.168.43.141:8080/admin/showmanager");
+                                                String respose = Request.RequestWithNoString(RequestAdress.GET_ALL_MANAGER);
                                                 Gson gson = new Gson();
                                                 FeedBack feedBack = gson.fromJson(respose,FeedBack.class);
                                                 if (feedBack == null) {

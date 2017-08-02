@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
+import com.qg.qgnews.model.RequestAdress;
 import com.qg.qgnews.ui.activity.LoginActivity;
 import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
@@ -65,13 +66,13 @@ public class ForgetPassword extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_forget_password,container,false);
+        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_forget_password, container, false);
 
         LoginActivity loginActivity = (LoginActivity) getActivity();
         loginActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         loginActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
 
-        time = new TimeCount(60000,1000);
+        time = new TimeCount(60000, 1000);
 
         initView();
         viewOnClick();
@@ -87,7 +88,7 @@ public class ForgetPassword extends Fragment {
     /**
      * 实例化控件
      */
-    private void initView () {
+    private void initView() {
         user = (EditText) view.findViewById(R.id.forget_user);
         password = (EditText) view.findViewById(R.id.forget_password_Edit);
         number = (EditText) view.findViewById(R.id.forget_number);
@@ -103,7 +104,7 @@ public class ForgetPassword extends Fragment {
     /**
      * 设置点击事件
      */
-    private void viewOnClick () {
+    private void viewOnClick() {
 
         number_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,9 +119,9 @@ public class ForgetPassword extends Fragment {
                         manager.setManagerAccount(user.getText().toString());
                         String line = gson.toJson(manager);
                         Log.d(TAG, line);
-                        String response = Request.RequestWithSession("http://192.168.43.141:8080/admin/sendverifycode",line,true);
+                        String response = Request.RequestWithSession(RequestAdress.SEND_VERIFY_CODE, line, true);
                         Log.d(TAG, line);
-                        FeedBack feedBack = gson.fromJson(response,FeedBack.class);
+                        FeedBack feedBack = gson.fromJson(response, FeedBack.class);
                         if (feedBack == null) {
                             Tool.toast("服务器无返回");
                         } else {
@@ -151,40 +152,52 @@ public class ForgetPassword extends Fragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Gson gson = new Gson();
-                        String nameS = user.getText().toString();
-                        String passwordS = password.getText().toString();
-                        String numberS = number.getText().toString();
-                        Map<String,String> map = new HashMap<String, String>();
-                        map.put("managerAccount",nameS);
-                        map.put("managerPassword",passwordS);
-                        map.put("verifyCode",numberS);
-                        String line = gson.toJson(map);
-                        Log.d(TAG, line);
-                        String response = Request.RequestWithSession("http://192.168.43.141:8080/admin/setnewpassword",line,false);
-                        Log.d(TAG, response);
-                        FeedBack feedBack = gson.fromJson(response,FeedBack.class);
-                        int state = feedBack.getState();
-                        if (state == 1) {
-                            Tool.toast("修改密码成功");
-                        } else if (state == 3) {
-                            Tool.toast("邮箱不存在");
-                        } else if (state == 4) {
-                            Tool.toast("邮箱为空");
-                        } else if (state == 5) {
-                            Tool.toast("密码为空");
-                        } else if (state == 6) {
-                            Tool.toast("邮箱格式不正确");
-                        } else if (state == 8) {
-                            Tool.toast("密码错误");
-                        } else if (state == 9) {
-                            Tool.toast("账户未激活");
-                        } else if (state == 10) {
-                            Tool.toast("账户未审批");
-                        } else if (state == 11) {
-                            Tool.toast("账户被封了");
-                        } else if (state == 5000) {
-                            Tool.toast("服务器异常");
+                        try {
+
+
+                            Gson gson = new Gson();
+                            String nameS = user.getText().toString();
+                            String passwordS = password.getText().toString();
+                            String numberS = number.getText().toString();
+                            Map<String, String> map = new HashMap<String, String>();
+                            map.put("managerAccount", nameS);
+                            map.put("managerPassword", Tool.encryption(passwordS));
+                            map.put("verifyCode", numberS);
+                            String line = gson.toJson(map);
+                            Log.d(TAG, line);
+                            String response = Request.RequestWithSession(RequestAdress.SET_NEW_PASSWORD, line, false);
+                            Log.d(TAG, response);
+                            FeedBack feedBack = gson.fromJson(response, FeedBack.class);
+                            int state = feedBack.getState();
+                            if (state == 1) {
+                                Tool.toast("修改密码成功");
+                                Manager manager = Tool.getCurrentManager();
+                                manager.setManagerPassword(password.getText().toString());
+                                Tool.setCurrentManager(manager);
+                            } else if (state == 3) {
+                                Tool.toast("邮箱不存在");
+                            } else if (state == 4) {
+                                Tool.toast("邮箱为空");
+                            } else if (state == 5) {
+                                Tool.toast("密码为空");
+                            } else if (state == 6) {
+                                Tool.toast("邮箱格式不正确");
+                            } else if (state == 8) {
+                                Tool.toast("密码错误");
+                            } else if (state == 9) {
+                                Tool.toast("账户未激活");
+                            } else if (state == 10) {
+                                Tool.toast("账户未审批");
+                            } else if (state == 11) {
+                                Tool.toast("账户被封了");
+                            } else if (state == 5000) {
+                                Tool.toast("服务器异常");
+                            } else if (state == 0){
+                                Tool.toast("好像出了点问题");
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Tool.toast("好像出了点问题");
                         }
                     }
                 }).start();
@@ -196,7 +209,7 @@ public class ForgetPassword extends Fragment {
     /**
      * 编辑框监听
      */
-    private void editViewOnClick () {
+    private void editViewOnClick() {
         user.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -212,6 +225,8 @@ public class ForgetPassword extends Fragment {
                     userImage.setVisibility(View.GONE);
                     change.setClickable(false);
                     change.setBackgroundColor(Color.parseColor("#d6d7d7"));
+                    number_button.setClickable(false);
+                    number_button.setBackgroundColor(Color.parseColor("#d6d7d7"));
                 } else {
                     if (Tool.isEmail(text)) {
                         userImage.setVisibility(View.VISIBLE);
@@ -221,7 +236,7 @@ public class ForgetPassword extends Fragment {
                             number_button.setClickable(true);
                             number_button.setBackgroundColor(Color.parseColor("#30b0ff"));
                         }
-                        if (password.getText().toString().length() > 5 && password.getText().toString().length() <21 && !number.getText().toString().equals("")) {
+                        if (password.getText().toString().length() > 5 && password.getText().toString().length() < 21 && number.getText().toString().length() != 0) {
                             change.setClickable(true);
                             change.setBackgroundColor(Color.parseColor("#30b0ff"));
                         }
@@ -231,6 +246,8 @@ public class ForgetPassword extends Fragment {
                         userState.setText("输入的邮箱格式错误");
                         change.setClickable(false);
                         change.setBackgroundColor(Color.parseColor("#d6d7d7"));
+                        number_button.setClickable(false);
+                        number_button.setBackgroundColor(Color.parseColor("#d6d7d7"));
 
                     }
                 }
@@ -274,7 +291,7 @@ public class ForgetPassword extends Fragment {
                         passwordState.setVisibility(View.GONE);
                         passwordImage.setVisibility(View.VISIBLE);
                         passwordImage.setImageResource(R.drawable.state_true);
-                        if (Tool.isEmail(user.getText().toString()) && !number.getText().toString().equals("")) {
+                        if (Tool.isEmail(user.getText().toString()) && number.getText().toString().length() != 0) {
                             change.setClickable(true);
                             change.setBackgroundColor(Color.parseColor("#30b0ff"));
                         }
@@ -288,6 +305,28 @@ public class ForgetPassword extends Fragment {
 
             }
         });
+
+        number.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                if (Tool.isEmail(user.getText().toString()) && password.getText().toString().length() > 5 && password.getText().toString().length() < 21 && number.getText().toString().length() != 0) {
+                    change.setClickable(true);
+                    change.setBackgroundColor(Color.parseColor("#30b0ff"));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
     }
 
     class TimeCount extends CountDownTimer {
@@ -306,7 +345,7 @@ public class ForgetPassword extends Fragment {
         @Override
         public void onTick(long l) {
             number_button.setClickable(false);
-            number_button.setText("剩余" + (int)(l/1000) + "秒");
+            number_button.setText("剩余" + (int) (l / 1000) + "秒");
             number_button.setBackgroundColor(Color.parseColor("#d6d7d7"));
             buttonState = 0;
         }

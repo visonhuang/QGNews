@@ -30,39 +30,50 @@ import java.util.List;
 public class Controller {
     private static Controller controller;
     private static Gson gson = new Gson();
+
     public static Controller getInstance() {
         if (controller == null) {
             controller = new Controller();
         }
         return controller;
     }
+
     public interface OnRequestNewsListener {
         void onSuccess(List<News> list);
+
         void onFailed(int state);
     }
+
     public interface OnRequestListener {
         void onSuccess(String json);
 
         void onFailed(int state);
     }
+
     //刷新新闻
     public static void RequestNews(final OnRequestNewsListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 FeedBack feedBack = Request.RequestNews();
-                if (feedBack.getState() == 1) {
-                    listener.onSuccess((List<News>) gson.fromJson(feedBack.getData(), new TypeToken<List<News>>() {
-                    }.getType()));
-                    Tool.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                try {
+                    if (feedBack.getState() == 1) {
+                        listener.onSuccess((List<News>) gson.fromJson(feedBack.getData(), new TypeToken<List<News>>() {
+                        }.getType()));
+                        Tool.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                        }
-                    });
-                } else {
-                    listener.onFailed(feedBack.getState());
+                            }
+                        });
+                    } else {
+                        listener.onFailed(feedBack.getState());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Tool.toast("服务器异常");
                 }
+
             }
         }).start();
     }
@@ -81,36 +92,37 @@ public class Controller {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String jsonString = "{\"newsId\":"+newsId+"}";
+                String jsonString = "{\"newsId\":" + newsId + "}";
                 Tool.toast(jsonString);
-                try{
-                    FeedBack feedBack = Request.RequestWithString2(RequestAdress.GET_NEWS_DETIAL,jsonString);
+                try {
+                    FeedBack feedBack = Request.RequestWithString2(RequestAdress.GET_NEWS_DETIAL, jsonString);
                     if (feedBack.getState() == 1) {
                         listener.onSuccess(feedBack.getData());
                     } else {
                         listener.onFailed(feedBack.getState());
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     listener.onFailed(-1);
                 }
             }
         }).start();
     }
+
     //带字符串请求
-    public static void RequestWithString(final String url, final String json, final OnRequestListener listener){
+    public static void RequestWithString(final String url, final String json, final OnRequestListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try{
-                    FeedBack feedBack = gson.fromJson(Request.RequestWithString(url,json),FeedBack.class);
+                try {
+                    FeedBack feedBack = gson.fromJson(Request.RequestWithString(url, json), FeedBack.class);
                     if (feedBack.getState() == 1) {
                         listener.onSuccess(feedBack.getData());
                     } else {
                         listener.onFailed(feedBack.getState());
                     }
 
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     listener.onFailed(-1);
                 }
@@ -120,12 +132,11 @@ public class Controller {
     }
 
 
-    public static void RequestWithString2(final String url, final String json, final OnRequestListener listener){
+    public static void RequestWithString2(final String url, final String json, final OnRequestListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Tool.toast(json);
-                FeedBack feedBack = Request.RequestWithString2(url,json);
+                FeedBack feedBack = Request.RequestWithString2(url, json);
                 if (feedBack.getState() == 1) {
                     listener.onSuccess(feedBack.getData());
                 } else {

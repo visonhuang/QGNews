@@ -130,12 +130,11 @@ public class ManagerActivity extends AppCompatActivity {
                     }
                 }).show();
                 break;
-            case R.id.manager_menu_check:
-                //查看附件下载
-                Intent intent = new Intent(ManagerActivity.this,ManagerFileListActivity.class);
-                startActivity(intent);
-
-                break;
+//            case R.id.manager_menu_check:
+//                //查看附件下载
+//                Intent intent = new Intent(ManagerActivity.this,ManagerFileListActivity.class);
+//                startActivity(intent);
+//                break;
             default:
         }
         return true;

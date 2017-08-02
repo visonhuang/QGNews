@@ -243,14 +243,18 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         new Thread(new Runnable() {
             @Override
             public void run() {
+                int managerId = Tool.getCurrentManager().getManagerId();
                 String newsTitle = mTitleText.getText().toString();
                 String newsBody = mContentText.getText().toString();
-                String newsAuthor = "我是新闻作者";
+                String newsAuthor = Tool.getCurrentManager().getManagerName();
                 String newsTime = "我是新闻发布时间";
                 String newsUuid = UUID.randomUUID().toString();
-                String newsFace = "有封面";
+                String newsFace = null;
+                if(mCoverBitmap != null){
+                    newsFace = "有封面";
+                }
                 String filesUuid = UUID.randomUUID().toString();
-                News news = new News(1,1,newsTitle,newsBody,newsAuthor,newsTime,newsUuid,
+                News news = new News(1,managerId,newsTitle,newsBody,newsAuthor,newsTime,newsUuid,
                         newsFace, filesUuid, null);
 
                 Request.upLoadNews(news, mCoverBitmap, getFilePathArray(mFileList), new UploadListener() {
@@ -276,18 +280,24 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
 
                             }
                         }).start();
-                        FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
-                        int status = feedBack.getState();
-                        if(status == 1){
-                            Tool.toast("新闻发布完成");
-                            mFab.setImageResource(R.drawable.ic_ok);
-                            mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
-                            finish();
+                        try{
+                            FeedBack feedBack = new Gson().fromJson(response, FeedBack.class);
+                            int status = feedBack.getState();
+                            if(status == 1){
+                                Tool.toast("新闻发布完成");
+                                mFab.setImageResource(R.drawable.ic_ok);
+                                mFab.startAnimation(AnimationUtils.loadAnimation(PublishNewsActivity.this, R.anim.rotate_360));
+                                finish();
+                            }
+                            else if(status == 5000){
+                                Tool.toast("新闻发布失败");
+                            }
+                            mIsPublishing = false;
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Tool.toast("服务器异常");
                         }
-                        else if(status == 5000){
-                            Tool.toast("新闻发布失败");
-                        }
-                        mIsPublishing = false;
+
                     }
                 });
 

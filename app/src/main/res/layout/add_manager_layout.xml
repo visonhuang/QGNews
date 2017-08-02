@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="邮箱" />
 
     <EditText
         android:id="@+id/add_manager_password"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="密码" />
 
     <EditText
         android:id="@+id/add_manager_name"
@@ -26,5 +26,5 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="昵称"/>
 </LinearLayout>

@@ -22,12 +22,15 @@ import android.widget.ImageView;
 
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
+import com.qg.qgnews.controller.adapter.Controller;
 import com.qg.qgnews.controller.adapter.DownLoadServer;
 import com.qg.qgnews.controller.adapter.FragmentPagerAdapterNewsMessage;
 import com.qg.qgnews.model.News;
 import com.qg.qgnews.model.NewsDetailAdapter;
 import com.qg.qgnews.model.PicAsnycTask;
+import com.qg.qgnews.model.RequestAdress;
 import com.qg.qgnews.ui.fragment.NewsMessage;
+import com.qg.qgnews.util.Tool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +67,9 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
         setContentView(R.layout.activity_news_message);
         Intent intent = getIntent();
         newsList = (List<News>) intent.getSerializableExtra("news_list");
+        for (News news : newsList) {
+            System.out.println(news);
+        }
         startPos = intent.getIntExtra("start_pos", 0);
         mode = intent.getIntExtra("mode", MODE_VISIT);
         Intent intent1 = new Intent(this, DownLoadServer.class);
@@ -119,10 +125,28 @@ public class NewsMessageActivity extends AppCompatActivity implements ViewPager.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        newsList.remove(posNow);
-        viewList.remove(posNow);
-        viewPager.removeAllViews();
-        viewPager.getAdapter().notifyDataSetChanged();
+        Controller.RequestWithString2(RequestAdress.DELETE_NEWS, "{\"newsId\":" + newsList.get(posNow).getNewsId() + "}", new Controller.OnRequestListener() {
+            @Override
+            public void onSuccess(String json) {
+                Tool.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (newsList.size() == 1) {
+                            finish();
+                        }
+                        //newsList.remove(posNow);
+                        viewList.remove(posNow);
+                        viewPager.removeAllViews();
+                        viewPager.getAdapter().notifyDataSetChanged();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(int state) {
+                Tool.toast("删除失败");
+            }
+        });
         return super.onOptionsItemSelected(item);
     }
 

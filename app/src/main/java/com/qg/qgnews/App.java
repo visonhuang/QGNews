@@ -3,10 +3,13 @@ package com.qg.qgnews;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+
+import com.qg.qgnews.controller.adapter.HeartBeatService;
 
 import java.util.Stack;
 
@@ -23,6 +26,7 @@ public class App extends Application {
     /**
      * 全局上下文，不能做UI操作
      */
+    public static boolean isManager = false;
     public static Context context;
     public static LruCache<Integer,Bitmap> bitmapLruCache;
     public static Stack<Activity> getActivityStack() {

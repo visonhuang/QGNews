@@ -10,8 +10,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.MenuItemImpl;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
@@ -31,6 +33,7 @@ import com.google.gson.reflect.TypeToken;
 import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.controller.adapter.Controller;
+import com.qg.qgnews.controller.adapter.HeartBeatService;
 import com.qg.qgnews.controller.adapter.NewsListAdapter2;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.News;
@@ -103,7 +106,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_toolbar_menu, menu);
+        MenuItem item = menu.findItem(R.id.main_menu_logout);
+        if (App.isManager) {
+            item.setTitle("退出登录");
+        } else {
+            item.setTitle("我要登陆");
+        }
         searchView = ((SearchView) menu.findItem(R.id.main_menu_search).getActionView());
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.main_menu_search), new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+
+                return true;
+            }
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                isSearch = false;
+                newsListFrag.onRefresh();
+                return true;
+            }
+        });
         setSearchViewOptions(searchView);
         return super.onCreateOptionsMenu(menu);
     }
@@ -114,9 +136,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_search:
                 break;
             case R.id.main_menu_logout:
+                //管理员注销，停止心跳包，并发送注销请求
+                if (App.isManager) {
+                    System.out.println("停止发送心跳包");
+                    stopService(new Intent(this, HeartBeatService.class));
+                }
                 finish();
                 startActivity(new Intent(this, LoginActivity.class));
                 break;
+
             case R.id.main_menu_select_download_path:
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
@@ -130,6 +158,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+    boolean isSearch = false;
+    String searchContent = "";
+
     private void setSearchViewOptions(final SearchView s) {
         s.setQueryHint("搜索新闻...");
         //显示提交按钮
@@ -137,7 +168,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         s.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                App.bitmapLruCache.evictAll();
+                searchContent = query;
+                //清缓存
+                //该标识
+                isSearch = true;
+                //触发刷新
+                newsListFrag.onRefresh();
                 return false;
             }
 
@@ -178,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.activity_main_mynews_button:
                 Tool.toast("点击了我的新闻");
-                Intent intent2 = new Intent(MainActivity.this, ManagerNews.class);
+                Intent intent2 = new Intent(this, ManagerNews.class);
                 intent2.putExtra("id", Tool.getCurrentManager().getManagerId());
                 startActivity(intent2);
                 break;
@@ -305,24 +341,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onRefresh(final NewsListAdapter2 adapter, final List<News> oldList) {
         App.bitmapLruCache.evictAll();
-        Controller.getInstance().RequestNews(new Controller.OnRequestNewsListener() {
-            @Override
-            public void onSuccess(final List<News> list) {
-                oldList.clear();
-                oldList.addAll(0, list);
-                Tool.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
+        if (isSearch) {
+            Controller.RequestWithString2(RequestAdress.SEARCH_NEWS, "{\"newsTitle\":\"" + searchContent + "\"}", new Controller.OnRequestListener() {
+                @Override
+                public void onSuccess(String json) {
+                    Log.d("搜索成功",json);
+                    oldList.clear();
+                    oldList.addAll(0, new Gson().fromJson(json, new TypeToken<List<News>>() {
+                    }.getType()));
+                    Tool.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
 
-            @Override
-            public void onFailed(int state) {
-                Tool.toast("刷新失败");
-            }
-        });
+                @Override
+                public void onFailed(int state) {
+
+                }
+            });
+        } else {
+            Controller.getInstance().RequestNews(new Controller.OnRequestNewsListener() {
+                @Override
+                public void onSuccess(final List<News> list) {
+                    oldList.clear();
+                    oldList.addAll(0, list);
+                    Tool.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailed(int state) {
+                    Tool.toast("刷新失败");
+                }
+            });
+            isSearch = false;
+        }
+
     }
 
     @Override
@@ -391,4 +452,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        if (App.isManager) {
+            Controller.RequestWithString2(RequestAdress.LOGOUT, "{\"managerId\":" + Tool.getCurrentManager().getManagerId() + "}", new Controller.OnRequestListener() {
+                @Override
+                public void onSuccess(String json) {
+
+                }
+
+                @Override
+                public void onFailed(int state) {
+
+                }
+            });
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        newsListFrag.onRefresh();
+    }
 }

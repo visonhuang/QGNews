@@ -8,11 +8,11 @@
         android:icon="@drawable/manager_add1"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/manager_menu_check"
-        android:title="查看附件下载"
-        android:icon="@drawable/file_download"
-        app:showAsAction="ifRoom"/>
+    <!--<item-->
+        <!--android:id="@+id/manager_menu_check"-->
+        <!--android:title="查看附件下载"-->
+        <!--android:icon="@drawable/file_download"-->
+        <!--app:showAsAction="ifRoom"/>-->
 
 
 </menu>

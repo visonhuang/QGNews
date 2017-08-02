@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.qg.qgnews.App;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.DownloadDetial;
 import com.qg.qgnews.model.RequestAdress;
@@ -66,11 +67,18 @@ public class DownLoadServer extends Service {
             stopForeground(true);
             DownloadDetial downloadDetial = new DownloadDetial();
             downloadDetial.setFileId(v.getFileId());
-            downloadDetial.setDownloader("565916548");
+            Log.d("取出===========",Tool.getCurrentManager().toString());
+            if (App.isManager) {
+                downloadDetial.setDownloader(Tool.getCurrentManager().getManagerAccount());
+
+            } else {
+                downloadDetial.setDownloader(Tool.getUUID());
+            }
+            Log.d("下载情况汇报",new Gson().toJson(downloadDetial));
             Controller.RequestWithString2(RequestAdress.POST_NEWS_DOWNLOAD_DETAIL, new Gson().toJson(downloadDetial), new Controller.OnRequestListener() {
                 @Override
                 public void onSuccess(String json) {
-
+                    Log.d("下载汇报完毕，返回","");
                 }
 
                 @Override

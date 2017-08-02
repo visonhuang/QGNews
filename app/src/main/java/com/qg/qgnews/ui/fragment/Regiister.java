@@ -30,6 +30,7 @@ import com.google.gson.reflect.TypeToken;
 import com.qg.qgnews.R;
 import com.qg.qgnews.model.FeedBack;
 import com.qg.qgnews.model.Manager;
+import com.qg.qgnews.model.RequestAdress;
 import com.qg.qgnews.ui.activity.LoginActivity;
 import com.qg.qgnews.util.Request;
 import com.qg.qgnews.util.Tool;
@@ -132,13 +133,11 @@ public class Regiister extends Fragment {
                                     }).create(); */
                             Manager manager = new Manager();
                             manager.setManagerAccount(user.getText().toString());
-                            manager.setManagerPassword(password.getText().toString());
+                            manager.setManagerPassword(Tool.encryption(password.getText().toString()));
                             manager.setManagerName(userName.getText().toString());
                             String line = gson.toJson(manager);
-                            String response = Request.RequestWithString("http://192.168.43.141:8080/admin/addaccount",line);
                             Gson gson1 = new Gson();
-                            Log.d(TAG, response);
-                            FeedBack feedBack = gson1.fromJson(response,FeedBack.class);
+                            FeedBack feedBack = Request.RequestWithString2(RequestAdress.REGISTER,line);
                             if (feedBack == null) {
                                 Tool.toast("服务器无返回");
                             } else {

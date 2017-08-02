@@ -85,7 +85,7 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
         adapter = new NewsListAdapter2(getContext(), R.layout.news_item, dataNews);
         newList.setOnItemClickListener(NewsListFrag.this);
         newList.setAdapter(adapter);
-        onRefresh();
+        //onRefresh();
 
     }
 
