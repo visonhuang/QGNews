@@ -82,17 +82,17 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
     private Toolbar mToolbar;
     private static final int PLUS_OPEN = 1;
     private static final int PLUS_CLOSE = 0;
-    private static int PulsButtonMode = PLUS_CLOSE;
+    private  int PulsButtonMode = PLUS_CLOSE;
     private static final int UPLOAD_OPEN = 1;
     private static final int UPLOAD_CLOSE = 0;
-    private static int UploadButtonMode = UPLOAD_CLOSE;
-    public static boolean mIsPublishing;
+    private  int UploadButtonMode = UPLOAD_CLOSE;
+    public  static boolean mIsPublishing;
     private static final int GET_FILE = 0;
     private static final int GET_PHOTO = 1;
     private static final int TYPE_CHOOSE_COVER = 0;
     private static final int TYPE_CHOOSE_FILE = 1;
-    private static  int ChoosePhotoType = TYPE_CHOOSE_COVER;
-    private static boolean hasChooseCover;
+    private   int ChoosePhotoType = TYPE_CHOOSE_COVER;
+    private  boolean hasChooseCover;
 
     private List<String> mFileList = new ArrayList<>();
     private FileAdapter mAdapter;
@@ -570,7 +570,7 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
                 Tool.toast("封面修改成功");
             }
             hasChooseCover = true;
-            mCoverBitmap = Tool.decodeSampledBitmapFromFile(imagePath, 540, 375);
+            mCoverBitmap = Tool.decodeSampledBitmapFromFile(imagePath, 540/2, 375/2);
         }
     }
 
@@ -654,5 +654,6 @@ public class PublishNewsActivity extends AppCompatActivity implements View.OnCli
         }
         return true;
     }
+
 
 }

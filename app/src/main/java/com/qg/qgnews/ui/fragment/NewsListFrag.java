@@ -43,7 +43,6 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
         if (adapter.getCount() <= position) {
             return;
         }
-        Tool.toast("dianji ");
         if (onNewsItemClickListener != null) {
 
             onNewsItemClickListener.OnItemClickListener(view, position, adapter.getItem(position));
@@ -124,7 +123,6 @@ public class NewsListFrag extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onLoad() {
-        Tool.toast("上啦加载");
         if (onRefreshOrLoadIngListener != null) {
             onRefreshOrLoadIngListener.onLoad(adapter, dataNews);
             refreshLayout.setLoading(false);

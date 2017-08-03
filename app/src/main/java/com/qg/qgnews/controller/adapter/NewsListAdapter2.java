@@ -45,6 +45,7 @@ public class NewsListAdapter2 extends ArrayAdapter<News> {
             itemView = convertView;
             holder = (ViewHolder) itemView.getTag();
         }
+
         new PicAsnycTask(holder.cover,getItem(position), App.bitmapLruCache).execute();
         holder.title.setText(news.getNewsTitle());
         holder.time.setText(news.getNewsTime());

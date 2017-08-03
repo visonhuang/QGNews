@@ -93,7 +93,6 @@ public class Controller {
             @Override
             public void run() {
                 String jsonString = "{\"newsId\":" + newsId + "}";
-                Tool.toast(jsonString);
                 try {
                     FeedBack feedBack = Request.RequestWithString2(RequestAdress.GET_NEWS_DETIAL, jsonString);
                     if (feedBack.getState() == 1) {
@@ -145,5 +144,17 @@ public class Controller {
             }
         }).start();
     }
-
+    public static void RequestWithString3(final String url, final String json, final OnRequestListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FeedBack feedBack = Request.RequestWithString3(url, json);
+                if (feedBack.getState() == 1) {
+                    listener.onSuccess(feedBack.getData());
+                } else {
+                    listener.onFailed(feedBack.getState());
+                }
+            }
+        }).start();
+    }
 }

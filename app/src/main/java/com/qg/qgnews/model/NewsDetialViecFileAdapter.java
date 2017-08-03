@@ -1,7 +1,11 @@
 package com.qg.qgnews.model;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +50,10 @@ public class NewsDetialViecFileAdapter extends RecyclerView.Adapter<NewsDetialVi
         holder.viceFileName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(newsMessageActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(newsMessageActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+                }//申请权限
                 showDialog(viceFileList.get(holder.getAdapterPosition()));
             }
         });

@@ -425,7 +425,7 @@ public class Request {
                 }
             }
         }
-        return BitmapFactory.decodeResource(App.context.getResources(), R.drawable.cover_not_found);
+        return BitmapFactory.decodeResource(App.context.getResources(), R.drawable.no_face);
     }
 
     public static FeedBack RequestWithString2(String URl, String content) {
@@ -517,21 +517,39 @@ public class Request {
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
             httpURLConnection.setRequestProperty("Charset", "utf-8");
+
+
+
+
             if (!isGetSession) {
+                Log.d("asdasd", session);
                 httpURLConnection.setRequestProperty("Cookie", session);
             }
+
+
+
+
             // 设置DataOutputStream
             ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
             ds.write(content.getBytes());
                /* close streams */
             ds.flush();
-            Log.d("asdasd", session);
+
             // Tool.saveSessionId(httpURLConnection);
             String cookieValue = httpURLConnection.getHeaderField("Set-Cookie");
+            inputStream = httpURLConnection.getInputStream();
+
+
+
+
             if (isGetSession) {
                 session = cookieValue.substring(0, cookieValue.indexOf(";"));
+                System.out.println(session);
             }
-            inputStream = httpURLConnection.getInputStream();
+
+
+
+
             inputStreamReader = new InputStreamReader(inputStream, "utf-8");
             reader = new BufferedReader(inputStreamReader);
             tempLine = null;
@@ -615,5 +633,71 @@ public class Request {
         }
 
 
+    }
+    public static FeedBack RequestWithString3(String URl, String content) {
+        Log.d("asdasd", content);
+        String end = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        BufferedOutputStream ds = null;
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        StringBuffer resultBuffer = new StringBuffer("{\"state\":0}");
+        String tempLine = null;
+        try {
+            URL url = new URL(URl);
+            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.setConnectTimeout(5000);
+            httpURLConnection.setReadTimeout(5000);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            httpURLConnection.setRequestProperty("Charset", "utf-8");
+            // 设置DataOutputStream
+            ds = new BufferedOutputStream((httpURLConnection.getOutputStream()));
+            ds.write(content.getBytes());
+               /* close streams */
+            ds.flush();
+            // Tool.saveSessionId(httpURLConnection);
+            inputStream = httpURLConnection.getInputStream();
+            inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            JsonReader reader = new JsonReader(new InputStreamReader(inputStream));
+            reader.setLenient(true);
+            Gson gson = new Gson();
+            return gson.fromJson(reader, FeedBack.class);
+        } catch (Exception e) {
+            Tool.toast("好像出了点问题");
+            e.printStackTrace();
+        } finally {
+            if (ds != null) {
+                try {
+                    ds.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            if (inputStreamReader != null) {
+                try {
+                    inputStreamReader.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        return new FeedBack(0, "");
     }
 }

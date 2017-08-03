@@ -75,7 +75,6 @@ public class ManagerNews extends AppCompatActivity implements NewsListFrag.OnRef
 
     @Override
     public void onRefresh(final NewsListAdapter2 adapter, final List<News> oldList) {
-        App.bitmapLruCache.evictAll();
         Controller.RequestWithString2(RequestAdress.SHOW_OWN_NEWS, "{\"managerId\":" + managerId + "}", new Controller.OnRequestListener() {
             @Override
             public void onSuccess(String json) {
@@ -86,6 +85,12 @@ public class ManagerNews extends AppCompatActivity implements NewsListFrag.OnRef
                 Tool.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (oldList.size() == 0){
+                            frag.error.setImageResource(R.drawable.loading_failed);
+                            frag.error.setVisibility(View.VISIBLE);
+                        } else {
+                            frag.error.setVisibility(View.GONE);
+                        }
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -93,6 +98,16 @@ public class ManagerNews extends AppCompatActivity implements NewsListFrag.OnRef
 
             @Override
             public void onFailed(int state) {
+                oldList.clear();
+                Tool.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        frag.error.setImageResource(R.drawable.loading_failed);
+                        frag.error.setVisibility(View.VISIBLE);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                Tool.toast("刷新失败");
             }
         });
     }

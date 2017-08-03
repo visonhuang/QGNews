@@ -98,10 +98,8 @@ public class UrlListAdapter extends ArrayAdapter<File> {
                             return;
                         }
                         selectedFiles.put(file.getPath(), file);
-                        Tool.toast("添加" + file.getPath());
                     } else {
                         selectedFiles.remove(file.getPath());
-                        Tool.toast("移除" + file.getPath());
                     }
                     if (onSelectedFilesChangedListener != null) {
                         onSelectedFilesChangedListener.onChanged();

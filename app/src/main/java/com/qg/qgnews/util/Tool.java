@@ -289,4 +289,16 @@ public class Tool {
         }
         return false;
     }
+
+    public static boolean isFirstRun() {
+        SharedPreferences preferences = App.context.getSharedPreferences("run", Context.MODE_PRIVATE);
+        if (preferences.getBoolean("isFirstRun", true)) {
+            SharedPreferences.Editor editor = App.context.getSharedPreferences("run", Context.MODE_PRIVATE).edit();
+            editor.putBoolean("isFirstRun", false);
+            editor.apply();
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

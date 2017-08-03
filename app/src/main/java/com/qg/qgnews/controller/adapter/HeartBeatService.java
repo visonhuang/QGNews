@@ -34,7 +34,7 @@ public class HeartBeatService extends Service {
                     public void run() {
                         while (App.isManager) {
                             Log.d("==========","asdasdwdqwd12312312");
-                            FeedBack feedBack = Request.RequestWithString2(RequestAdress.LOGIN, new Gson().toJson(Tool.getCurrentManager()));
+                            FeedBack feedBack = Request.RequestWithString3(RequestAdress.LOGIN, new Gson().toJson(Tool.getCurrentManager()));
                             try {
                                 Thread.sleep(3000);
                             } catch (InterruptedException e) {

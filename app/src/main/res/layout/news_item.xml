@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/example" />
+                app:srcCompat="@drawable/loading" />
 
             <TextView
                 android:id="@+id/news_item_title"

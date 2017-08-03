@@ -5,7 +5,7 @@ package com.qg.qgnews.model;
  */
 
 public class RequestAdress {
-    private static final String HOST = "http://119.23.106.145:80/news_app/";
+    public static  String HOST = "http://119.23.106.145:80/news_app/";
 
     /**
      * 上传新闻url

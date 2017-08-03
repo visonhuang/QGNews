@@ -205,15 +205,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.activity_main_edit_button:
                 Intent intent = new Intent(this, PublishNewsActivity.class);
                 startActivityForResult(intent, 1);
-                Tool.toast("点击了编辑");
                 break;
             case R.id.activity_main_manager_button:
-                Tool.toast("点击了管理");
                 Intent intent1 = new Intent(this, ManagerActivity.class);
                 startActivity(intent1);
                 break;
             case R.id.activity_main_mynews_button:
-                Tool.toast("点击了我的新闻");
                 Intent intent2 = new Intent(this, ManagerNews.class);
                 intent2.putExtra("id", Tool.getCurrentManager().getManagerId());
                 startActivity(intent2);
@@ -340,7 +337,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onRefresh(final NewsListAdapter2 adapter, final List<News> oldList) {
-        App.bitmapLruCache.evictAll();
         if (isSearch) {
             Controller.RequestWithString2(RequestAdress.SEARCH_NEWS, "{\"newsTitle\":\"" + searchContent + "\"}", new Controller.OnRequestListener() {
                 @Override
@@ -369,7 +365,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
 
-                    Tool.toast("没有");
                 }
             });
         } else {

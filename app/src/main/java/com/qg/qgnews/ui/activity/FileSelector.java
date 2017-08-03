@@ -64,7 +64,6 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
                 setTopRightButton("确认", R.drawable.selector_ok, new OnClickListener() {
                     @Override
                     public void onClick() {
-                        Tool.toast("点击了确定");
                         Intent intent = new Intent();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("map_key", (Serializable) selectedFiles);
@@ -163,11 +162,9 @@ public class FileSelector extends TopBarBaseActivity implements View.OnClickList
                     Tool.toast("已达到上限");
                     return;
                 }
-                Tool.toast("添加" + now.listFiles()[position].getPath());
                 selectedFiles.put(now.listFiles()[position].getPath(), now.listFiles()[position]);
             } else {
                 selectedFiles.remove(now.listFiles()[position].getPath());
-                Tool.toast("移除" + now.listFiles()[position].getPath());
             }
             setTitle("选择上传文件" + selectedFiles.size() + "/" + maxSelected);
         }
